@@ -235,7 +235,8 @@ function getValueAfter(lines, label){
   });
   if(i<0) return "";
   const line=lines[i].trim();
-  const same=line.slice(label.trim().length).replace(/^\\s*[:：]?\\s*/,"").trim();
+  let same=line.slice(label.trim().length).trim();
+  if(same.startsWith(":")||same.startsWith("：")) same=same.slice(1).trim();
   return same || clean(lines[i+1]||"");
 }
 function extractEmail(s){const m=s.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);return m?m[0]:""}
