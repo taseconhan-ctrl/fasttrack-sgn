@@ -272,14 +272,13 @@ function getAssignedStaff(lines){
   // Nhận diện phân công SGN ở cả hai dạng: "SGN - Tên [SĐT]" và "Tên SGN [SĐT]".
   // Số điện thoại là tùy chọn; loại trừ dòng "SGN - Dịch vụ" vì đây không phải nhân viên.
   for(const raw of lines){
-    const value=raw.trim().replace(/^[-*•\\s]+|[-*\\s]+$/g,"");
+    const value=raw.trim().replace(/^[-*•\s]+|[-*\s]+$/g,"");
     if(!value) continue;
     if(/^nhatquang$/i.test(value)) return "nhatquang";
-    if(/^(?:SGN\\s*[-–—]?\\s*(?:dịch vụ|dịch vụ fast track))$/i.test(value)) continue;
-    const phoneTail="(?:\\s+\\+?\\d[\\d\\s().-]{5,}\\d)?";
-    let match=value.match(new RegExp("^SGN\\\\s*[-–—]?\\\\s*(.+?)"+phoneTail+"$","i"));
+    if(/^SGN\s*[-–—]?\s*(?:dịch vụ|dịch vụ fast track)$/i.test(value)) continue;
+    let match=value.match(/^SGN\s*[-–—]?\s*(.+?)(?:\s+\+?\d[\d\s().-]{5,}\d)?$/i);
     if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim())) return match[1].trim();
-    match=value.match(new RegExp("^(.+?)\\\\s+SGN"+phoneTail+"$","i"));
+    match=value.match(/^(.+?)\s+SGN(?:\s+\+?\d[\d\s().-]{5,}\d)?$/i);
     if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim())) return match[1].trim();
   }
   return "";
