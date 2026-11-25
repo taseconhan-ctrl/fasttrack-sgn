@@ -153,7 +153,7 @@ th{background:#eaf2ee;color:#214b43}
     <div><label for="phone">Điện thoại / WhatsApp</label><input id="phone" type="tel" value="+84 867802129" readonly></div>
     <div><label for="hotline">Hotline</label><input id="hotline" type="tel" value="+84 866624188" readonly></div>
   </div>
-  <p class="hint">Danh sách cố định gồm đúng 11 nhân viên. Không tự thêm tên ngoài danh sách. Số WhatsApp chỉ tự điền khi đã có thông tin được xác nhận.</p>
+  <p class="hint">Nhập hoặc chọn tên nhân viên; hệ thống tự chuẩn hóa tên tiếng Anh và điền số điện thoại / WhatsApp theo hồ sơ đã thiết lập.</p>
 </section>
 <div id="summary" class="panel hidden"></div>
 <div id="results"></div>
@@ -177,15 +177,25 @@ const STAFF_PROFILES = {
   "Bình": { name: "Binh", phone: "" },
   "Nhật Quang": { name: "Nhat Quang", phone: "" }
 };
-function allStaffProfiles(){ return STAFF_PROFILES; }
+const STAFF_ALIASES = {
+  "Nhan": { name: "Nhan", phone: "+84 867802129" },
+  "David": { name: "david", phone: "+84 901113978" },
+  "Hưng": { name: "Hung", phone: "+84 816226474" },
+  "An": { name: "An", phone: "+84 366404159" },
+  "khanh": { name: "Khanh", phone: "+84 869392539" },
+  "nhatquang": { name: "Quang", phone: "+84 366884210" }
+};
+function allStaffProfiles(){ return {...STAFF_PROFILES,...STAFF_ALIASES}; }
 function renderStaffProfileOptions(){
   const list=$("staffProfiles");
-  list.innerHTML=Object.keys(STAFF_PROFILES).map(name=>'<option value="'+esc(name)+'"></option>').join("");
+  const names=[...new Set([...Object.keys(STAFF_PROFILES),...Object.keys(STAFF_ALIASES)])];
+  list.innerHTML=names.map(name=>'<option value="'+esc(name)+'"></option>').join("");
 }
 function applyStaffProfile(){
   const selected=$("staffProfile").value.trim();
-  const key=Object.keys(STAFF_PROFILES).find(n=>n.toLowerCase()===selected.toLowerCase());
-  const profile=key?STAFF_PROFILES[key]:null;
+  const profiles=allStaffProfiles();
+  const key=Object.keys(profiles).find(n=>n.toLowerCase()===selected.toLowerCase());
+  const profile=key?profiles[key]:null;
   if(!profile){$("staff").value="";$("phone").value="";return;}
   $("staffProfile").value=profile.name;
   $("staff").value=profile.name;
