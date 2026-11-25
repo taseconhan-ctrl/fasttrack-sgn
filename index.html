@@ -177,11 +177,11 @@ function parseChunk(ls){
  b.flight=getValueAfter(ls,"Số hiệu chuyến bay");
  // Fallback: một số bản booking đặt mã chuyến bay ở dòng độc lập hoặc cách nhãn bằng khoảng trắng.
  if(!b.flight){
-   const fm=raw.match(/(?:^|\\n)\\s*([A-Z]{2,3})\\s?(\\d{2,4})\\s*(?=\\n|$)/i)
-     || raw.match(/\\b([A-Z]{2,3})\\s?(\\d{2,4})\\b/i);
+   const fm=raw.match(/(?:^|\n)\s*([A-Z]{2,3})\s?(\d{2,4})\s*(?=\n|$)/i)
+     || raw.match(/\b([A-Z]{2,3})\s?(\d{2,4})\b/i);
    if(fm)b.flight=(fm[1]+fm[2]).toUpperCase();
  } else {
-   b.flight=b.flight.replace(/\\s+/g,"").toUpperCase();
+   b.flight=b.flight.replace(/\s+/g,"").toUpperCase();
  }
  b.service=getValueAfter(ls,"Dịch vụ chính")||ls.find(x=>/(đón khách|tiễn khách|arrival|departure)/i.test(x)&&/(quốc tế|quốc nội|international|domestic)/i.test(x))||"";
  const dm=ls.map(dateMatch).find(Boolean);
