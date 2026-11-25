@@ -751,8 +751,9 @@ window.copyText=copyText;
       document.title=next.title||document.title;
       document.head.querySelectorAll('style').forEach(s=>s.remove());
       next.head.querySelectorAll('style').forEach(s=>document.head.appendChild(s.cloneNode(true)));
-      document.body.replaceChildren(...[...next.body.childNodes].filter(n=>!(n.nodeType===1&&(n.id==='christmas-audio-player'||n.id==='persistent-music-navigation'||n.id==='christmas-audio-player-script'))));
-      if(player)document.body.appendChild(player);
+      for(const node of [...document.body.childNodes])if(node!==player)node.remove();
+      const pageNodes=[...next.body.childNodes].filter(n=>!(n.nodeType===1&&(n.id==='christmas-audio-player'||n.id==='persistent-music-navigation'||n.id==='christmas-audio-player-script')));
+      for(const node of pageNodes){if(player)document.body.insertBefore(node,player);else document.body.appendChild(node);}
       if(addHistory)history.pushState({},'',target.pathname+target.search+target.hash);
       window.scrollTo(0,0);
       for(const oldScript of pageScripts){
