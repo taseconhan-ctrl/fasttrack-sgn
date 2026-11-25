@@ -228,17 +228,15 @@ function normalizeAgency(s){
   return clean(s);
 }
 function getValueAfter(lines, label){
-  const escaped=label.replace(/[.*+?^${}()|[\]\\]/g,"\\function getValueAfter(lines, label){
-  const i=lines.findIndex(x=>x.toLowerCase().includes(label.toLowerCase()));
+  const target=label.trim().toLowerCase();
+  const i=lines.findIndex(x=>{
+    const t=x.trim().toLowerCase();
+    return t===target || t.startsWith(target+":") || t.startsWith(target+"：");
+  });
   if(i<0) return "";
-  const same=lines[i].split(/[:：]/).slice(1).join(":").trim();
-  return same || lines[i+1] || "";
-}");
-  const i=lines.findIndex(x=>new RegExp("^\\s*"+escaped+"\\s*(?:[:：].*)?$","i").test(x));
-  if(i<0) return "";
-  const line=lines[i];
-  const same=line.replace(new RegExp("^\\s*"+escaped+"\\s*[:：]?\\s*","i"),"").trim();
-  return same || lines[i+1] || "";
+  const line=lines[i].trim();
+  const same=line.slice(label.trim().length).replace(/^\\s*[:：]?\\s*/,"").trim();
+  return same || clean(lines[i+1]||"");
 }
 function extractEmail(s){const m=s.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);return m?m[0]:""}
 function extractPhone(s){
