@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fast Track SGN – Dán là ra</title>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--ink:#172033;--muted:#65718a;--line:#dce2ec;--accent:#2257c7;--soft:#eaf0ff;--good:#087443;--warn:#946200;--bad:#a22b36}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:#14233f;color:#fff;padding:22px max(18px,calc((100% - 1180px)/2))}
+header h1{font-size:23px;margin:0 0 5px}header p{margin:0;color:#d5def0}
+main{max-width:1180px;margin:22px auto;padding:0 16px 60px}
+.panel,.booking,.review{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 3px 12px #17203308}
+label{font-weight:650;display:block;margin-bottom:7px}textarea{width:100%;min-height:260px;resize:vertical;border:1px solid #bbc6d8;border-radius:10px;padding:13px;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;color:#1d2b42}
+input[type=text],input[type=tel]{padding:9px 10px;border:1px solid #bbc6d8;border-radius:8px;width:100%;max-width:240px}
+.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:12px}.field{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.field label{margin:0;font-weight:500}
+button,.linkbtn{border:0;border-radius:9px;background:var(--accent);color:white;padding:9px 13px;font-weight:650;cursor:pointer;text-decoration:none;display:inline-flex;gap:6px;align-items:center;font-size:14px}
+button.secondary,.linkbtn.secondary{background:#e9eef7;color:#21304b}button.ghost{background:#fff;color:#273653;border:1px solid var(--line)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.hint,.muted{color:var(--muted);font-size:13px}.status{padding:11px 13px;border-radius:9px;background:var(--soft);margin-top:12px}.status.good{background:#e8f6ef;color:var(--good)}.status.warn{background:#fff6df;color:var(--warn)}
+h2{font-size:19px;margin:0 0 12px}h3{font-size:16px;margin:16px 0 8px}.topline{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.pill{font-size:12px;padding:4px 8px;border-radius:999px;background:#edf1f7;color:#33415b;font-weight:700}.pill.good{background:#e5f6ed;color:#087443}.pill.warn{background:#fff2d5;color:#8a5a00}.pill.bad{background:#fdebed;color:#a22b36}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f7f8fb;border:1px solid #e4e8f0;border-radius:9px;padding:12px;margin:7px 0;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}.booking h2{margin:0}.meta{display:flex;gap:7px;flex-wrap:wrap;margin:9px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}.kv{background:#f8f9fc;border-radius:8px;padding:9px}.kv small{display:block;color:var(--muted);font-size:11px}.kv b{overflow-wrap:anywhere}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:9px 8px;vertical-align:top}th{background:#f7f8fb;color:#46536b}td:last-child{min-width:210px}.tablewrap{overflow-x:auto}.mini{padding:6px 9px;font-size:12px}
+.hidden{display:none!important}.warning{color:var(--warn)}.danger{color:var(--bad)}
+@media(max-width:640px){header h1{font-size:20px}.panel,.booking,.review{padding:13px}td:last-child{min-width:170px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Fast Track SGN – Công cụ “Dán là ra”</h1>
+  <p>Xử lý booking ngay trên trình duyệt · Không tải dữ liệu lên máy chủ · Tạo bản nháp liên hệ, không tự gửi tin nhắn/email</p>
+</header>
+<main>
+<section class="panel">
+  <h2>1. Dán dữ liệu booking</h2>
+  <label for="raw">Dán nguyên văn danh sách booking hoặc nội dung trang chi tiết booking</label>
+  <textarea id="raw" placeholder="Dán dữ liệu booking Fast Track vào đây..."></textarea>
+  <div class="controls">
+    <div class="field"><input id="allBookings" type="checkbox"><label for="allBookings">Xử lý cả booking đã có nhân viên nhận việc</label></div>
+    <button id="run">Phân tích & tạo kết quả</button>
+    <button class="secondary" id="clear">Xóa dữ liệu</button>
+  </div>
+  <p class="hint">Mặc định chỉ lấy booking Đã xác nhận và NV Nhận việc trống / “_”. Nếu chỉ dán một booking chi tiết có tên nhân viên, bật tùy chọn xử lý tất cả.</p>
+  <div id="status" class="status">Chưa có dữ liệu được xử lý.</div>
+</section>
+
+<section class="panel">
+  <h2>2. Thông tin nhân viên đang dùng</h2>
+  <div class="controls">
+    <div><label for="staff">Tên nhân viên (English)</label><input id="staff" type="text" value="Nhan"></div>
+    <div><label for="phone">Điện thoại / WhatsApp</label><input id="phone" type="tel" value="+84 867802129"></div>
+    <div><label for="hotline">Hotline</label><input id="hotline" type="tel" value="+84 866624188"></div>
+  </div>
+  <p class="hint">Có thể sửa các trường này trước khi bấm phân tích. Công cụ dùng các giá trị hiện tại để tạo toàn bộ BODY và link liên hệ.</p>
+</section>
+
+<div id="summary" class="panel hidden"></div>
+<div id="results"></div>
+<div id="reviews"></div>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const WELCOME = "https://drive.google.com/file/d/1oz2djqDYCy15yjs3OCRJOfWDf104PjC2/view?usp=sharing";
+let lastOutput = [];
+
+function clean(s){return (s||"").replace(/\u00a0/g," ").replace(/\r/g,"").trim()}
+function linesOf(s){return s.split("\n").map(x=>x.trim()).filter(Boolean)}
+function isOrder(s){return /^[A-Z0-9]{6}$/i.test(clean(s))}
+function dateMatch(s){return clean(s).match(/\b(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})\s+(\d{1,2}):(\d{2})\b/)}
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function splitGuestNames(s){
+  return clean(s).split(/\s*,\s*|\s*;\s*/).map(x=>x.trim()).filter(Boolean);
+}
+function normalizeAgency(s){
+  const x=(s||"").toLowerCase();
+  if(/linkcare|vietinbank|\buob\b/.test(x)) return "LINKCARE";
+  if(/tô hòa|tô quà|urbox/.test(x)) return "URBOX";
+  if(/viettel/.test(x)) return "VIETTEL";
+  if(/ctrip/.test(x)) return "Ctrip";
+  if(/dragon\s*pass/.test(x)) return "Dragon Pass";
+  if(/klook/.test(x)) return "KLOOK";
+  if(/trip\.com/.test(x)) return "Trip";
+  if(/kkday/.test(x)) return "KKday";
+  return clean(s);
+}
+function getValueAfter(lines, label){
+  const i=lines.findIndex(x=>x.toLowerCase().includes(label.toLowerCase()));
+  if(i<0) return "";
+  const same=lines[i].split(/[:：]/).slice(1).join(":").trim();
+  return same || lines[i+1] || "";
+}
+function extractEmail(s){const m=s.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);return m?m[0]:""}
+function extractPhone(s){
+  const patterns=[
+    /(?:whatsapp|zalo|contact|sđt liên hệ|phone|mobile)\s*[:：-]?\s*((?:\+\s*)?\d[\d\s().-]{5,}\d)/i,
+    /(?:^|\s)(\+\d[\d\s().-]{7,}\d)(?:\s|$)/m
+  ];
+  for(const p of patterns){const m=s.match(p);if(m)return clean(m[1])}
+  return "";
+}
+function countryFrom(s){
+ const m=s.match(/Country\/region of passport\s*:\s*([A-Za-z ]+)/i);
+ return m?clean(m[1]).replace(/\*+.*$/,"").trim():"";
+}
+const ccMap={"brunei":"673","singapore":"65","japan":"81","australia":"61","new zealand":"64","united states":"1","usa":"1","canada":"1","united kingdom":"44","uk":"44","malaysia":"60","india":"91","france":"33","germany":"49","italy":"39","philippines":"63","thailand":"66","indonesia":"62","vietnam":"84","viet nam":"84","south korea":"82","korea":"82","china":"86","hong kong":"852","taiwan":"886"};
+function internationalPhone(raw,country){
+ let d=(raw||"").replace(/\D/g,""); if(!d)return "";
+ if((raw||"").trim().startsWith("+")) return d;
+ if(d.startsWith("00")) return d.slice(2);
+ if(d.startsWith("0") && country){
+   const cc=ccMap[country.toLowerCase()];
+   if(cc) return cc+d.slice(1);
+ }
+ if(country && ccMap[country.toLowerCase()] && !d.startsWith(ccMap[country.toLowerCase()])) return ccMap[country.toLowerCase()]+d.replace(/^0+/,"");
+ return "";
+}
+function localVNPhone(raw){
+ let d=(raw||"").replace(/\D/g,"");
+ if(d.startsWith("84")) d="0"+d.slice(2);
+ return /^0\d{9}$/.test(d)?d:"";
+}
+function parseBlocks(raw){
+ const ls=raw.replace(/\r/g,"").split("\n").map(x=>x.trim());
+ const starts=[];
+ for(let i=0;i<ls.length;i++){
+   if(isOrder(ls[i])) starts.push(i);
+   else if(/^Mã order$/i.test(ls[i]) && isOrder(ls[i+1]||"")) starts.push(i+1);
+ }
+ const unique=[...new Set(starts)].sort((a,b)=>a-b);
+ if(!unique.length) return [parseSingle(raw)];
+ return unique.map((st,n)=>parseChunk(ls.slice(st,unique[n+1]??ls.length)));
+}
+function parseChunk(ls){
+ const raw=ls.join("\n");
+ const b={raw,order:"",flight:"",service:"",date:"",time:"",names:[],pax:0,staffAssign:"",status:"",agency:"",email:"",phone:"",country:"",tickets:[],notes:""};
+ b.order=ls.find(isOrder)||"";
+ b.service=ls.find(x=>/(đón khách|tiễn khách|arrival|departure)/i.test(x)&&/(quốc tế|quốc nội|international|domestic)/i.test(x))||"";
+ const dm=ls.map(dateMatch).find(Boolean);
+ if(dm){b.date=`${String(dm[1]).padStart(2,"0")}/${String(dm[2]).padStart(2,"0")}/${dm[3]}`;b.time=`${String(dm[4]).padStart(2,"0")}:${dm[5]}`}
+ if(b.service){
+   const si=ls.indexOf(b.service);
+   if(si>0) b.flight=ls[si-1];
+   const di=ls.findIndex(x=>dateMatch(x));
+   if(di>=0 && ls[di+1]) b.names=splitGuestNames(ls[di+1]);
+   if(di>=0 && ls[di+2]) b.staffAssign=ls[di+2];
+ } else {
+   b.flight=getValueAfter(ls,"Số hiệu chuyến bay");
+   b.service=getValueAfter(ls,"Dịch vụ chính");
+   const nameIdx=ls.findIndex(x=>/^Họ và tên$/i.test(x));
+   if(nameIdx>=0){
+     for(let i=nameIdx+1;i<ls.length;i++){
+       if(/^(Số vé|Trẻ em|Hành lý|Ghi chú|Tài liệu|Chi phí|Số tiền|Ngày tạo|No rows)$/i.test(ls[i])) break;
+       if(ls[i] && !/^(Không|Có)$/i.test(ls[i])) b.names.push(ls[i]);
+     }
+   } else {
+     const di=ls.findIndex(x=>dateMatch(x));
+     if(di>=0 && ls[di+1]) b.names=splitGuestNames(ls[di+1]);
+     if(di>=0 && ls[di+2]) b.staffAssign=ls[di+2];
+   }
+   b.staffAssign=getValueAfter(ls,"NV Nhận việc")||b.staffAssign;
+   b.status=getValueAfter(ls,"Trạng thái");
+   b.email=getValueAfter(ls,"Email khách");
+   b.phone=getValueAfter(ls,"SĐT liên hệ");
+ }
+ if(!b.status) b.status=ls.find(x=>/đã xác nhận|chờ xác nhận|cancel|hủy/i.test(x))||"";
+ if(!b.agency){
+   const a=ls.find(x=>/KLOOK|LINKCARE|VIETTEL|URBOX|TÔ HÒA|TÔ QUÀ|Ctrip|Dragon Pass|Trip\.com|KKday|UOB/i.test(x));
+   b.agency=a||"";
+ }
+ b.email=b.email.includes("@")?b.email:extractEmail(raw);
+ b.phone=(b.phone && /\d{7}/.test(b.phone))?b.phone:extractPhone(raw);
+ b.country=countryFrom(raw);
+ const paxLine=ls.find(x=>/^\d{1,2}$/.test(x));
+ b.pax=paxLine?Number(paxLine):(b.names.length||1);
+ if(!b.names.length && b.pax===1){
+   const ix=ls.findIndex(x=>dateMatch(x));
+   if(ix>=0 && ls[ix+1] && !dateMatch(ls[ix+1])) b.names=splitGuestNames(ls[ix+1]);
+ }
+ b.pax=Math.max(b.pax,b.names.length);
+ b.tickets=[];
+ const ti=ls.findIndex(x=>/^Số vé$/i.test(x));
+ if(ti>=0){for(let j=0;j<b.names.length;j++) if(ls[ti+1+j]) b.tickets.push(ls[ti+1+j]);}
+ b.notes=ls.filter(x=>/special requirements|ghi chú/i.test(x)).join(" ");
+ return b;
+}
+function parseSingle(raw){return parseChunk(raw.split("\n").map(x=>x.trim()))}
+function direction(b){return /đón khách|arrival/i.test(b.service)?"ARRIVAL":/tiễn khách|departure/i.test(b.service)?"DEPARTURE":""}
+function isDomestic(b){return /quốc nội|domestic/i.test(b.service)}
+function isPartner(b){return ["LINKCARE","VIETTEL","URBOX"].includes(normalizeAgency(b.agency))}
+function isFull(b){return /\b(full|vip|business class|thương gia)\b/i.test(b.service)}
+function isPriority(b){return /(ưu tiên check.?in|priority check.?in|ƯTCK)/i.test(b.service+" "+b.raw)}
+function serviceCode(b){
+ if(isFull(b)) return "FULL";
+ if(direction(b)==="ARRIVAL"&&!isDomestic(b)) return "KHL";
+ if(direction(b)==="DEPARTURE"&&!isDomestic(b)) return "Kci";
+ return "";
+}
+function dateLong(b){const m=b.date.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);return m?`${m[1]}/${m[2]}/${m[3]}`:b.date}
+function greeting(b){
+ if(b.pax>=5) return "Dear Valued Guests,";
+ return "Dear Mr./Ms. "+(b.names.length?b.names.join(", "):"[MISSING GUEST NAME]")+",";
+}
+function signature(staff,phone,hotline){return `Best regards,\n${staff}\nPhone/WhatsApp\nMe: ${phone}\nHotline: ${hotline}`}
+function bodyEnglish(b,staff,phone,hotline){
+ if(!b.flight||!b.date) return "";
+ const g=greeting(b), sig=signature(staff,phone,hotline);
+ const ref=b.order?`\n\nBooking Reference: ${b.order}`:"";
+ const d=dateLong(b);
+ if(direction(b)==="ARRIVAL"){
+  let intro=`${g}\n\nMy name is ${staff}, and I will be assisting you with the Fast Track arrival service for flight ${b.flight} at Tan Son Nhat International Airport on ${d}.\n\nI will be waiting for you before the immigration area, holding a welcome sign.\n\nFor your reference, please see the welcome sign I will be holding at the airport via the Google Drive link below.\n\nWelcome sign: ${WELCOME}`;
+  const special=/vip|full|business class|thương gia/i.test(b.service);
+  if(!isPartner(b)&&b.pax<5&&!special) intro+=`\n\nAfter landing, please send me a message so I can assist you. If you cannot find me, please go to the clock area in the center of the immigration hall.`;
+  return intro+ref+"\n\n"+sig;
+ }
+ if(direction(b)==="DEPARTURE"&&isDomestic(b)&&!isPartner(b)){
+  return `${g}\n\nThank you for choosing our Fast Track service.${ref}\n\nWe regret to inform you that we currently do not provide Fast Track services for domestic departures, as domestic airport procedures are generally less crowded and less complicated.\n\nTherefore, we kindly ask you to cancel your booking and contact the booking platform or agency to request a refund.\n\nWe sincerely apologize for the inconvenience and appreciate your understanding.\n\n${sig}`;
+ }
+ if(direction(b)==="DEPARTURE"){
+  let intro=`${g}\n\nMy name is ${staff}, and I will be assisting you with the Fast Track departure service for flight ${b.flight} at Tan Son Nhat International Airport on ${d}.\n\nMay I know what time you expect to arrive at the airport?`;
+  if(isPriority(b)) return intro+ref+"\n\n"+sig;
+  if(!isPartner(b)&&!isFull(b)&&!isDomestic(b)) intro+=" Please complete your airline check-in and baggage drop first. Once you have finished, please come to the H-10 meeting point and message me so I can assist you.";
+  return intro+ref+"\n\n"+sig;
+ }
+ return "";
+}
+function bodyVietnamese(b,staffVN){
+ if(!isPartner(b)||!b.flight||!b.date||!b.time) return "";
+ const intro=`em chào anh/chị,\n\nem là ${staffVN}, nhân viên sẽ hỗ trợ mình làm thủ tục cho chuyến bay ${b.flight}, ngày ${b.date} lúc ${b.time}.`;
+ if(direction(b)==="ARRIVAL") return `${intro}\n\nkhi anh/chị đáp em sẽ cầm biển đón như bên dưới để đón anh/chị, lúc đáp nhờ anh/chị tìm giúp em để em có thể hỗ trợ anh/chị ạ.\n\nem cảm ơn anh/chị ạ.`;
+ if(direction(b)==="DEPARTURE"&&isDomestic(b)) return `${intro}\n\nanh/chị cho em hỏi mấy giờ mình đến sân bay và mình có hành lý ký gửi không ạ?\n\nem cảm ơn anh/chị.`;
+ return `${intro}\n\nanh/chị cho em hỏi mấy giờ mình đến sân bay ạ?\n\nem cảm ơn anh/chị.`;
+}
+function subject(b){
+ if(!b.date||!b.time||!b.flight||!b.names.length) return "";
+ const agency=normalizeAgency(b.agency);
+ const agencyPart=(["LINKCARE","VIETTEL","URBOX","Ctrip","Dragon Pass"].includes(agency))?agency:"";
+ const name=b.names[0]+(b.pax>1?` (+${b.pax-1})`:"");
+ const code=serviceCode(b);
+ if(direction(b)==="ARRIVAL"){
+   return [b.date.slice(0,5),agencyPart,b.order,name,code,b.flight,b.time].filter(Boolean).join(" – ");
+ }
+ if(direction(b)==="DEPARTURE"){
+   if(isDomestic(b)&&!isPartner(b)) return `Domestic Fast Track Service – ${b.order} – Cancellation and Refund Request`;
+   const head=isPriority(b)?"🛫 ƯTCK":"🛫";
+   return [head,b.date.slice(0,5),agencyPart,b.order,name,(isPriority(b)?"":code),b.flight,b.time].filter(Boolean).join(" – ").replace(" –  – "," – ");
+ }
+ return "";
+}
+function phoneDisplay(raw,international){return international?("+"+international):clean(raw)||"Không có số điện thoại"}
+function gmailLink(email,sub,body){
+ const u=new URL("https://mail.google.com/mail/");
+ u.searchParams.set("view","cm");u.searchParams.set("fs","1");u.searchParams.set("to",email);u.searchParams.set("su",sub);u.searchParams.set("body",body);
+ return u.toString();
+}
+function buildOne(b,staff,phone,hotline){
+ const dir=direction(b),agency=normalizeAgency(b.agency);
+ const sub=subject(b), en=bodyEnglish(b,staff,phone,hotline), vi=bodyVietnamese(b,"Nhân");
+ const intl=internationalPhone(b.phone,b.country),vn=localVNPhone(b.phone);
+ const wa=intl&&en?`https://wa.me/${intl}?text=${encodeURIComponent(en)}`:"";
+ const gm=b.email&&b.order&&b.flight&&b.date&&en?gmailLink(b.email,sub,en):"";
+ const zalo=isPartner(b)&&vn?`https://zalo.me/${vn}`:"";
+ const assigned=clean(b.staffAssign);
+ const confirmed=/đã xác nhận/i.test(b.status);
+ const unassigned=!assigned||assigned==="_"||/^[-_]+$/.test(assigned)||/chưa phân công/i.test(assigned);
+ const warnings=[];
+ if(!b.order)warnings.push("Thiếu mã order");
+ if(!b.flight)warnings.push("Thiếu chuyến bay");
+ if(!b.date||!b.time)warnings.push("Thiếu ngày/giờ bay");
+ if(!b.names.length)warnings.push("Thiếu tên khách");
+ if(b.phone&&!intl)warnings.push("Không chuẩn hóa được số WhatsApp; kiểm tra số và quốc gia hộ chiếu");
+ if(isPartner(b)&&!vn)warnings.push("Không tạo Zalo: thiếu hoặc số điện thoại không phải số Việt Nam hợp lệ");
+ if(!b.email)warnings.push("Không có email khách");
+ if(!sub)warnings.push("Chưa đủ dữ liệu tạo Subject");
+ if(!confirmed)warnings.push("Trạng thái không phải Đã xác nhận");
+ if(!unassigned)warnings.push("Đã có nhân viên nhận việc: "+assigned);
+ let copySubject=sub;
+ // Review table rule: order ID appears in its own column, so remove it from review subject only.
+ if(b.order&&copySubject) copySubject=copySubject.replace(b.order,"").replace(/\s+–\s+–\s+/g," – ").replace(/^ – | – $/g,"").replace(/🛫 – /,"🛫 ");
+ return {...b,dir,agency,sub,en,vi,wa,gm,zalo,intl,vn,confirmed,unassigned,warnings,reviewSubject:copySubject,reviewPhone:intl?("+"+intl):(b.phone||"Không có số điện thoại")};
+}
+function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:`<span class="muted">Không tạo được – thiếu dữ liệu phù hợp</span>`}
+function block(title,content){return `<h3>${title}</h3><pre>${esc(content)}</pre>`}
+function cardHtml(b,i){
+ const badges=`<span class="pill">${b.dir||"CHƯA RÕ LOẠI"}</span><span class="pill">${esc(b.agency||"Chưa rõ agency")}</span><span class="pill ${b.confirmed&&b.unassigned?"good":"warn"}">${b.confirmed?(b.unassigned?"Đủ điều kiện":"Đã phân công"):"Chưa xác nhận"}</span>`;
+ const links=`<div class="actions">${linkHtml(b.wa,"WhatsApp")}${linkHtml(b.gm,"Gmail")}${linkHtml(b.zalo,"Zalo")}</div>`;
+ const internal=isDomestic(b)?internalHtml(b):"";
+ const notes=b.warnings.length?`<div class="status warn"><b>Ghi chú:</b><br>${b.warnings.map(esc).join("<br>")}</div>`:"";
+ return `<article class="booking">
+ <div class="topline"><h2>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.dir||"Không xác định")}</h2><div>${badges}</div></div>
+ <div class="meta"><span class="pill">${esc(b.flight||"Thiếu flight")}</span><span class="pill">${esc(b.date)} ${esc(b.time)}</span><span class="pill">${b.pax} khách</span></div>
+ <div class="grid"><div class="kv"><small>Khách</small><b>${esc(b.names.join(", ")||"Chưa có tên")}</b></div><div class="kv"><small>Nhân viên nhận việc</small><b>${esc(b.staffAssign||"Trống")}</b></div><div class="kv"><small>Liên hệ</small><b>${esc(b.phone||"Không có số điện thoại")} ${b.email?" · "+esc(b.email):""}</b></div></div>
+ ${block("SUBJECT",b.sub||"Không đủ dữ liệu tạo Subject")}
+ ${b.en?block("BODY TIẾNG ANH",b.en):""}
+ ${b.vi?block("BODY TIẾNG VIỆT",b.vi):""}
+ <div class="actions"><button class="mini" onclick="copyText(${JSON.stringify(b.sub||"")})">Copy Subject</button><button class="mini secondary" onclick="copyText(${JSON.stringify(b.en||"")})">Copy Body EN</button>${b.vi?`<button class="mini secondary" onclick="copyText(${JSON.stringify(b.vi)})">Copy Body VI</button>`:""}</div>
+ <h3>LIÊN HỆ</h3>${links}${internal}${notes}
+ </article>`;
+}
+function internalHtml(b){
+ const dt=parseDateTime(b.date,b.time);
+ let eta="(thiếu ngày/giờ)";
+ if(dt){dt.setMinutes(dt.getMinutes()-90);eta=fmtDateTime(dt)}
+ let terminal="";
+ const f=b.flight.toUpperCase();
+ if(/^VJ/.test(f))terminal="T1";else if(/^(VN|QH|BL|VU|0V)/.test(f))terminal="T3";
+ const f1=`Tên khách:\n\n${b.names.map((n,i)=>`${i+1}. ${n}`).join("\n")}\n\nChuyến bay: ${b.flight}\nGiờ bay: ${b.time}\nGiờ đến sân bay: ${eta}\nTerminal: ${terminal||"(chưa xác định)"}\n\nGhi chú: Em xin hỗ trợ ${b.pax} khách ngày mai ${b.date} ạ`;
+ let f2="";
+ if(/^VN/i.test(b.flight)){
+   const ticket=b.tickets.filter(Boolean).join(", ")||"( để trống )";
+   f2=`Tên Khách\n\n${b.names.join("\n")}\n\nChuyến bay: ${b.flight}\nGiờ bay: ${b.time}\nmã đặt chỗ: ${ticket}\n\nYêu cầu: xin ghế cao và quầy ưu tiên\n\nEm xin hỗ trợ ( ${b.pax} ) khách ngày mai ${b.date} ạ`;
+ }
+ return `<h3>COPY NỘI BỘ – FORM 1</h3><pre>${esc(f1)}</pre><button class="mini" onclick="copyText(${JSON.stringify(f1)})">Copy Form 1</button>${f2?`<h3>FORM 2 – VIETNAM AIRLINES</h3><pre>${esc(f2)}</pre><button class="mini" onclick="copyText(${JSON.stringify(f2)})">Copy Form 2</button>`:""}`;
+}
+function parseDateTime(d,t){const m=d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/),n=t.match(/^(\d{2}):(\d{2})$/);if(!m||!n)return null;return new Date(+m[3],+m[2]-1,+m[1],+n[1],+n[2])}
+function fmtDateTime(d){return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`}
+function renderReview(items,dir,title){
+ const rows=items.filter(x=>x.dir===dir&&x.sub).map((b,i)=>{
+   const line=`${b.order} | ${b.reviewPhone} | ${b.reviewSubject}`;
+   return `<tr><td>${i+1}</td><td>${esc(b.order)}</td><td>${esc(b.reviewPhone)}</td><td>${esc(b.reviewSubject)}</td><td><button class="mini" onclick="copyText(${JSON.stringify(line)})">Copy dòng</button></td></tr>`;
+ });
+ const all=items.filter(x=>x.dir===dir&&x.sub).map(x=>`${x.order} | ${x.reviewPhone} | ${x.reviewSubject}`).join("\n");
+ return `<section class="review"><div class="topline"><h2>${title}</h2><button onclick="copyText(${JSON.stringify(all)})">Copy tất cả</button></div><div class="tablewrap"><table><thead><tr><th>#</th><th>Mã order</th><th>Số điện thoại</th><th>Subject (không lặp mã order)</th><th></th></tr></thead><tbody>${rows.join("")||`<tr><td colspan="5" class="muted">Không có booking.</td></tr>`}</tbody></table></div></section>`;
+}
+async function copyText(s){
+ try{await navigator.clipboard.writeText(s);toast("Đã sao chép.");}
+ catch(e){const t=document.createElement("textarea");t.value=s;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();toast("Đã sao chép.");}
+}
+function toast(msg){const el=$("status");el.textContent=msg;el.className="status good"}
+function run(){
+ const raw=$("raw").value;
+ if(!clean(raw)){ $("status").textContent="Bạn chưa dán dữ liệu.";return}
+ const parsed=parseBlocks(raw);
+ const staff=$("staff").value.trim()||"Nhan",phone=$("phone").value.trim()||"+84 867802129",hotline=$("hotline").value.trim()||"+84 866624188";
+ const all=$("allBookings").checked;
+ const made=parsed.map(b=>buildOne(b,staff,phone,hotline));
+ const kept=made.filter(b=>b.sub && (all || (b.confirmed&&b.unassigned)));
+ const skipped=made.filter(b=>!kept.includes(b));
+ lastOutput=kept;
+ $("summary").classList.remove("hidden");
+ $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?`<p class="hint">Bỏ qua: ${skipped.map(x=>`${esc(x.order||"Không rõ mã")} (${esc(x.staffAssign||x.status||"không đạt bộ lọc")})`).join("; ")}</p>`:""}`;
+ $("results").innerHTML=kept.map(cardHtml).join("")||`<section class="panel">Không có booking nào đủ điều kiện tạo Subject. Kiểm tra định dạng dữ liệu hoặc bật xử lý tất cả.</section>`;
+ $("reviews").innerHTML=renderReview(kept,"ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+renderReview(kept,"DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
+ $("status").textContent=`Đã phân tích ${made.length} booking; hiển thị ${kept.length} booking. Các link chỉ mở bản nháp, không tự gửi.`;
+ $("status").className="status good";
+}
+$("run").addEventListener("click",run);
+$("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("status").textContent="Đã xóa dữ liệu.";});
+window.copyText=copyText;
+</script>
+</body>
+</html>
