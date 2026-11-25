@@ -47,26 +47,19 @@ for each row execute function public.set_booking_audit_fields();
 alter table public.bookings enable row level security;
 
 drop policy if exists "Authenticated users can view bookings" on public.bookings;
-create policy "Authenticated users can view bookings"
-on public.bookings for select to authenticated
-using (true);
-
 drop policy if exists "Authenticated users can insert bookings" on public.bookings;
-create policy "Authenticated users can insert bookings"
-on public.bookings for insert to authenticated
+drop policy if exists "Authenticated users can update bookings" on public.bookings;
+drop policy if exists "Authenticated users can delete bookings" on public.bookings;
+drop policy if exists "Public access to bookings" on public.bookings;
+
+-- Public mode: anyone holding the website URL can read and modify all bookings.
+-- WARNING: this intentionally allows anonymous read/insert/update/delete access.
+create policy "Public access to bookings"
+on public.bookings for all to anon, authenticated
+using (true)
 with check (true);
 
-drop policy if exists "Authenticated users can update bookings" on public.bookings;
-create policy "Authenticated users can update bookings"
-on public.bookings for update to authenticated
-using (true) with check (true);
-
-drop policy if exists "Authenticated users can delete bookings" on public.bookings;
-create policy "Authenticated users can delete bookings"
-on public.bookings for delete to authenticated
-using (true);
-
-grant select, insert, update, delete on public.bookings to authenticated;
+grant select, insert, update, delete on public.bookings to anon, authenticated;
 
 -- Enable Supabase Realtime for this table (safe to run more than once).
 do $$
