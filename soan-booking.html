@@ -141,7 +141,7 @@ th{background:#eaf2ee;color:#214b43}
     <button id="run">Phân tích & tạo kết quả</button>
     <button class="secondary" id="clear">Xóa dữ liệu</button>
   </div>
-  <p class="hint">Mặc định chỉ lấy booking Đã xác nhận và NV Nhận việc trống / “_”. Booking có bất kỳ nhân viên nhận việc nào (ví dụ SGN - Nhân, SGN - Khanh) luôn bị bỏ qua, kể cả khi bật xử lý tất cả.</p>
+  <p class="hint">Mặc định chỉ lấy booking Đã xác nhận và chưa có nhân viên nhận việc. Hệ thống nhận diện cả trường “NV Nhận việc” và dòng phân công “SGN [Tên nhân viên] [Số điện thoại]” (ví dụ SGN An 0366404159); booking đã có nhân viên luôn bị bỏ qua, kể cả khi bật xử lý tất cả.</p>
   <div id="status" class="status">Chưa có dữ liệu được xử lý.</div>
 </section>
 
@@ -331,9 +331,11 @@ function parseChunk(ls){
  b.service=getValueAfter(ls,"Dịch vụ chính")||ls.find(x=>/(đón khách|tiễn khách|arrival|departure)/i.test(x)&&/(quốc tế|quốc nội|international|domestic)/i.test(x))||"";
  const dm=ls.map(dateMatch).find(Boolean);
  if(dm){b.date=`${String(dm[1]).padStart(2,"0")}/${String(dm[2]).padStart(2,"0")}/${dm[3]}`;b.time=`${String(dm[4]).padStart(2,"0")}:${dm[5]}`;}
- // Chỉ đọc đúng trường "NV Nhận việc". Không suy đoán từ ghi chú nhân viên,
- // ghi chú booking, tên khách hoặc dòng SGN/số điện thoại.
- b.staffAssign=getValueAfter(ls,"NV Nhận việc");
+ // Ưu tiên trường "NV Nhận việc". Nếu trường này trống, nhận diện nhân viên
+ // đã nhận việc từ dòng phân công có cấu trúc: "SGN [Tên nhân viên] [Số điện thoại]".
+ // Không nhầm dòng "SGN - Dịch vụ" vì dòng đó không có số điện thoại.
+ const sgnStaffLine=ls.map(x=>x.match(/^SGN\\s+(?:-\\s*)?(.+?)\\s+((?:\\+?\\d)[\\d\\s().-]{7,})$/i)).find(Boolean);
+ b.staffAssign=getValueAfter(ls,"NV Nhận việc")||(sgnStaffLine?sgnStaffLine[1].trim():"");
  b.status=getValueAfter(ls,"Trạng thái")||ls.find(x=>/đã xác nhận|chờ xác nhận|cancel|hủy/i.test(x))||"";
  b.email=getValueAfter(ls,"Email khách");
  b.phone=getValueAfter(ls,"SĐT liên hệ");
