@@ -30,7 +30,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 <body>
 <header>
   <h1>Fast Track SGN – làm nhanh rồi đi nhậu</h1>
-  <p>Xử lý booking trên trình duyệt · Có thể gửi qua backend riêng sau khi cấu hình và xác nhận</p>
+  <p>Xử lý booking trực tiếp trên trình duyệt · Tạo nội dung và link liên hệ để nhân viên kiểm tra, sao chép hoặc mở bản nháp</p>
 </header>
 <main>
 <section class="panel">
@@ -57,19 +57,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 </section>
 
 
-<section class="panel" id="sendSettings">
-  <h2>3. Kết nối gửi tự động (thiết lập một lần trên trình duyệt)</h2>
-  <div class="grid">
-    <div><label for="apiUrl">Cloudflare Worker URL</label><input id="apiUrl" type="text" value="https://fasttrack-sgn.taseco-nhan.workers.dev/" placeholder="https://your-worker.workers.dev" style="max-width:100%;width:100%"></div>
-    <div><label for="apiKey">Mã truy cập riêng</label><input id="apiKey" type="password" placeholder="Nhập APP_SHARED_SECRET" style="max-width:100%;width:100%"></div>
-    <div><label for="waTemplate">Tên mẫu WhatsApp đã được Meta duyệt</label><input id="waTemplate" type="text" placeholder="Ví dụ: fasttrack_booking_notice" style="max-width:100%;width:100%"></div>
-  </div>
-  <div class="controls"><input id="waWindowOpen" type="checkbox"><label for="waWindowOpen">Khách đã nhắn cho doanh nghiệp trong 24 giờ gần nhất (được phép gửi nội dung tự do)</label></div>
-  <div class="controls"><button type="button" class="secondary" id="testConnection">Kiểm tra kết nối Gmail</button><span id="connectionStatus" class="hint">Chưa kiểm tra. Nút này chỉ kiểm tra cấu hình, không gửi email.</span></div>
-  <p class="hint">Không lưu mã truy cập vào website hoặc GitHub. Mã chỉ nằm trong phiên trình duyệt hiện tại. Nếu ngoài cửa sổ 24 giờ, cần mẫu tin WhatsApp đã được Meta phê duyệt. Chỉ bấm gửi sau khi kiểm tra đúng khách và nội dung.</p>
-  <div class="status warn">Chưa kết nối backend. Các nút gửi chỉ hoạt động sau khi triển khai Cloudflare Worker và nhập URL/mã truy cập.</div>
-</section>
-\n<div id="summary" class="panel hidden"></div>
+<div id="summary" class="panel hidden"></div>
 <div id="results"></div>
 <div id="reviews"></div>
 </main>
@@ -314,7 +302,6 @@ function buildOne(b,staff,phone,hotline){
 function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:`<span class="muted">Không tạo được – thiếu dữ liệu phù hợp</span>`}
 function block(title,content){return `<h3>${title}</h3><pre>${esc(content)}</pre>`}
 function cardHtml(b,i){
- const sendButtons=`<button type="button" class="mini" data-send-channel="gmail" data-booking-index="${i}" ${b.gm?"":"disabled"}>Gửi Gmail</button> <button type="button" class="mini" data-send-channel="whatsapp" data-booking-index="${i}" ${b.wa?"":"disabled"}>Gửi WhatsApp</button>`;
  const badges=`<span class="pill">${b.dir||"CHƯA RÕ LOẠI"}</span><span class="pill">${esc(b.agency||"Chưa rõ agency")}</span><span class="pill ${b.confirmed&&b.unassigned?"good":"warn"}">${b.confirmed?(b.unassigned?"Đủ điều kiện":"Đã phân công"):"Chưa xác nhận"}</span>`;
  const links=`<div class="actions">${linkHtml(b.wa,"WhatsApp")}${linkHtml(b.gm,"Gmail")}${linkHtml(b.zalo,"Zalo")}</div>`;
  const internal=isDomestic(b)?internalHtml(b):"";
@@ -326,7 +313,7 @@ function cardHtml(b,i){
  ${block("SUBJECT",b.sub||"Không đủ dữ liệu tạo Subject")}
  ${b.en?block("BODY TIẾNG ANH",b.en):""}
  ${b.vi?block("BODY TIẾNG VIỆT",b.vi):""}
- <div class="actions">${copyButton(b.sub||"","Copy Subject")} ${copyButton(b.en||"","Copy Body EN","mini secondary")} ${sendButtons}${b.vi?` ${copyButton(b.vi,"Copy Body VI","mini secondary")}`:""}</div>
+ <div class="actions">${copyButton(b.sub||"","Copy Subject")} ${copyButton(b.en||"","Copy Body EN","mini secondary")}${b.vi?` ${copyButton(b.vi,"Copy Body VI","mini secondary")}`:""}</div>
  <h3>LIÊN HỆ</h3>${links}${internal}${notes}
  </article>`;
 }
@@ -391,44 +378,9 @@ function run(){
  $("status").textContent=`Đã phân tích ${made.length} booking; hiển thị ${kept.length} booking. Các link chỉ mở bản nháp, không tự gửi.`;
  $("status").className="status good";
 }
-async function testConnection(){
- const apiUrl=$("apiUrl").value.trim().replace(/\/$/,"");
- const apiKey=$("apiKey").value.trim();
- const out=$("connectionStatus");
- if(!apiUrl||!apiKey){out.textContent="Nhập Worker URL và mã truy cập trước.";return;}
- out.textContent="Đang kiểm tra Worker, D1 và quyền Gmail...";
- try{
-   const res=await fetch(apiUrl,{method:"GET",headers:{"Authorization":"Bearer "+apiKey}});
-   const data=await res.json().catch(()=>({}));
-   if(!res.ok) throw new Error(data.error||("HTTP "+res.status));
-   const labels={sharedSecret:"APP_SHARED_SECRET",googleClientId:"Google Client ID",googleClientSecret:"Google Client Secret",googleRefreshToken:"Google Refresh Token",database:"D1 database",gmailOAuth:"Google OAuth",gmailScope:"Gmail send scope"};
-   const lines=Object.entries(labels).map(([key,label])=>label+": "+(data.checks?.[key]?"OK":"LỖI"));
-   out.textContent=lines.join(" · ");
-   out.className="hint "+(data.ok?"":"danger");
-   if(data.ok) out.textContent="OAuth và quyền gửi Gmail đã xác nhận; chưa gửi email thử. "+lines.join(" · ");
- }catch(err){out.textContent="Kiểm tra thất bại: "+err.message;out.className="hint danger";}
-}
-$("testConnection").addEventListener("click",testConnection);
 $("run").addEventListener("click",run);
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("status").textContent="Đã xóa dữ liệu.";});
-async function sendBooking(channel,index){
- const b=lastOutput[index]; if(!b) return;
- const apiUrl=$("apiUrl").value.trim().replace(/\/$/,"");
- const apiKey=$("apiKey").value.trim();
- if(!apiUrl||!apiKey){toast("Nhập Worker URL và mã truy cập trước.",false);return;}
- if(!confirm("Xác nhận gửi "+(channel==="gmail"?"Gmail":"WhatsApp")+" cho booking "+b.order+"? Hãy chắc chắn đã kiểm tra đúng người nhận và nội dung.")) return;
- const payload={channel,bookingId:b.order,to:channel==="gmail"?b.email:b.intl,subject:b.sub,body:b.en,waWindowOpen:$("waWindowOpen").checked,templateName:$("waTemplate").value.trim(),templateLanguage:"en"};
- try{
-   toast("Đang gửi "+channel+" cho "+b.order+"...",true);
-   const res=await fetch(apiUrl,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},body:JSON.stringify(payload)});
-   const data=await res.json().catch(()=>({}));
-   if(!res.ok) throw new Error(data.error||("HTTP "+res.status));
-   toast("Đã gửi "+channel+" thành công cho "+b.order+".",true);
- }catch(err){toast("Gửi thất bại: "+err.message,false);}
-}
 document.addEventListener("click",e=>{
- const send=e.target.closest("[data-send-channel]");
- if(send){sendBooking(send.dataset.sendChannel,Number(send.dataset.bookingIndex));return;}
  const btn=e.target.closest("[data-copy-key]");
  if(!btn)return;
  const key=btn.getAttribute("data-copy-key");
