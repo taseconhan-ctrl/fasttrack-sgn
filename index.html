@@ -61,6 +61,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 <div id="summary" class="panel hidden"></div>
 <section id="employeeHistory" class="panel"><div class="topline"><h2>3. LỊCH SỬ NHÂN VIÊN ĐÃ LÀM</h2><button type="button" class="ghost mini" id="clearEmployeeHistory">Xóa lịch sử</button></div><p class="hint">Tự lưu nhân viên có tên trong trường NV Nhận việc. Dữ liệu lưu trên trình duyệt này.</p><div id="employeeHistoryContent" class="muted">Chưa có lịch sử.</div></section>
 <div id="results"></div>
+<div id="skippedBookings"></div>
 <div id="reviews"></div>
 </main>
 <script>
@@ -446,6 +447,29 @@ function recordEmployees(bookings){
 }
 $("clearEmployeeHistory").addEventListener("click",()=>{if(confirm("Xóa toàn bộ lịch sử nhân viên đã lưu trên trình duyệt này?")){localStorage.removeItem(EMPLOYEE_HISTORY_KEY);renderEmployeeHistory();}});
 renderEmployeeHistory();
+function skippedReasons(b,all){
+ const reasons=[];
+ if(!b.order)reasons.push("Thiếu mã order");
+ if(!b.flight)reasons.push("Thiếu số hiệu chuyến bay");
+ if(!b.date)reasons.push("Thiếu ngày bay");
+ if(!b.time)reasons.push("Thiếu giờ bay");
+ if(!b.names.length)reasons.push("Thiếu tên khách");
+ if(!b.dir)reasons.push("Không xác định được loại dịch vụ ĐÓN/TIỄN");
+ if(!b.sub)reasons.push("Không đủ dữ liệu bắt buộc để tạo Subject");
+ if(!all){
+  if(!b.confirmed)reasons.push("Trạng thái không phải Đã xác nhận");
+  if(!b.unassigned)reasons.push("Booking đã có nhân viên nhận việc: "+(b.staffAssign||"không rõ"));
+ }
+ return [...new Set(reasons)];
+}
+function renderSkippedBookings(items){
+ if(!items.length)return "";
+ const rows=items.map((b,i)=>{
+  const reason=skippedReasons(b,$("allBookings").checked);
+  return `<article class="booking"><div class="topline"><h3>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.dir||"Chưa xác định loại")}</h3><span class="pill bad">ĐÃ BỎ QUA</span></div><div class="meta"><span class="pill">${esc(b.flight||"Thiếu flight")}</span><span class="pill">${esc(b.date||"Thiếu ngày")} ${esc(b.time||"Thiếu giờ")}</span><span class="pill">${b.pax||b.names.length||0} khách</span></div><div class="grid"><div class="kv"><small>Khách</small><b>${esc(b.names.join(", ")||"Chưa có tên")}</b></div><div class="kv"><small>Nhân viên nhận việc</small><b>${esc(b.staffAssign||"Trống")}</b></div><div class="kv"><small>Trạng thái</small><b>${esc(b.status||"Không rõ")}</b></div></div><div class="status warn"><b>Lý do bỏ qua (bắt buộc):</b><ul>${reason.map(x=>"<li>"+esc(x)+"</li>").join("")||"<li>Không đạt điều kiện tạo kết quả.</li>"}</ul></div></article>`;
+ }).join("");
+ return `<section class="panel"><div class="topline"><h2>BOOKING BỊ BỎ QUA (${items.length})</h2><span class="pill bad">Có lý do cho từng booking</span></div><p class="hint">Tất cả booking không được đưa vào kết quả chính đều hiển thị tại đây. Mỗi booking bắt buộc có lý do bỏ qua cụ thể.</p>${rows}</section>`;
+}
 function run(){
  const raw=$("raw").value;
  if(!clean(raw)){ $("status").textContent="Bạn chưa dán dữ liệu.";return}
@@ -459,9 +483,10 @@ function run(){
  $("summary").classList.remove("hidden");
  processedBookings=kept;
  const partners=[...new Set(kept.map(x=>x.agency||"Chưa rõ đối tác"))].sort((a,b)=>a.localeCompare(b,"vi"));
- $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?`<p class="hint">Bỏ qua: ${skipped.map(x=>`${esc(x.order||"Không rõ mã")} (${esc(x.staffAssign||x.status||"không đạt bộ lọc")})`).join("; ")}</p>`:""}
+ $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?'<p class="hint">Có '+skipped.length+' booking bị loại khỏi kết quả chính; xem bảng BOOKING BỊ BỎ QUA bên dưới để biết lý do từng booking.</p>':""}
  <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm booking</label><input id="bookingSearch" type="text" placeholder="Mã order / tên / chuyến bay / SĐT" style="width:min(340px,85vw);max-width:none"></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="__ALL__">Tất cả (${kept.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${kept.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
  renderFilteredBookings();
+ $("skippedBookings").innerHTML=renderSkippedBookings(skipped);
  ["partnerFilter","directionFilter","dateFilter"].forEach(id=>$(id).addEventListener("change",renderFilteredBookings));
  $("bookingSearch").addEventListener("input",renderFilteredBookings);
  $("status").textContent=`Đã phân tích ${made.length} booking; hiển thị ${kept.length} booking. Các link chỉ mở bản nháp, không tự gửi.`;
