@@ -149,7 +149,7 @@ th{background:#eaf2ee;color:#214b43}
   <h2>2. Nhân viên đang sử dụng</h2>
   <div class="controls">
     <div><label for="staffProfile">Chọn nhân viên</label><input id="staffProfile" type="text" list="staffProfiles" placeholder="Chọn đúng nhân viên..." value="Nhân" autocomplete="off"><datalist id="staffProfiles"></datalist></div>
-    <div><label for="staff">Tên nhân viên</label><input id="staff" type="text" value="Nhân" readonly></div>
+    <div><label for="staff">Tên nhân viên (English, không dấu)</label><input id="staff" type="text" value="Nhan" readonly></div>
     <div><label for="phone">Điện thoại / WhatsApp</label><input id="phone" type="tel" value="+84 867802129" readonly></div>
     <div><label for="hotline">Hotline</label><input id="hotline" type="tel" value="+84 866624188" readonly></div>
   </div>
@@ -165,17 +165,17 @@ th{background:#eaf2ee;color:#214b43}
 
 const $ = id => document.getElementById(id);
 const STAFF_PROFILES = {
-  "Nhân": { name: "Nhân", phone: "+84 867802129" },
-  "Khánh": { name: "Khánh", phone: "" },
+  "Nhân": { name: "Nhan", phone: "+84 867802129" },
+  "khanh": { name: "Khanh", phone: "" },
   "Khoa": { name: "Khoa", phone: "" },
-  "Diệp": { name: "Diệp", phone: "" },
+  "Diệp": { name: "Diep", phone: "" },
   "Quang": { name: "Quang", phone: "" },
-  "Hưng": { name: "Hưng", phone: "+84 816226474" },
-  "Dương": { name: "Dương", phone: "" },
-  "Hùng": { name: "Hùng", phone: "" },
+  "Hưng": { name: "Hung", phone: "+84 816226474" },
+  "Dương": { name: "Duong", phone: "" },
+  "Hùng": { name: "Hung", phone: "" },
   "An": { name: "An", phone: "" },
-  "Bình": { name: "Bình", phone: "" },
-  "Nhật Quang": { name: "Nhật Quang", phone: "" }
+  "Bình": { name: "Binh", phone: "" },
+  "Nhật Quang": { name: "Nhat Quang", phone: "" }
 };
 function allStaffProfiles(){ return STAFF_PROFILES; }
 function renderStaffProfileOptions(){
