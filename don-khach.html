@@ -149,7 +149,19 @@ async function updateBooking(row,patch){if(!supabase){$("status").textContent="C
 async function startRealtime(){if(!supabase)return;if(realtimeChannel)await supabase.removeChannel(realtimeChannel);realtimeChannel=supabase.channel("bookings-live").on("postgres_changes",{event:"*",schema:"public",table:"bookings"},()=>loadBookings()).subscribe(state=>{if(state==="SUBSCRIBED")$("connectionState").textContent="Đang đồng bộ trực tiếp";});}
 async function initializePublicAccess(){currentUser=true;$("connectionState").textContent="Đang kết nối…";$("authMessage").textContent="Đang khởi tạo kết nối dữ liệu…";const ok=await ensureSupabase();if(!ok){$("connectionState").textContent="Chưa kết nối";return;}$("connectionState").textContent="Truy cập công khai";$("authMessage").textContent="Đang tải dữ liệu dùng chung…";await loadBookings();await startRealtime();}
 initializePublicAccess();
-function download(rows,name){const blob=new Blob([tsv(rows).replace(/\n/g,"\r\n")],{type:"text/tab-separated-values;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name+".tsv";a.click();URL.revokeObjectURL(url);}
+function download(rows,name){
+ try{
+  if(!rows.length){$("status").textContent="Không có booking để xuất theo bộ lọc hiện tại.";return;}
+  const content="\\uFEFF"+tsv(rows).replace(/\\n/g,"\\r\\n");
+  const blob=new Blob([content],{type:"text/tab-separated-values;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=name+".tsv";a.style.display="none";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+  $("status").textContent="Đang tải file "+name+".tsv ("+rows.length+" booking). Nếu chưa thấy file, kiểm tra mục Downloads hoặc quyền tải xuống của trình duyệt.";
+ }catch(e){$("status").textContent="Xuất file thất bại: "+e.message;}
+}
 async function copy(rows,label){try{await navigator.clipboard.writeText(tsv(rows));$("status").textContent="Đã sao chép "+label+" ("+rows.length+" booking).";}catch(e){$("status").textContent="Trình duyệt không cho phép sao chép tự động. Hãy thử mở trang bằng HTTPS.";}}
 $("import").onclick=async()=>{const rows=parseRows($("raw").value);if(!rows.length){$("status").textContent="Không tìm thấy booking có Type hợp lệ. Kiểm tra Type Arrival / Arrival FULL / Departure Kci / Departure FULL.";return;}if(rows.some(r=>!r[7])&&!confirm("Có booking thiếu ngày. Bạn vẫn muốn nhập?"))return;await persistRows(rows,true);$("status").textContent+=" "+rows.filter(r=>r[4].startsWith("Arrival")).length+" ARRIVAL, "+rows.filter(r=>r[4].startsWith("Departure")).length+" DEPARTURE.";};
 $("append").onclick=async()=>{const rows=parseRows($("raw").value);if(!rows.length){$("status").textContent="Không tìm thấy booking hợp lệ để thêm.";return;}await persistRows(rows,false);};
