@@ -33,21 +33,21 @@ button,.back{border:0;border-radius:8px;background:var(--blue);color:#fff;paddin
 <div class="controls">
 <div><label for="search">Tìm kiếm</label><input id="search" placeholder="Tên khách, chuyến bay, agency, order, nhân viên..."></div>
 <div><label for="staffFilter">Nhân viên thực hiện</label><select id="staffFilter"><option value="">Tất cả nhân viên</option></select></div>
-<div><label for="dateFrom">Từ ngày</label><input id="dateFrom" type="date"></div>
-<div><label for="dateTo">Đến ngày</label><input id="dateTo" type="date"></div>
+<div><label for="filterDate">Chọn ngày đón</label><input id="filterDate" type="date"></div>
+<div><label for="statusFilter">Trạng thái đón</label><select id="statusFilter"><option value="">Tất cả trạng thái</option><option>Chưa phân công</option><option>Đã phân công</option><option>Đang đón</option><option>Đã đón</option><option>Không gặp khách</option></select></div>
 <div style="flex:0 0 auto;min-width:auto"><button class="secondary" id="clearDate">Xóa lọc ngày</button></div>
 </div>
-<p class="hint">Có thể lọc theo khoảng ngày, sửa trực tiếp NV thực hiện trên từng dòng. Booking Arrival FULL được tô màu theo Agency để dễ nhận biết.</p>
+<p class="hint">Chọn một ngày để chỉ xem booking đúng ngày đó. Điều phối viên phân công nhân viên và cập nhật trạng thái; Booking Arrival FULL được tô màu theo Agency.</p>
 </section>
 <section class="panel">
 <div class="top"><h2><span class="sectiontag">ARRIVAL</span> Danh sách khách đón</h2><span class="count" id="arrivalCount">0 booking</span></div>
 <div class="controls"><button id="copyArrival">Copy ARRIVAL</button><button class="secondary" id="exportArrival">Xuất ARRIVAL TSV</button></div><div id="arrivalFullLegend" class="hint" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"></div>
-<div class="tablewrap"><table><thead><tr><th>Agency</th><th>Flight</th><th>Name</th><th>Time</th><th>Type</th><th>Order</th><th>NV thực hiện</th></tr></thead><tbody id="arrivalRows"></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>Agency</th><th>Flight</th><th>Name</th><th>Ngày</th><th>Giờ</th><th>Type</th><th>Order</th><th>NV phụ trách</th><th>Trạng thái</th><th>Cập nhật lúc</th></tr></thead><tbody id="arrivalRows"></tbody></table></div>
 </section>
 <section class="panel">
 <div class="top"><h2><span class="sectiontag">DEPARTURE</span> Danh sách khách tiễn</h2><span class="count" id="departureCount">0 booking</span></div>
 <div class="controls"><button id="copyDeparture">Copy DEPARTURE</button><button class="secondary" id="exportDeparture">Xuất DEPARTURE TSV</button></div>
-<div class="tablewrap"><table><thead><tr><th>Agency</th><th>Flight</th><th>Name</th><th>Time</th><th>Type</th><th>Order</th><th>NV thực hiện</th></tr></thead><tbody id="departureRows"></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>Agency</th><th>Flight</th><th>Name</th><th>Ngày</th><th>Giờ</th><th>Type</th><th>Order</th><th>NV phụ trách</th><th>Trạng thái</th><th>Cập nhật lúc</th></tr></thead><tbody id="departureRows"></tbody></table></div>
 </section>
 <section class="panel"><div class="top"><h2>3. Sao chép / xuất toàn bộ</h2><div class="controls" style="margin:0"><button id="copyAll">Copy cả hai bảng</button><button class="secondary" id="exportAll">Xuất toàn bộ TSV</button><button class="danger" id="clearAll">Xóa toàn bộ danh sách</button></div></div></section>
 </main>
@@ -55,7 +55,9 @@ button,.back{border:0;border-radius:8px;background:var(--blue);color:#fff;paddin
 "use strict";
 const $=id=>document.getElementById(id), KEY="ta_se_co_arrival_list_v2";
 let data=[];try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");if(Array.isArray(v))data=v;}catch(e){}
-const HEAD=["Agency","Flight","Name","Time","Type","Order","NV thực hiện"];
+const HEAD=["Agency","Flight","Name","Date","Time","Type","Order","NV phụ trách","Trạng thái","Cập nhật lúc"];
+const STAFF=["Tuấn Khánh","Minh Khoa","Văn Diệp","Việt Quang","Đồng Hưng","Lý Ngọc Dũng","Ngọc Nhân","Thanh Hằng","Nhật Quang","Vũ Văn Bình","Trung An"];
+const STATUSES=["Chưa phân công","Đã phân công","Đang đón","Đã đón","Không gặp khách"];
 const clean=s=>String(s??"").replace(/^\uFEFF/,"").trim();
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function normalizeAgency(v,notes){let a=clean(v);const u=a.toUpperCase();if(u==="CTRIP TRAVEL HOLDING (HONG KONG) LIMITED")return "Ctrip";if(u.includes("CTCP GIẢI PHÁP THÔNG MINH LINKCARE"))return "LINKCARE";if(u.includes("CTCP TIẾP THỊ SỐ TÔ QUÀ"))return "URBOX";if(u==="KLOOK TRAVEL TECHNOLOGY LIMITED"||u==="KLOOK TRAVEL")return "KLOOK";if(u==="SGN - DỊCH VỤ"||u==="SGN-DỊCH VỤ")return notes.find(x=>x)||"";return a;}
@@ -83,7 +85,7 @@ function parseVerticalRows(text){
    const agency=normalizeAgency(agencyRaw,notes);
    const type=normalizeType(service);
    if(!type)continue;
-   out.push([agency,normalizeFlight(flight),normalizeName(name),normalizeTime(dateTime),type,order,normalizeStaff(staff),dateISO(dateTime)]);
+   out.push([agency,normalizeFlight(flight),normalizeName(name),normalizeTime(dateTime),type,order,normalizeStaff(staff),dateISO(dateTime),"Chưa phân công",""]);
  }
  return out;
 }
@@ -106,16 +108,22 @@ function parseRows(text){
    if(!typ){const raw=clean(c[5]||c[4]);typ=normalizeType(raw);}
    if(!typ)continue;
    const rawDate=c.length>=9?c[6]:c[3];
-   out.push([a,f,n,tim,typ,clean(ord),staff,dateISO(rawDate||"")]);
+   out.push([a,f,n,tim,typ,clean(ord),staff,dateISO(rawDate||""),"Chưa phân công",""]);
  }
  return out;
 }
 function mins(t){const m=String(t||"").match(/^(\d{2}):(\d{2})$/);return m?Number(m[1])*60+Number(m[2]):9999;}
 function sorted(rows){return rows.slice().sort((a,b)=>mins(a[3])-mins(b[3])||a[1].localeCompare(b[1]));}
-function filtered(){const q=$("search").value.toLowerCase(),s=$("staffFilter").value,from=$("dateFrom").value,to=$("dateTo").value;return data.filter(r=>(!q||r.join(" ").toLowerCase().includes(q))&&(!s||r[6]===s)&&(!from||((r[7]||"")>=from))&&(!to||((r[7]||"")<=to)));}
+function filtered(){const q=$("search").value.toLowerCase(),s=$("staffFilter").value,d=$("filterDate").value,st=$("statusFilter").value;return data.filter(r=>(!q||r.join(" ").toLowerCase().includes(q))&&(!s||r[6]===s)&&(!d||r[7]===d)&&(!st||(r[8]||"Chưa phân công")===st));}
 function rowsFor(type){return sorted(filtered().filter(r=>r[4].startsWith(type)));}
-function tsv(rows){return [HEAD.join("\t"),...rows.map(r=>r.map(v=>String(v??"").replace(/[\t\n]/g," ")).join("\t"))].join("\n");}
-function renderTable(id,rows){$(id).innerHTML=rows.length?rows.map(r=>{const full=id==="arrivalRows"&&r[4]==="Arrival FULL",bg=full?agencyColor(r[0]):"";return '<tr class="'+(full?"arrival-full-row":"")+'" style="'+(full?"background:"+bg:"")+'">'+r.slice(0,6).map(v=>'<td>'+esc(v)+'</td>').join("")+'<td><input aria-label="NV thực hiện" data-index="'+data.indexOf(r)+'" value="'+esc(r[6])+'" placeholder="Chưa phân công"></td></tr>';}).join(""):'<tr><td colspan="7" style="text-align:center;color:#68758b">Không có booking phù hợp.</td></tr>';}
+function tsv(rows){return [HEAD.join("\t"),...rows.map(r=>[r[0],r[1],r[2],r[7]||"",r[3],r[4],r[5],r[6],r[8]||"Chưa phân công",r[9]||""].map(v=>String(v??"").replace(/[\t\n]/g," ")).join("\t"))].join("\n");}
+function renderTable(id,rows){
+ const staffOptions=current=>'<option value="">Chưa phân công</option>'+[...new Set([...STAFF,...(current?[current]:[])])].map(s=>'<option value="'+esc(s)+'" '+(s===current?'selected':'')+'>'+esc(s)+'</option>').join("");
+ const statusOptions=current=>STATUSES.map(s=>'<option '+(s===(current||"Chưa phân công")?'selected':'')+'>'+s+'</option>').join("");
+ $(id).innerHTML=rows.length?rows.map(r=>{const full=id==="arrivalRows"&&r[4]==="Arrival FULL",bg=full?agencyColor(r[0]):"",idx=data.indexOf(r);return '<tr class="'+(full?"arrival-full-row":"")+'" style="'+(full?"background:"+bg:"")+'"><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[7]||"Chưa có ngày")+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td><td>'+esc(r[5])+'</td><td><select aria-label="Nhân viên phụ trách" data-staff="'+idx+'">'+staffOptions(r[6])+'</select></td><td><select aria-label="Trạng thái đón" data-status="'+idx+'">'+statusOptions(r[8])+'</select></td><td>'+esc(r[9]||"—")+'</td></tr>';}).join(""):'<tr><td colspan="10" style="text-align:center;color:#68758b">Không có booking phù hợp với ngày / bộ lọc đã chọn.</td></tr>';
+ document.querySelectorAll("[data-staff]").forEach(el=>el.addEventListener("change",e=>{const row=data[Number(e.target.dataset.staff)];row[6]=e.target.value;row[8]=e.target.value?(row[8]&&row[8]!=="Chưa phân công"?row[8]:"Đã phân công"):"Chưa phân công";row[9]=new Date().toLocaleString("vi-VN");save();}));
+ document.querySelectorAll("[data-status]").forEach(el=>el.addEventListener("change",e=>{const row=data[Number(e.target.dataset.status)];row[8]=e.target.value;row[9]=new Date().toLocaleString("vi-VN");save();}));
+}
 function render(){const arr=rowsFor("Arrival"),dep=rowsFor("Departure");$("count").textContent=filtered().length+" / "+data.length+" booking";$("arrivalCount").textContent=arr.length+" booking";$("departureCount").textContent=dep.length+" booking";const staffs=[...new Set(data.map(r=>r[6]).filter(Boolean))].sort();const old=$("staffFilter").value;$("staffFilter").innerHTML='<option value="">Tất cả nhân viên</option>'+staffs.map(s=>'<option value="'+esc(s)+'">'+esc(s)+'</option>').join("");$("staffFilter").value=staffs.includes(old)?old:"";renderTable("arrivalRows",arr);renderTable("departureRows",dep);const fullAgencies=[...new Set(arr.filter(r=>r[4]==="Arrival FULL").map(r=>r[0]||"Chưa rõ"))].sort();$("arrivalFullLegend").innerHTML=fullAgencies.map(a=>'<span style="display:inline-flex;align-items:center;gap:5px;background:'+agencyColor(a)+';padding:3px 8px;border-radius:6px;color:#263348">'+esc(a)+'</span>').join("");document.querySelectorAll("[data-index]").forEach(el=>el.addEventListener("change",e=>{data[Number(e.target.dataset.index)][6]=e.target.value.trim();save();}));}
 function save(){localStorage.setItem(KEY,JSON.stringify(data));render();}
 function download(rows,name){const blob=new Blob([tsv(rows).replace(/\n/g,"\r\n")],{type:"text/tab-separated-values;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name+".tsv";a.click();URL.revokeObjectURL(url);}
@@ -124,7 +132,7 @@ $("import").onclick=()=>{const rows=parseRows($("raw").value);if(!rows.length){$
 $("append").onclick=()=>{const rows=parseRows($("raw").value);if(!rows.length){$("status").textContent="Không tìm thấy booking hợp lệ để thêm.";return;}data.push(...rows);save();$("status").textContent="Đã thêm "+rows.length+" booking. Tổng cộng "+data.length+" booking.";};
 $("clearInput").onclick=()=>{$("raw").value="";};
 $("clearAll").onclick=()=>{if(confirm("Xóa toàn bộ danh sách đã lưu trên trình duyệt này?")){data=[];save();$("status").textContent="Đã xóa toàn bộ danh sách trên thiết bị này.";}}
-$("search").oninput=render;$("staffFilter").onchange=render;$("dateFrom").onchange=render;$("dateTo").onchange=render;$("clearDate").onclick=()=>{$("dateFrom").value="";$("dateTo").value="";render();};
+$("search").oninput=render;$("staffFilter").onchange=render;$("filterDate").onchange=render;$("statusFilter").onchange=render;$("clearDate").onclick=()=>{$("filterDate").value="";render();};
 $("copyArrival").onclick=()=>copy(rowsFor("Arrival"),"ARRIVAL");$("copyDeparture").onclick=()=>copy(rowsFor("Departure"),"DEPARTURE");$("copyAll").onclick=()=>copy([...rowsFor("Arrival"),...rowsFor("Departure")],"toàn bộ danh sách");
 $("exportArrival").onclick=()=>download(rowsFor("Arrival"),"arrival-fasttrack-sgn");$("exportDeparture").onclick=()=>download(rowsFor("Departure"),"departure-fasttrack-sgn");$("exportAll").onclick=()=>download([...rowsFor("Arrival"),...rowsFor("Departure")],"fasttrack-sgn");
 render();
