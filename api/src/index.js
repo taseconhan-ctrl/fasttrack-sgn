@@ -4,7 +4,7 @@ export default {
     const allowed = (env.ALLOWED_ORIGINS || "").split(",").map(x => x.trim()).filter(Boolean);
     const corsOrigin = allowed.includes(origin) ? origin : "";
     const headers = {
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
       "Vary": "Origin"
     };
@@ -13,6 +13,48 @@ export default {
     const json = (data, status=200) => new Response(JSON.stringify(data), {
       status, headers: { ...headers, "Content-Type": "application/json; charset=utf-8" }
     });
+    if (request.method === "GET") {
+      if (!corsOrigin) return json({ error: "Origin not allowed" }, 403);
+      if (!env.APP_SHARED_SECRET || request.headers.get("Authorization") !== "Bearer " + env.APP_SHARED_SECRET)
+        return json({ error: "Unauthorized" }, 401);
+      const checks = {
+        sharedSecret: Boolean(env.APP_SHARED_SECRET),
+        googleClientId: Boolean(env.GOOGLE_CLIENT_ID),
+        googleClientSecret: Boolean(env.GOOGLE_CLIENT_SECRET),
+        googleRefreshToken: Boolean(env.GOOGLE_REFRESH_TOKEN),
+        database: false,
+        gmailOAuth: false,
+        gmailScope: false,
+        gmailApi: false
+      };
+      try {
+        await env.DB.prepare("SELECT 1").first();
+        checks.database = true;
+      } catch {}
+      if (checks.googleClientId && checks.googleClientSecret && checks.googleRefreshToken) {
+        try {
+          const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+            method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+              client_id: env.GOOGLE_CLIENT_ID,
+              client_secret: env.GOOGLE_CLIENT_SECRET,
+              refresh_token: env.GOOGLE_REFRESH_TOKEN,
+              grant_type: "refresh_token"
+            })
+          });
+          const tokenData = await tokenRes.json();
+          if (tokenRes.ok && tokenData.access_token) {
+            checks.gmailOAuth = true;
+            checks.gmailScope = String(tokenData.scope || "").split(" ").includes("https://www.googleapis.com/auth/gmail.send");
+            const profileRes = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/profile", {
+              headers: { Authorization: "Bearer " + tokenData.access_token }
+            });
+            checks.gmailApi = profileRes.ok;
+          }
+        } catch {}
+      }
+      return json({ ok: checks.database && checks.gmailOAuth && checks.gmailScope && checks.gmailApi, checks });
+    }
     if (request.method !== "POST") return json({ error: "POST only" }, 405);
     if (!corsOrigin) return json({ error: "Origin not allowed" }, 403);
     if (!env.APP_SHARED_SECRET || request.headers.get("Authorization") !== "Bearer " + env.APP_SHARED_SECRET)
