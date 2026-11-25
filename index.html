@@ -65,6 +65,13 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 const $ = id => document.getElementById(id);
 const WELCOME = "https://drive.google.com/file/d/1oz2djqDYCy15yjs3OCRJOfWDf104PjC2/view?usp=sharing";
 let lastOutput = [];
+const copyStore = new Map();
+let copySeq = 0;
+function copyButton(value,label,cls="mini"){
+ const key="copy-"+(++copySeq);
+ copyStore.set(key,String(value??""));
+ return `<button type="button" class="${cls}" data-copy-key="${key}">${label}</button>`;
+}
 
 function clean(s){return (s||"").replace(/\u00a0/g," ").replace(/\r/g,"").trim()}
 function linesOf(s){return s.split("\n").map(x=>x.trim()).filter(Boolean)}
@@ -101,21 +108,31 @@ function extractPhone(s){
   for(const p of patterns){const m=s.match(p);if(m)return clean(m[1])}
   return "";
 }
+function normalizeCountry(s){return clean(s).normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/\\s*\\([^)]*\\)\\s*/g," ").replace(/\\s+/g," ").trim()}
 function countryFrom(s){
- const m=s.match(/Country\/region of passport\s*:\s*([A-Za-z ]+)/i);
- return m?clean(m[1]).replace(/\*+.*$/,"").trim():"";
+ const labels=/(?:country\\s*\\/\\s*region\\s+of\\s+passport|passport\\s+country|quốc gia\\s*\\/\\s*vùng(?: lãnh thổ)?\\s*hộ chiếu)\\s*[:：]?\\s*([^\\n]+)/i;
+ const m=s.match(labels);
+ if(m && clean(m[1])) return clean(m[1]).replace(/\\*+.*$/,"").trim();
+ const ls=s.split(/\\r?\\n/);
+ const i=ls.findIndex(x=>/(?:country\\s*\\/\\s*region\\s+of\\s+passport|passport\\s+country|quốc gia\\s*\\/\\s*vùng(?: lãnh thổ)?\\s*hộ chiếu)/i.test(x));
+ return i>=0?clean(ls[i+1]||"").replace(/\\*+.*$/,"").trim():"";
 }
-const ccMap={"brunei":"673","singapore":"65","japan":"81","australia":"61","new zealand":"64","united states":"1","usa":"1","canada":"1","united kingdom":"44","uk":"44","malaysia":"60","india":"91","france":"33","germany":"49","italy":"39","philippines":"63","thailand":"66","indonesia":"62","vietnam":"84","viet nam":"84","south korea":"82","korea":"82","china":"86","hong kong":"852","taiwan":"886"};
+const ccMap={
+ "brunei":"673","singapore":"65","japan":"81","australia":"61","new zealand":"64","united states":"1","united states of america":"1","usa":"1","us":"1","canada":"1","united kingdom":"44","uk":"44","great britain":"44","england":"44","malaysia":"60","india":"91","france":"33","germany":"49","italy":"39","philippines":"63","thailand":"66","indonesia":"62","vietnam":"84","viet nam":"84","south korea":"82","republic of korea":"82","korea":"82","china":"86","hong kong":"852","taiwan":"886","macau":"853","macao":"853","russia":"7","united arab emirates":"971","uae":"971","saudi arabia":"966","qatar":"974","kuwait":"965","oman":"968","bahrain":"973","sri lanka":"94","bangladesh":"880","pakistan":"92","nepal":"977","myanmar":"95","cambodia":"855","laos":"856","south africa":"27","nigeria":"234","kenya":"254","egypt":"20","morocco":"212","turkey":"90","türkiye":"90","spain":"34","portugal":"351","netherlands":"31","belgium":"32","switzerland":"41","austria":"43","sweden":"46","norway":"47","denmark":"45","finland":"358","ireland":"353","poland":"48","czech republic":"420","czechia":"420","greece":"30","israel":"972","mexico":"52","brazil":"55","argentina":"54","chile":"56","colombia":"57","peru":"51","ukraine":"380","romania":"40","hungary":"36","croatia":"385","serbia":"381","slovakia":"421","slovenia":"386","bulgaria":"359","iceland":"354","luxembourg":"352","cyprus":"357","maldives":"960","mauritius":"230","fiji":"679","papua new guinea":"675"
+};
 function internationalPhone(raw,country){
- let d=(raw||"").replace(/\D/g,""); if(!d)return "";
- if((raw||"").trim().startsWith("+")) return d;
+ const original=clean(raw);
+ let d=original.replace(/\\D/g,"");
+ if(!d)return "";
+ if(original.startsWith("+")) return d;
  if(d.startsWith("00")) return d.slice(2);
- if(d.startsWith("0") && country){
-   const cc=ccMap[country.toLowerCase()];
-   if(cc) return cc+d.slice(1);
- }
- if(country && ccMap[country.toLowerCase()] && !d.startsWith(ccMap[country.toLowerCase()])) return ccMap[country.toLowerCase()]+d.replace(/^0+/,"");
- return "";
+ const c=ccMap[normalizeCountry(country)];
+ if(!c) return "";
+ // A number that already contains the passport country's calling code must not be prefixed twice.
+ if(d.startsWith(c)) return d;
+ // Remove the domestic trunk prefix before adding the international calling code.
+ if(d.startsWith("0")) d=d.replace(/^0+/,"");
+ return c+d;
 }
 function localVNPhone(raw){
  let d=(raw||"").replace(/\D/g,"");
@@ -295,7 +312,7 @@ function cardHtml(b,i){
  ${block("SUBJECT",b.sub||"Không đủ dữ liệu tạo Subject")}
  ${b.en?block("BODY TIẾNG ANH",b.en):""}
  ${b.vi?block("BODY TIẾNG VIỆT",b.vi):""}
- <div class="actions"><button class="mini" onclick="copyText(${JSON.stringify(b.sub||"")})">Copy Subject</button><button class="mini secondary" onclick="copyText(${JSON.stringify(b.en||"")})">Copy Body EN</button>${b.vi?`<button class="mini secondary" onclick="copyText(${JSON.stringify(b.vi)})">Copy Body VI</button>`:""}</div>
+ <div class="actions">${copyButton(b.sub||"","Copy Subject")} ${copyButton(b.en||"","Copy Body EN","mini secondary")}${b.vi?` ${copyButton(b.vi,"Copy Body VI","mini secondary")}`:""}</div>
  <h3>LIÊN HỆ</h3>${links}${internal}${notes}
  </article>`;
 }
@@ -312,23 +329,37 @@ function internalHtml(b){
    const ticket=b.tickets.filter(Boolean).join(", ")||"( để trống )";
    f2=`Tên Khách\n\n${b.names.join("\n")}\n\nChuyến bay: ${b.flight}\nGiờ bay: ${b.time}\nmã đặt chỗ: ${ticket}\n\nYêu cầu: xin ghế cao và quầy ưu tiên\n\nEm xin hỗ trợ ( ${b.pax} ) khách ngày mai ${b.date} ạ`;
  }
- return `<h3>COPY NỘI BỘ – FORM 1</h3><pre>${esc(f1)}</pre><button class="mini" onclick="copyText(${JSON.stringify(f1)})">Copy Form 1</button>${f2?`<h3>FORM 2 – VIETNAM AIRLINES</h3><pre>${esc(f2)}</pre><button class="mini" onclick="copyText(${JSON.stringify(f2)})">Copy Form 2</button>`:""}`;
+ return `<h3>COPY NỘI BỘ – FORM 1</h3><pre>${esc(f1)}</pre>${copyButton(f1,"Copy Form 1")}${f2?`<h3>FORM 2 – VIETNAM AIRLINES</h3><pre>${esc(f2)}</pre>${copyButton(f2,"Copy Form 2")}`:""}`;
 }
 function parseDateTime(d,t){const m=d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/),n=t.match(/^(\d{2}):(\d{2})$/);if(!m||!n)return null;return new Date(+m[3],+m[2]-1,+m[1],+n[1],+n[2])}
 function fmtDateTime(d){return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`}
 function renderReview(items,dir,title){
  const rows=items.filter(x=>x.dir===dir&&x.sub).map((b,i)=>{
    const line=`${b.order} | ${b.reviewPhone} | ${b.reviewSubject}`;
-   return `<tr><td>${i+1}</td><td>${esc(b.order)}</td><td>${esc(b.reviewPhone)}</td><td>${esc(b.reviewSubject)}</td><td><button class="mini" onclick="copyText(${JSON.stringify(line)})">Copy dòng</button></td></tr>`;
+   return `<tr><td>${i+1}</td><td>${esc(b.order)}</td><td>${esc(b.reviewPhone)}</td><td>${esc(b.reviewSubject)}</td><td>${copyButton(line,"Copy dòng")}</td></tr>`;
  });
  const all=items.filter(x=>x.dir===dir&&x.sub).map(x=>`${x.order} | ${x.reviewPhone} | ${x.reviewSubject}`).join("\n");
- return `<section class="review"><div class="topline"><h2>${title}</h2><button onclick="copyText(${JSON.stringify(all)})">Copy tất cả</button></div><div class="tablewrap"><table><thead><tr><th>#</th><th>Mã order</th><th>Số điện thoại</th><th>Subject (không lặp mã order)</th><th></th></tr></thead><tbody>${rows.join("")||`<tr><td colspan="5" class="muted">Không có booking.</td></tr>`}</tbody></table></div></section>`;
+ return `<section class="review"><div class="topline"><h2>${title}</h2>${copyButton(all,"Copy tất cả"," ")}</div><div class="tablewrap"><table><thead><tr><th>#</th><th>Mã order</th><th>Số điện thoại</th><th>Subject (không lặp mã order)</th><th></th></tr></thead><tbody>${rows.join("")||`<tr><td colspan="5" class="muted">Không có booking.</td></tr>`}</tbody></table></div></section>`;
 }
 async function copyText(s){
- try{await navigator.clipboard.writeText(s);toast("Đã sao chép.");}
- catch(e){const t=document.createElement("textarea");t.value=s;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();toast("Đã sao chép.");}
+ const value=String(s??"");
+ if(!value){toast("Không có nội dung để sao chép.",false);return;}
+ try{
+   if(navigator.clipboard && window.isSecureContext){
+     await navigator.clipboard.writeText(value);
+   } else {
+     const t=document.createElement("textarea");t.value=value;t.setAttribute("readonly","");
+     t.style.position="fixed";t.style.opacity="0";t.style.left="-9999px";
+     document.body.appendChild(t);t.focus();t.select();t.setSelectionRange(0,t.value.length);
+     const ok=document.execCommand("copy");t.remove();
+     if(!ok) throw new Error("Trình duyệt không cho phép sao chép");
+   }
+   toast("Đã sao chép.");
+ }catch(e){
+   toast("Không sao chép được. Hãy cấp quyền Clipboard cho trang hoặc sao chép thủ công.",false);
+ }
 }
-function toast(msg){const el=$("status");el.textContent=msg;el.className="status good"}
+function toast(msg,good=true){const el=$("status");el.textContent=msg;el.className="status "+(good?"good":"warn")}
 function run(){
  const raw=$("raw").value;
  if(!clean(raw)){ $("status").textContent="Bạn chưa dán dữ liệu.";return}
@@ -348,6 +379,12 @@ function run(){
 }
 $("run").addEventListener("click",run);
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("status").textContent="Đã xóa dữ liệu.";});
+document.addEventListener("click",e=>{
+ const btn=e.target.closest("[data-copy-key]");
+ if(!btn)return;
+ const key=btn.getAttribute("data-copy-key");
+ if(copyStore.has(key)) copyText(copyStore.get(key));
+});
 window.copyText=copyText;
 </script>
 </body>
