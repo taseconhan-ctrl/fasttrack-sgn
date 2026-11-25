@@ -285,4 +285,51 @@ $("search").oninput=render;$("staffFilter").onchange=render;$("filterDate").onch
 $("copyArrival").onclick=()=>copy(rowsFor("Arrival"),"ARRIVAL");$("copyDeparture").onclick=()=>copy(rowsFor("Departure"),"DEPARTURE");$("copyAll").onclick=()=>copy([...rowsFor("Arrival"),...rowsFor("Departure")],"toàn bộ danh sách");
 $("exportArrival").onclick=()=>download(rowsFor("Arrival"),"arrival-fasttrack-sgn");$("exportDeparture").onclick=()=>download(rowsFor("Departure"),"departure-fasttrack-sgn");$("exportAll").onclick=()=>download([...rowsFor("Arrival"),...rowsFor("Departure")],"fasttrack-sgn");
 render();
-</script></body></html>
+</script>
+<style id="christmas-audio-player-style">
+#christmas-audio-player{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid rgba(255,215,120,.72);border-radius:999px;background:linear-gradient(135deg,#102c27f5,#7d1728f2);box-shadow:0 8px 24px #071b18aa;color:#fff;font:600 13px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;backdrop-filter:blur(8px)}
+#christmas-audio-player button{border:0;border-radius:999px;background:#f4d58a;color:#17372e;padding:10px 14px;font:700 13px system-ui;cursor:pointer;white-space:nowrap}
+#christmas-audio-player button:focus-visible{outline:3px solid #fff;outline-offset:3px}
+#christmas-audio-player .music-note{font-size:18px}
+#christmas-audio-player .music-credit{font-size:10px;opacity:.85;white-space:nowrap}
+#christmas-audio-player .music-credit a{color:#ffe6a5}
+@media(max-width:600px){#christmas-audio-player{right:10px;bottom:10px;left:10px;justify-content:center;gap:8px;padding:8px 10px}#christmas-audio-player button{padding:10px 13px;font-size:12px}#christmas-audio-player .music-credit{font-size:9px}}
+</style>
+<div id="christmas-audio-player" aria-label="Nhạc nền Giáng Sinh">
+  <span class="music-note" aria-hidden="true">🎅</span>
+  <button id="christmas-audio-toggle" type="button" aria-pressed="false">🎵 Bật nhạc Giáng Sinh</button>
+  <span class="music-credit">Jingle Bells · <a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100187" target="_blank" rel="noopener">Kevin MacLeod</a></span>
+  <audio id="christmas-background-audio" preload="none" loop>
+    <source src="https://incompetech.com/music/royalty-free/mp3-royaltyfree/Jingle%20Bells%203.mp3" type="audio/mpeg">
+  </audio>
+</div>
+<script id="christmas-audio-player-script">
+(function(){
+  const button=document.getElementById('christmas-audio-toggle');
+  const audio=document.getElementById('christmas-background-audio');
+  if(!button||!audio)return;
+  audio.volume=0.2;
+  button.addEventListener('click',async function(){
+    if(audio.paused){
+      try{
+        await audio.play();
+        button.textContent='⏸ Tắt nhạc Giáng Sinh';
+        button.setAttribute('aria-pressed','true');
+      }catch(error){
+        button.textContent='▶ Thử bật nhạc lại';
+        button.setAttribute('aria-pressed','false');
+      }
+    }else{
+      audio.pause();
+      button.textContent='🎵 Bật nhạc Giáng Sinh';
+      button.setAttribute('aria-pressed','false');
+    }
+  });
+  audio.addEventListener('ended',function(){
+    button.textContent='🎵 Bật nhạc Giáng Sinh';
+    button.setAttribute('aria-pressed','false');
+  });
+})();
+</script>
+
+</body></html>
