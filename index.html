@@ -61,6 +61,29 @@ main{width:min(100% - 40px,1040px);padding:38px 0 48px}
 footer{padding:18px;border-top:1px solid #dfc47e;background:#102b36;color:#f2dfae;letter-spacing:1.2px}
 @media(max-width:650px){main{padding:25px 0 32px}.menu{grid-template-columns:1fr}.item{min-height:190px}.intro{padding:24px 14px}}
 
+
+/* Mobile-first refinements */
+@media(max-width:700px){
+ body{font-size:15px}
+ header{padding:18px 16px 17px!important}
+ header:before{right:10px!important;top:7px!important;font-size:11px!important;letter-spacing:2px!important}
+ header:after{font-size:9px!important;letter-spacing:1px!important;margin-top:8px}
+ .brand{font-size:25px;letter-spacing:1.5px}
+ .sub{font-size:11px;max-width:75%;line-height:1.35}
+ main{width:calc(100% - 24px)!important;padding:22px 0 28px!important}
+ .intro{padding:25px 12px 22px;margin-bottom:16px}
+ .intro:before,.intro:after{font-size:12px;letter-spacing:4px}
+ .intro h2{font-size:24px}
+ .intro p{font-size:13px}
+ .menu{grid-template-columns:1fr;gap:13px}
+ .item{min-height:0;padding:19px;border-radius:16px}
+ .item h3{font-size:19px}
+ .item p{font-size:13px;margin-bottom:14px}
+ .icon{width:50px;height:50px;margin-bottom:12px}
+ footer{font-size:10px;padding:14px 10px;letter-spacing:.4px}
+}
+@media(max-width:380px){.brand{font-size:22px}.sub{font-size:10px}.item{padding:16px}}
+
 </style>
 </head>
 <body>
