@@ -230,14 +230,16 @@ function normalizeAgency(s){
 function getValueAfter(lines, label){
   const target=label.trim().toLowerCase();
   const i=lines.findIndex(x=>{
-    const t=x.trim().toLowerCase();
+    const t=x.trim().replace(/^\*+|\*+$/g,"").toLowerCase();
     return t===target || t.startsWith(target+":") || t.startsWith(target+"：");
   });
   if(i<0) return "";
-  const line=lines[i].trim();
+  const line=lines[i].trim().replace(/^\*+|\*+$/g,"");
   let same=line.slice(label.trim().length).trim();
   if(same.startsWith(":")||same.startsWith("：")) same=same.slice(1).trim();
-  return same || clean(lines[i+1]||"");
+  if(same) return same;
+  for(let j=i+1;j<lines.length;j++) if(clean(lines[j])) return clean(lines[j]);
+  return "";
 }
 function extractEmail(s){const m=s.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);return m?m[0]:""}
 function extractPhone(s){
@@ -279,19 +281,27 @@ function localVNPhone(raw){
  if(d.startsWith("84")) d="0"+d.slice(2);
  return /^0\d{9}$/.test(d)?d:"";
 }
+function normalizePastedLine(value){
+ return clean(value)
+  .replace(/&nbsp;|&#x20;|&#32;/gi," ")
+  .replace(/&amp;/gi,"&")
+  .replace(/^#{1,6}\s*/,"")
+  .replace(/^\*\*(.*?)\*\*$/,"$1")
+  .replace(/^[-*]\s*$/,"");
+}
 function parseBlocks(raw){
- const ls=raw.replace(/\r/g,"").split("\n").map(x=>x.trim());
+ // Nội dung copy từ trang quản trị thường có dòng trống xen giữa nhãn và giá trị.
+ // Chuẩn hóa khoảng trắng và loại dòng rỗng trước khi nhận diện các trường.
+ const ls=raw.replace(/\r/g,"").split("\n").map(normalizePastedLine).filter(Boolean);
  const starts=[];
  for(let i=0;i<ls.length;i++){
-   // Không nhầm mã chuyến bay 6 ký tự (VN1823/FD1436) thành mã order.
-   const isBookingStart=isOrder(ls[i]) && (
-     /^(?:Tân Sơn Nhất|Tan Son Nhat|SGN)\b/i.test(ls[i+1]||"") ||
-     /^Mã order$/i.test(ls[i-1]||"")
-   );
-   if(isBookingStart) starts.push(i);
+   if(!isOrder(ls[i])) continue;
+   const previous=ls[i-1]||"";
+   const next=ls[i+1]||"";
+   if(/^(?:Tân Sơn Nhất|Tan Son Nhat|SGN)\b/i.test(next) || /^Mã order$/i.test(previous)) starts.push(i);
  }
  const unique=[...new Set(starts)].sort((a,b)=>a-b);
- if(!unique.length) return [parseSingle(raw)];
+ if(!unique.length) return [parseSingle(ls.join("\n"))];
  return unique.map((st,n)=>parseChunk(ls.slice(st,unique[n+1]??ls.length)));
 }
 function parseChunk(ls){
@@ -329,7 +339,8 @@ function parseChunk(ls){
      const x=clean(ls[i]);
      if(!x)continue;
      if(/^(Ảnh thực hiện|Cần ít nhất|Tài liệu đính kèm|Chi phí phát sinh|Số tiền|Ngày tạo|No rows|Ghi chú nhân viên)$/i.test(x))break;
-     if(/^(Không|Có|Yes|No)$/i.test(x))continue;
+     if(/^(Không|Có|Yes|No|blank|n\/a|null|-)$/i.test(x))continue;
+     if(/^(Country|Reservation code|Seat type)\s*:/i.test(x))continue;
      if(/^[A-Z0-9-]{6,}$/i.test(x))continue;
      if(/^(\d{1,2})$/.test(x))continue;
      if(/^(Thông tin chuyến bay|Khách hàng)$/i.test(x))continue;
