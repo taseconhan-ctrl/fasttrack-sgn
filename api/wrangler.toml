@@ -1,4 +1,4 @@
-name = "fasttrack-sgn-api"
+name = "fasttrack-sgn"
 main = "src/index.js"
 compatibility_date = "2026-11-25"
 
