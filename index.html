@@ -12,7 +12,7 @@ header h1{font-size:23px;margin:0 0 5px}header p{margin:0;color:#d5def0}
 main{max-width:1180px;margin:22px auto;padding:0 16px 60px}
 .panel,.booking,.review{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 3px 12px #17203308}
 label{font-weight:650;display:block;margin-bottom:7px}textarea{width:100%;min-height:260px;resize:vertical;border:1px solid #bbc6d8;border-radius:10px;padding:13px;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;color:#1d2b42}
-input[type=text],input[type=tel]{padding:9px 10px;border:1px solid #bbc6d8;border-radius:8px;width:100%;max-width:240px}
+input[type=text],input[type=tel],input[type=email]{padding:9px 10px;border:1px solid #bbc6d8;border-radius:8px;width:100%;max-width:240px}
 .controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:12px}.field{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.field label{margin:0;font-weight:500}
 button,.linkbtn{border:0;border-radius:9px;background:var(--accent);color:white;padding:9px 13px;font-weight:650;cursor:pointer;text-decoration:none;display:inline-flex;gap:6px;align-items:center;font-size:14px}
 button.secondary,.linkbtn.secondary{background:#e9eef7;color:#21304b}button.ghost{background:#fff;color:#273653;border:1px solid var(--line)}
@@ -413,7 +413,7 @@ function buildOne(b,staff,phone,hotline){
 }
 function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:`<span class="muted">Không tạo được – thiếu dữ liệu phù hợp</span>`}
 function block(title,content){return `<h3>${title}</h3><pre>${esc(content)}</pre>`}
-function cardHtml(b,i){
+function cardHtml(b,i,cacheIndex){
  const badges=`<span class="pill">${b.dir||"CHƯA RÕ LOẠI"}</span><span class="pill">${esc(b.agency||"Chưa rõ agency")}</span><span class="pill ${b.confirmed&&b.unassigned?"good":"warn"}">${b.confirmed?(b.unassigned?"Đủ điều kiện":"Đã phân công"):"Chưa xác nhận"}</span>`;
  const links=`<div class="actions">${linkHtml(b.wa,"WhatsApp")}${linkHtml(b.gm,"Gmail")}${linkHtml(b.zalo,"Zalo")}</div>`;
  const internal=isDomestic(b)?internalHtml(b):"";
@@ -426,8 +426,33 @@ function cardHtml(b,i){
  ${b.en?block("BODY TIẾNG ANH",b.en):""}
  ${b.vi?block("BODY TIẾNG VIỆT",b.vi):""}
  <div class="actions">${copyButton(b.sub||"","Copy Subject")} ${copyButton(b.en||"","Copy Body EN","mini secondary")}${b.vi?` ${copyButton(b.vi,"Copy Body VI","mini secondary")}`:""}</div>
- <h3>LIÊN HỆ</h3>${links}${internal}${notes}
+ <h3>LIÊN HỆ</h3>
+ <div class="kv" style="margin:10px 0">
+ <b>Bổ sung / chỉnh sửa thông tin liên hệ</b>
+ <p class="hint">Nhập số điện thoại có mã quốc gia (ví dụ +84...) và/hoặc Gmail. Sau khi cập nhật, link WhatsApp và Gmail sẽ được tạo lại ngay cho booking này.</p>
+ <div class="controls">
+ <div><label for="contactPhone-${cacheIndex}">Số điện thoại</label><input id="contactPhone-${cacheIndex}" type="tel" value="${esc(b.phone||"")}" placeholder="+84..." autocomplete="tel"></div>
+ <div><label for="contactEmail-${cacheIndex}">Gmail / Email</label><input id="contactEmail-${cacheIndex}" type="email" value="${esc(b.email||"")}" placeholder="customer@gmail.com" autocomplete="email"></div>
+ <button type="button" class="save-contact" data-contact-index="${cacheIndex}">Cập nhật & tạo link</button>
+ </div>
+ </div>
+ <div class="contact-links">${links}</div>${internal}${notes}
  </article>`;
+}
+function updateBookingContact(index){
+ const b=allBookingsCache[index]; if(!b)return;
+ const phone=$("contactPhone-"+index)?.value.trim()||"";
+ const email=$("contactEmail-"+index)?.value.trim()||"";
+ if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast("Email chưa đúng định dạng. Vui lòng kiểm tra lại.",false);return;}
+ if(phone&&!/^[+\d][\d\s().-]{6,24}$/.test(phone)){toast("Số điện thoại chưa đúng định dạng. Hãy nhập cả mã quốc gia, ví dụ +84...",false);return;}
+ b.phone=phone;b.email=email;b.intl=internationalPhone(phone,b.country);b.vn=localVNPhone(phone);
+ b.wa=b.intl&&b.en?"https://wa.me/"+b.intl+"?text="+encodeURIComponent(b.en):"";
+ b.gm=email&&b.order&&b.flight&&b.date&&b.en?gmailLink(email,b.sub,b.en):"";
+ b.zalo=isPartner(b)&&b.vn?"https://zalo.me/"+b.vn:"";
+ b.warnings=(b.warnings||[]).filter(x=>!x.startsWith("Không chuẩn hóa được số WhatsApp")&&!x.startsWith("Không có email khách"));
+ if(phone&&!b.intl)b.warnings.push("Không chuẩn hóa được số WhatsApp; kiểm tra số và quốc gia hộ chiếu");
+ if(!email)b.warnings.push("Không có email khách");
+ renderFilteredBookings();toast("Đã cập nhật liên hệ cho booking "+(b.order||"này")+" và tạo lại các link phù hợp.");
 }
 function internalHtml(b){
  const dt=parseDateTime(b.date,b.time);
@@ -470,7 +495,7 @@ function renderFilteredBookings(){
   const hay=[x.order,x.names.join(" "),x.flight,x.phone,x.email,x.agency,x.staffAssign].join(" ").toLocaleLowerCase("vi");
   return partnerOk&&dirOk&&dateOk&&(!search||hay.includes(search));
  });
- $("results").innerHTML=shown.map(cardHtml).join("")||`<section class="panel">Không có booking thuộc đối tác này.</section>`;
+ $("results").innerHTML=shown.map((b,i)=>cardHtml(b,i,allBookingsCache.indexOf(b))).join("")||`<section class="panel">Không có booking thuộc đối tác này.</section>`;
  $("reviews").innerHTML=renderReview(shown,"ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+renderReview(shown,"DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
  const count=$("filterCount");
  if(count) count.textContent=`Đang hiển thị ${shown.length}/${processedBookings.length} booking`;
@@ -546,6 +571,8 @@ function run(){
 $("run").addEventListener("click",run);
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("skippedBookings").innerHTML="";processedBookings=[];allBookingsCache=[];skippedBookingsCache=[];$("status").textContent="Đã xóa dữ liệu.";});
 document.addEventListener("click",e=>{
+ const saveContact=e.target.closest(".save-contact");
+ if(saveContact){updateBookingContact(Number(saveContact.dataset.contactIndex));return;}
  const compose=e.target.closest("#composeSkipped");
  if(compose){
   const existing=new Set(processedBookings.map(b=>b.raw));
