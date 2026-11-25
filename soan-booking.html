@@ -673,7 +673,7 @@ function renderSkippedBookings(items,all){
  const rows=items.map((b,i)=>{
   const reason=skippedReasons(b,all),missing=missingInfo(b);
   const alreadyComposed=processedBookings.some(x=>x.raw===b.raw);
-  return `<article class="booking"><div class="topline"><h3>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.dir||"Chưa xác định loại")}</h3><span class="pill bad">ĐÃ BỎ QUA</span></div><div class="meta"><span class="pill">${esc(b.flight||"Chưa có flight")}</span><span class="pill">${esc(b.date||"")} ${esc(b.time||"")}</span><span class="pill">${b.pax||b.names.length||0} khách</span></div><div class="grid"><div class="kv"><small>Khách</small><b>${esc(b.names.join(", "))}</b></div><div class="kv"><small>Nhân viên nhận việc</small><b>${esc(b.staffAssign||"Trống")}</b></div><div class="kv"><small>Trạng thái</small><b>${esc(b.status||"")}</b></div></div><div class="status warn"><b>Lý do bỏ qua:</b><ul>${reason.map(x=>"<li>"+esc(x)+"</li>").join("")||"<li>Booking được đưa vào đây theo bộ lọc hiện tại.</li>"}</ul>${missing.length?`<p><b>Thông tin còn thiếu (nếu có):</b> ${missing.map(esc).join(", ")}. Các trường này sẽ để trống khi soạn.</p>`:""}</div><div class="controls"><button type="button" class="compose-one-skipped" data-skipped-index="${i}" ${alreadyComposed?"disabled":""}>${alreadyComposed?"Đã thêm vào danh sách soạn":"Soạn booking này"}</button></div></article>`;
+  return `<article class="booking"><div class="topline"><h3>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.dir||"Chưa xác định loại")}</h3><span class="pill bad">ĐÃ BỎ QUA</span></div><div class="meta"><span class="pill">${esc(b.flight||"Chưa có flight")}</span><span class="pill">${esc(b.date||"")} ${esc(b.time||"")}</span><span class="pill">${b.pax||b.names.length||0} khách</span></div><div class="grid"><div class="kv"><small>Khách</small><b>${esc(b.names.join(", "))}</b></div><div class="kv"><small>Nhân viên nhận việc</small><b>${esc(b.staffAssign||"Trống")}</b></div><div class="kv"><small>Trạng thái</small><b>${esc(b.status||"")}</b></div></div><div class="status warn"><b>Lý do bỏ qua:</b><ul>${reason.map(x=>"<li>"+esc(x)+"</li>").join("")||"<li>Booking được đưa vào đây theo bộ lọc hiện tại.</li>"}</ul>${missing.length?`<p><b>Thông tin còn thiếu (nếu có):</b> ${missing.map(esc).join(", ")}. Các trường này sẽ để trống khi soạn.</p>`:""}</div><div class="controls"><button type="button" class="compose-one-skipped" data-skipped-index="${i}" ${alreadyComposed?"disabled":""}>${alreadyComposed?"Đã soạn tại đây":"Soạn booking này"}</button></div><div class="skipped-compose-output"></div></article>`;
  }).join("");
  return `<section class="panel"><div class="topline"><h2>BOOKING BỊ BỎ QUA (${items.length})</h2><span class="pill bad">Có lý do cho từng booking</span></div><p class="hint">Chỉ ghi lý do theo bộ lọc: booking chưa xác nhận hoặc đã có nhân viên nhận việc. Thiếu trường dữ liệu không ngăn việc soạn; trường thiếu sẽ để trống. Bấm “Soạn booking này” ở từng booking nếu muốn đưa riêng booking đó vào danh sách soạn.</p>${rows}</section>`;
 }
@@ -715,13 +715,18 @@ document.addEventListener("click",e=>{
   const index=Number(composeOne.dataset.skippedIndex);
   const booking=skippedBookingsCache[index];
   if(!booking){toast("Không tìm thấy booking này.",false);return;}
-  if(processedBookings.some(b=>b.raw===booking.raw)){toast("Booking này đã có trong danh sách soạn.",false);return;}
+  if(processedBookings.some(b=>b.raw===booking.raw)){toast("Booking này đã được soạn rồi.",false);return;}
   booking.skipReason=skippedReasons(booking,$("allBookings").checked).join("; ")||"Bị loại khỏi kết quả chính theo bộ lọc ban đầu";
   processedBookings=[...processedBookings,booking];
   saveReviewItems([booking]);
-  renderFilteredBookings();
-  $("skippedBookings").innerHTML=renderSkippedBookings(skippedBookingsCache,$("allBookings").checked);
-  toast("Đã thêm booking "+(booking.order||"được chọn")+" vào danh sách soạn. Các booking bị bỏ qua khác vẫn giữ nguyên.");
+  const host=composeOne.closest(".booking")?.querySelector(".skipped-compose-output");
+  if(host) host.innerHTML=cardHtml(booking,index,allBookingsCache.indexOf(booking));
+  composeOne.disabled=true;
+  composeOne.textContent="Đã soạn tại đây";
+  $("reviews").innerHTML=renderReview(processedBookings,"ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+renderReview(processedBookings,"DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
+  const count=$("filterCount");
+  if(count) count.textContent=`Đang hiển thị ${processedBookings.length}/${processedBookings.length} booking (bao gồm booking đã soạn tại mục bỏ qua)`;
+  toast("Đã soạn booking ngay tại vị trí này. Các booking bị bỏ qua khác không thay đổi.");
   return;
  }
  const btn=e.target.closest("[data-copy-key]");
