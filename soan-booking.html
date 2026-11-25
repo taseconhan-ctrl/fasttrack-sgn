@@ -146,24 +146,14 @@ th{background:#eaf2ee;color:#214b43}
 </section>
 
 <section class="panel">
-  <h2>2. Thông tin nhân viên đang dùng</h2>
+  <h2>2. Nhân viên đang sử dụng</h2>
   <div class="controls">
-    <div><label for="staffProfile">Tìm và chọn nhân viên</label><input id="staffProfile" type="text" list="staffProfiles" placeholder="Nhập tên nhân viên..." value="Nhan" autocomplete="off"><datalist id="staffProfiles"><option value="Nhan"></option><option value="Hung"></option><option value="David"></option></datalist></div>
-    <div><label for="staff">Tên nhân viên (English)</label><input id="staff" type="text" value="Nhan" readonly></div>
+    <div><label for="staffProfile">Chọn nhân viên</label><input id="staffProfile" type="text" list="staffProfiles" placeholder="Chọn đúng nhân viên..." value="Nhân" autocomplete="off"><datalist id="staffProfiles"></datalist></div>
+    <div><label for="staff">Tên nhân viên</label><input id="staff" type="text" value="Nhân" readonly></div>
     <div><label for="phone">Điện thoại / WhatsApp</label><input id="phone" type="tel" value="+84 867802129" readonly></div>
     <div><label for="hotline">Hotline</label><input id="hotline" type="tel" value="+84 866624188" readonly></div>
   </div>
-  <p class="hint">Chọn nhân viên trong danh sách để tự điền tên và số WhatsApp. Hotline được dùng chung.</p>
-  <div class="kv" style="margin-top:14px">
-    <h3 style="margin-top:0">Đăng ký nhân viên mới</h3>
-    <p class="hint">Nhập tên tiếng Anh và số điện thoại có mã quốc gia (ví dụ +84...). Sau khi lưu, hồ sơ sẽ xuất hiện trong danh sách nhân viên trên trình duyệt này.</p>
-    <div class="controls">
-      <div><label for="newStaffName">Tên nhân viên (English)</label><input id="newStaffName" type="text" placeholder="Ví dụ: An" autocomplete="name"></div>
-      <div><label for="newStaffPhone">Điện thoại / WhatsApp</label><input id="newStaffPhone" type="tel" placeholder="+84..." autocomplete="tel"></div>
-      <button type="button" id="saveStaffProfile">Lưu nhân viên mới</button>
-    </div>
-    <p id="staffProfileMessage" class="hint" aria-live="polite">Hồ sơ tự đăng ký được lưu trên trình duyệt hiện tại.</p>
-  </div>
+  <p class="hint">Danh sách cố định gồm đúng 11 nhân viên. Không tự thêm tên ngoài danh sách. Số WhatsApp chỉ tự điền khi đã có thông tin được xác nhận.</p>
 </section>
 <div id="summary" class="panel hidden"></div>
 <div id="results"></div>
@@ -175,61 +165,34 @@ th{background:#eaf2ee;color:#214b43}
 
 const $ = id => document.getElementById(id);
 const STAFF_PROFILES = {
-  "Nhan": { name: "Nhan", phone: "+84 867802129" },
-  "Hung": { name: "Hung", phone: "+84 816226474" },
-  "David": { name: "David", phone: "+84 901113978" }
+  "Nhân": { name: "Nhân", phone: "+84 867802129" },
+  "Khánh": { name: "Khánh", phone: "" },
+  "Khoa": { name: "Khoa", phone: "" },
+  "Diệp": { name: "Diệp", phone: "" },
+  "Quang": { name: "Quang", phone: "" },
+  "Hưng": { name: "Hưng", phone: "+84 816226474" },
+  "Dương": { name: "Dương", phone: "" },
+  "Hùng": { name: "Hùng", phone: "" },
+  "An": { name: "An", phone: "" },
+  "Bình": { name: "Bình", phone: "" },
+  "Nhật Quang": { name: "Nhật Quang", phone: "" }
 };
-const STAFF_PROFILE_STORAGE_KEY = "fasttrack_sgn_staff_profiles_v1";
-function readCustomStaffProfiles(){
-  try{
-    const saved=JSON.parse(localStorage.getItem(STAFF_PROFILE_STORAGE_KEY)||"[]");
-    return Array.isArray(saved)?saved.filter(x=>x&&typeof x.name==="string"&&typeof x.phone==="string"):[];
-  }catch(e){return [];}
-}
-function allStaffProfiles(){
-  const profiles={...STAFF_PROFILES};
-  readCustomStaffProfiles().forEach(p=>{profiles[p.name]=p;});
-  return profiles;
-}
+function allStaffProfiles(){ return STAFF_PROFILES; }
 function renderStaffProfileOptions(){
-  const list=$("staffProfiles"), profiles=allStaffProfiles();
-  list.innerHTML=Object.values(profiles).sort((a,b)=>a.name.localeCompare(b.name)).map(p=>'<option value="'+esc(p.name)+'"></option>').join("");
+  const list=$("staffProfiles");
+  list.innerHTML=Object.keys(STAFF_PROFILES).map(name=>'<option value="'+esc(name)+'"></option>').join("");
 }
 function applyStaffProfile(){
   const selected=$("staffProfile").value.trim();
-  const profiles=allStaffProfiles();
-  const key=Object.keys(profiles).find(n=>n.toLowerCase()===selected.toLowerCase());
-  const profile=key?profiles[key]:null;
+  const key=Object.keys(STAFF_PROFILES).find(n=>n.toLowerCase()===selected.toLowerCase());
+  const profile=key?STAFF_PROFILES[key]:null;
   if(!profile){$("staff").value="";$("phone").value="";return;}
   $("staffProfile").value=profile.name;
   $("staff").value=profile.name;
   $("phone").value=profile.phone;
 }
-function saveNewStaffProfile(){
-  const name=$("newStaffName").value.trim().replace(/\s+/g," ");
-  const phone=$("newStaffPhone").value.trim();
-  const message=$("staffProfileMessage");
-  if(!name||!phone){message.textContent="Vui lòng nhập đầy đủ tên và số WhatsApp.";return;}
-  if(!/^\+?[\d\s().-]{8,20}$/.test(phone)||phone.replace(/\D/g,"").length<8){message.textContent="Số điện thoại chưa hợp lệ. Hãy nhập cả mã quốc gia, ví dụ +84...";return;}
-  const builtin=Object.keys(STAFF_PROFILES).find(n=>n.toLowerCase()===name.toLowerCase());
-  if(builtin){message.textContent="Tên này đã có trong danh sách mặc định. Hãy chọn tên đó ở phía trên.";return;}
-  const profiles=readCustomStaffProfiles();
-  const existing=profiles.findIndex(p=>p.name.toLowerCase()===name.toLowerCase());
-  const profile={name,phone};
-  if(existing>=0)profiles[existing]=profile;else profiles.push(profile);
-  try{
-    localStorage.setItem(STAFF_PROFILE_STORAGE_KEY,JSON.stringify(profiles));
-    renderStaffProfileOptions();
-    $("staffProfile").value=name;
-    applyStaffProfile();
-    $("newStaffName").value="";
-    $("newStaffPhone").value="";
-    message.textContent="Đã lưu hồ sơ "+name+". Tên và số WhatsApp đã được tự điền; lần sau có thể chọn tên trong danh sách.";
-  }catch(e){message.textContent="Không lưu được. Trình duyệt có thể đang chặn bộ nhớ trang web.";}
-}
 $("staffProfile").addEventListener("input",applyStaffProfile);
 $("staffProfile").addEventListener("change",applyStaffProfile);
-$("saveStaffProfile").addEventListener("click",saveNewStaffProfile);
 renderStaffProfileOptions();
 applyStaffProfile();
 const WELCOME = "https://drive.google.com/file/d/1oz2djqDYCy15yjs3OCRJOfWDf104PjC2/view?usp=sharing";
@@ -265,9 +228,16 @@ function normalizeAgency(s){
   return clean(s);
 }
 function getValueAfter(lines, label){
+  const escaped=label.replace(/[.*+?^${}()|[\]\\]/g,"\\function getValueAfter(lines, label){
   const i=lines.findIndex(x=>x.toLowerCase().includes(label.toLowerCase()));
   if(i<0) return "";
   const same=lines[i].split(/[:：]/).slice(1).join(":").trim();
+  return same || lines[i+1] || "";
+}");
+  const i=lines.findIndex(x=>new RegExp("^\\s*"+escaped+"\\s*(?:[:：].*)?$","i").test(x));
+  if(i<0) return "";
+  const line=lines[i];
+  const same=line.replace(new RegExp("^\\s*"+escaped+"\\s*[:：]?\\s*","i"),"").trim();
   return same || lines[i+1] || "";
 }
 function extractEmail(s){const m=s.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);return m?m[0]:""}
@@ -342,11 +312,9 @@ function parseChunk(ls){
  b.service=getValueAfter(ls,"Dịch vụ chính")||ls.find(x=>/(đón khách|tiễn khách|arrival|departure)/i.test(x)&&/(quốc tế|quốc nội|international|domestic)/i.test(x))||"";
  const dm=ls.map(dateMatch).find(Boolean);
  if(dm){b.date=`${String(dm[1]).padStart(2,"0")}/${String(dm[2]).padStart(2,"0")}/${dm[3]}`;b.time=`${String(dm[4]).padStart(2,"0")}:${dm[5]}`;}
+ // Chỉ đọc đúng trường "NV Nhận việc". Không suy đoán từ ghi chú nhân viên,
+ // ghi chú booking, tên khách hoặc dòng SGN/số điện thoại.
  b.staffAssign=getValueAfter(ls,"NV Nhận việc");
- if(!b.staffAssign){
-   const assignedLine=ls.find(x=>/^SGN(?:\s*[-–])?\s+.+\d{8,}/i.test(x));
-   if(assignedLine)b.staffAssign=assignedLine;
- }
  b.status=getValueAfter(ls,"Trạng thái")||ls.find(x=>/đã xác nhận|chờ xác nhận|cancel|hủy/i.test(x))||"";
  b.email=getValueAfter(ls,"Email khách");
  b.phone=getValueAfter(ls,"SĐT liên hệ");
