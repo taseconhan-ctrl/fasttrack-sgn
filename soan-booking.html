@@ -141,7 +141,7 @@ th{background:#eaf2ee;color:#214b43}
     <button id="run">Phân tích & tạo kết quả</button>
     <button class="secondary" id="clear">Xóa dữ liệu</button>
   </div>
-  <p class="hint">Mặc định chỉ lấy booking Đã xác nhận và NV Nhận việc trống / “_”. Nếu chỉ dán một booking chi tiết có tên nhân viên, bật tùy chọn xử lý tất cả.</p>
+  <p class="hint">Mặc định chỉ lấy booking Đã xác nhận và NV Nhận việc trống / “_”. Booking có bất kỳ nhân viên nhận việc nào (ví dụ SGN - Nhân, SGN - Khanh) luôn bị bỏ qua, kể cả khi bật xử lý tất cả.</p>
   <div id="status" class="status">Chưa có dữ liệu được xử lý.</div>
 </section>
 
@@ -609,10 +609,8 @@ async function copyText(s){
 function toast(msg,good=true){const el=$("status");el.textContent=msg;el.className="status "+(good?"good":"warn")}
 function skippedReasons(b,all){
  const reasons=[];
- if(!all){
-  if(!b.confirmed)reasons.push("Trạng thái booking không phải “Đã xác nhận”");
-  if(!b.unassigned)reasons.push("Đã có nhân viên nhận việc: "+(b.staffAssign||"không rõ"));
- }
+ if(!b.unassigned)reasons.push("Đã có nhân viên nhận việc: "+(b.staffAssign||"không rõ"));
+ if(!all && !b.confirmed)reasons.push("Trạng thái booking không phải “Đã xác nhận”");
  return [...new Set(reasons)];
 }
 function missingInfo(b){
@@ -631,7 +629,7 @@ function renderSkippedBookings(items,all){
   const reason=skippedReasons(b,all),missing=missingInfo(b);
   return `<article class="booking"><div class="topline"><h3>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.dir||"Chưa xác định loại")}</h3><span class="pill bad">ĐÃ BỎ QUA</span></div><div class="meta"><span class="pill">${esc(b.flight||"Chưa có flight")}</span><span class="pill">${esc(b.date||"")} ${esc(b.time||"")}</span><span class="pill">${b.pax||b.names.length||0} khách</span></div><div class="grid"><div class="kv"><small>Khách</small><b>${esc(b.names.join(", "))}</b></div><div class="kv"><small>Nhân viên nhận việc</small><b>${esc(b.staffAssign||"Trống")}</b></div><div class="kv"><small>Trạng thái</small><b>${esc(b.status||"")}</b></div></div><div class="status warn"><b>Lý do bỏ qua:</b><ul>${reason.map(x=>"<li>"+esc(x)+"</li>").join("")||"<li>Booking được đưa vào đây theo bộ lọc hiện tại.</li>"}</ul>${missing.length?`<p><b>Thông tin còn thiếu (nếu có):</b> ${missing.map(esc).join(", ")}. Các trường này sẽ để trống khi soạn.</p>`:""}</div></article>`;
  }).join("");
- return `<section class="panel"><div class="topline"><h2>BOOKING BỊ BỎ QUA (${items.length})</h2><span class="pill bad">Có lý do cho từng booking</span></div><p class="hint">Chỉ ghi lý do theo bộ lọc: booking chưa xác nhận hoặc đã có nhân viên nhận việc. Thiếu trường dữ liệu không ngăn việc soạn; trường thiếu sẽ để trống.</p><div class="controls"><button type="button" id="composeSkipped">Soạn tất cả booking đã bỏ qua (${items.length})</button></div><p class="hint">Nút này luôn đưa toàn bộ booking bị bỏ qua vào danh sách soạn, kể cả khi thiếu mã order, chuyến bay, ngày giờ, tên khách hoặc chưa xác định được ĐÓN/TIỄN.</p>${rows}</section>`;
+ return `<section class="panel"><div class="topline"><h2>BOOKING BỊ BỎ QUA (${items.length})</h2><span class="pill bad">Có lý do cho từng booking</span></div><p class="hint">Chỉ ghi lý do theo bộ lọc: booking chưa xác nhận hoặc đã có nhân viên nhận việc. Thiếu trường dữ liệu không ngăn việc soạn; trường thiếu sẽ để trống.</p><div class="controls"><button type="button" id="composeSkipped">Soạn tất cả booking đã bỏ qua (${items.length})</button></div><p class="hint">Nút này chỉ đưa booking chưa xác nhận nhưng vẫn chưa có nhân viên nhận việc vào danh sách soạn. Booking đã có nhân viên nhận việc luôn bị loại khỏi thao tác này.</p>${rows}</section>`;
 }
 function run(){
  const raw=$("raw").value;
@@ -640,7 +638,7 @@ function run(){
  const staff=$("staff").value.trim()||"Nhan",phone=$("phone").value.trim()||"+84 867802129",hotline=$("hotline").value.trim()||"+84 866624188";
  const all=$("allBookings").checked;
  const made=parsed.map(b=>buildOne(b,staff,phone,hotline));
- const kept=made.filter(b=>all || (b.confirmed&&b.unassigned));
+ const kept=made.filter(b=>b.unassigned && (all || b.confirmed));
  const skipped=made.filter(b=>!kept.includes(b));
  $("summary").classList.remove("hidden");
  processedBookings=kept;
@@ -669,7 +667,7 @@ document.addEventListener("click",e=>{
  const compose=e.target.closest("#composeSkipped");
  if(compose){
   const existing=new Set(processedBookings.map(b=>b.raw));
-  const drafts=skippedBookingsCache.filter(b=>!existing.has(b.raw));
+  const drafts=skippedBookingsCache.filter(b=>b.unassigned&&!existing.has(b.raw));
   if(!drafts.length){toast("Không còn booking bị bỏ qua nào để soạn.",false);return;}
   processedBookings=[...processedBookings,...drafts];
   saveReviewItems(drafts);
