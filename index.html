@@ -49,11 +49,12 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 <section class="panel">
   <h2>2. Thông tin nhân viên đang dùng</h2>
   <div class="controls">
-    <div><label for="staff">Tên nhân viên (English)</label><input id="staff" type="text" value="Nhan"></div>
-    <div><label for="phone">Điện thoại / WhatsApp</label><input id="phone" type="tel" value="+84 867802129"></div>
-    <div><label for="hotline">Hotline</label><input id="hotline" type="tel" value="+84 866624188"></div>
+    <div><label for="staffProfile">Tìm và chọn nhân viên</label><input id="staffProfile" type="text" list="staffProfiles" placeholder="Nhập tên nhân viên..." value="Nhan" autocomplete="off"><datalist id="staffProfiles"><option value="Nhan"></option><option value="Hung"></option><option value="David"></option></datalist></div>
+    <div><label for="staff">Tên nhân viên (English)</label><input id="staff" type="text" value="Nhan" readonly></div>
+    <div><label for="phone">Điện thoại / WhatsApp</label><input id="phone" type="tel" value="+84 867802129" readonly></div>
+    <div><label for="hotline">Hotline</label><input id="hotline" type="tel" value="+84 866624188" readonly></div>
   </div>
-  <p class="hint">Có thể sửa các trường này trước khi bấm phân tích. Công cụ dùng các giá trị hiện tại để tạo toàn bộ BODY và link liên hệ.</p>
+  <p class="hint">Chọn hoặc nhập tên trong danh sách để tự điền tên và số WhatsApp. Hotline được dùng chung. Muốn thêm nhân viên mới, gửi tên và số điện thoại để cập nhật danh sách chung trên website.</p>
 </section>
 
 
@@ -65,6 +66,21 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 <script>
 "use strict";
 const $ = id => document.getElementById(id);
+const STAFF_PROFILES = {
+  "Nhan": { name: "Nhan", phone: "+84 867802129" },
+  "Hung": { name: "Hung", phone: "+84 816226474" },
+  "David": { name: "David", phone: "+84 901113978" }
+};
+function applyStaffProfile(){
+  const selected = $("staffProfile").value.trim();
+  const profile = STAFF_PROFILES[selected];
+  if(!profile){ $("staff").value=""; $("phone").value=""; return; }
+  $("staff").value=profile.name;
+  $("phone").value=profile.phone;
+}
+$("staffProfile").addEventListener("input",applyStaffProfile);
+$("staffProfile").addEventListener("change",applyStaffProfile);
+applyStaffProfile();
 const WELCOME = "https://drive.google.com/file/d/1oz2djqDYCy15yjs3OCRJOfWDf104PjC2/view?usp=sharing";
 const copyStore = new Map();
 let copySeq = 0;
