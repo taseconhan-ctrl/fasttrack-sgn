@@ -158,7 +158,7 @@ th{background:#eaf2ee;color:#214b43}
 <div id="summary" class="panel hidden"></div>
 <div id="results"></div>
 <div id="skippedBookings"></div>
-<div id="reviews"></div>
+<div id="reviews"></div><section id="savedReviewArchive" class="panel"><h2>PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</h2><p class="hint">Lịch sử lưu trên thiết bị này; xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
 </main>
 <script>
 "use strict";
@@ -528,7 +528,7 @@ function updateBookingContact(index){
  b.warnings=(b.warnings||[]).filter(x=>!x.startsWith("Không chuẩn hóa được số WhatsApp")&&!x.startsWith("Không có email khách"));
  if(phone&&!b.intl)b.warnings.push("Không chuẩn hóa được số WhatsApp; kiểm tra số và quốc gia hộ chiếu");
  if(!email)b.warnings.push("Không có email khách");
- renderFilteredBookings();toast("Đã cập nhật liên hệ cho booking "+(b.order||"này")+" và tạo lại các link phù hợp.");
+ renderFilteredBookings();saveReviewItems([b]);toast("Đã cập nhật liên hệ và lưu lại lịch sử booking.");
 }
 function internalHtml(b){
  const dt=parseDateTime(b.date,b.time);
@@ -548,13 +548,24 @@ function internalHtml(b){
 function parseDateTime(d,t){const m=d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/),n=t.match(/^(\d{2}):(\d{2})$/);if(!m||!n)return null;return new Date(+m[3],+m[2]-1,+m[1],+n[1],+n[2])}
 function fmtDateTime(d){return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`}
 function renderReview(items,dir,title){
- const rows=items.filter(x=>x.dir===dir&&x.sub).map((b,i)=>{
-   const line=`${b.order} | ${b.reviewPhone} | ${b.reviewSubject}`;
-   return `<tr><td>${i+1}</td><td>${esc(b.order)}</td><td>${esc(b.reviewPhone)}</td><td>${esc(b.reviewSubject)}</td><td>${copyButton(line,"Copy dòng")}</td></tr>`;
- });
- const all=items.filter(x=>x.dir===dir&&x.sub).map(x=>`${x.order} | ${x.reviewPhone} | ${x.reviewSubject}`).join("\n");
- return `<section class="review"><div class="topline"><h2>${title}</h2>${copyButton(all,"Copy tất cả"," ")}</div><div class="tablewrap"><table><thead><tr><th>#</th><th>Mã order</th><th>Số điện thoại</th><th>Subject (không lặp mã order)</th><th></th></tr></thead><tbody>${rows.join("")||`<tr><td colspan="5" class="muted">Không có booking.</td></tr>`}</tbody></table></div></section>`;
+ const list=items.filter(x=>x.dir===dir&&x.sub);
+ const rows=list.map((x,i)=>{const line=[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",x.reviewSubject].join(" | ");return `<tr><td>${i+1}</td><td>${esc(x.order)}</td><td>${esc(x.reviewPhone)}</td><td>${esc(x.agency||"Chưa rõ agency")}</td><td>${esc(x.reviewSubject)}</td><td>${copyButton(line,"Copy dòng")}</td></tr>`;});
+ const all=list.map(x=>[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",x.reviewSubject].join(" | ")).join("\n");
+ return `<section class="review"><div class="topline"><h2>${title}</h2>${copyButton(all,"Copy tất cả"," ")}</div><div class="tablewrap"><table><thead><tr><th>#</th><th>Mã order</th><th>Số điện thoại</th><th>Agency</th><th>Subject (không lặp mã order)</th><th></th></tr></thead><tbody>${rows.join("")||`<tr><td colspan="6" class="muted">Không có booking.</td></tr>`}</tbody></table></div></section>`;
 }
+const SAVED_REVIEW_KEY="fasttrack_sgn_saved_review_history_v1";
+let savedReviewItems=[];
+function loadSavedReview(){try{const v=JSON.parse(localStorage.getItem(SAVED_REVIEW_KEY)||"[]");savedReviewItems=Array.isArray(v)?v:[];}catch(e){savedReviewItems=[];}}
+function persistSavedReview(){try{localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));}catch(e){toast("Không thể lưu lịch sử: bộ nhớ trình duyệt có thể đã đầy hoặc bị chặn.",false);}}
+function dateToIso(v){const m=String(v||"").match(/^(\d{2})\/(\d{2})\/(\d{4})$/);return m?m[3]+"-"+m[2]+"-"+m[1]:"";}
+function saveReviewItems(items){loadSavedReview();const map=new Map(savedReviewItems.map(x=>[x.key,x]));items.filter(x=>x.sub&&x.dir&&x.date).forEach(x=>{const key=[x.dir,x.date,x.order||"",x.flight||"",x.names.join(",")].join("|");map.set(key,{...x,key,savedAt:new Date().toISOString()});});savedReviewItems=[...map.values()].sort((a,b)=>dateToIso(b.date).localeCompare(dateToIso(a.date)));persistSavedReview();renderSavedReviewArchive();}
+function renderSavedReviewArchive(){
+ const filter=$("savedDateFilter")?.value||"",filtered=savedReviewItems.filter(x=>!filter||dateToIso(x.date)===filter),groups={};filtered.forEach(x=>{(groups[x.date] ||= []).push(x);});
+ $("savedDailySummary").innerHTML=Object.keys(groups).sort((a,b)=>dateToIso(b).localeCompare(dateToIso(a))).map(d=>{const v=groups[d],arr=v.filter(x=>x.dir==="ARRIVAL").length,dep=v.filter(x=>x.dir==="DEPARTURE").length;return `<div class="kv" style="margin:8px 0"><b>${esc(d)}</b><div class="hint">Tổng ${v.length} booking · ĐÓN: ${arr} · TIỄN: ${dep}</div></div>`;}).join("")||'<p class="muted">Chưa có booking đã lưu trong ngày được chọn.</p>';
+ function table(dir,title){const list=filtered.filter(x=>x.dir===dir&&x.sub),rows=list.map((x,i)=>{const line=[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",x.reviewSubject].join(" | ");return `<tr><td>${i+1}</td><td>${esc(x.date)}</td><td>${esc(x.order)}</td><td>${esc(x.reviewPhone)}</td><td>${esc(x.agency||"Chưa rõ agency")}</td><td>${esc(x.reviewSubject)}</td><td>${copyButton(line,"Copy dòng")} <button type="button" class="mini ghost delete-saved-review" data-saved-key="${esc(x.key)}">Xóa</button></td></tr>`;});const all=list.map(x=>[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",x.reviewSubject].join(" | ")).join("\n");return `<section class="review"><div class="topline"><h3>${title}</h3>${copyButton(all,"Copy tất cả","secondary")}</div><div class="tablewrap"><table><thead><tr><th>#</th><th>Ngày bay</th><th>Mã order</th><th>Số điện thoại</th><th>Agency</th><th>Subject</th><th>Thao tác</th></tr></thead><tbody>${rows.join("")||'<tr><td colspan="7" class="muted">Không có booking.</td></tr>'}</tbody></table></div></section>`;}
+ $("savedReviewTables").innerHTML=table("ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+table("DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
+}
+loadSavedReview();
 function renderFilteredBookings(){
  const select=$("partnerFilter");
  const partner=select?select.value:"__ALL__";
@@ -633,6 +644,7 @@ function run(){
  $("summary").classList.remove("hidden");
  processedBookings=kept;
  allBookingsCache=made;
+ saveReviewItems(kept);
  const partners=[...new Set(made.map(x=>x.agency||"Chưa rõ đối tác"))].sort((a,b)=>a.localeCompare(b,"vi"));
  $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?'<p class="hint">Có '+skipped.length+' booking bị loại khỏi kết quả chính; xem bảng BOOKING BỊ BỎ QUA bên dưới để biết lý do từng booking.</p>':""}
  <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm tất cả booking</label><input id="bookingSearch" type="text" placeholder="Tìm mọi booking: mã order / tên / chuyến bay / SĐT / nhân viên..." style="width:min(340px,85vw);max-width:none"><p class="hint">Khi nhập từ khóa, hệ thống tìm trong toàn bộ booking đã dán, gồm cả booking đã có nhân viên nhận việc, chưa xác nhận và booking cũ. Không giới hạn theo điều kiện lọc mặc định.</p></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="__ALL__">Tất cả (${made.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${made.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
@@ -645,8 +657,12 @@ function run(){
  $("status").className="status good";
 }
 $("run").addEventListener("click",run);
+$("savedDateFilter").addEventListener("change",renderSavedReviewArchive);
+$("clearSavedDate").addEventListener("click",()=>{$("savedDateFilter").value="";renderSavedReviewArchive();});
+$("clearSavedArchive").addEventListener("click",()=>{if(!confirm("Xóa toàn bộ lịch sử đã lưu trên thiết bị này?"))return;savedReviewItems=[];persistSavedReview();renderSavedReviewArchive();toast("Đã xóa toàn bộ lịch sử.");});
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("skippedBookings").innerHTML="";processedBookings=[];allBookingsCache=[];skippedBookingsCache=[];$("status").textContent="Đã xóa dữ liệu.";});
 document.addEventListener("click",e=>{
+ const del=e.target.closest(".delete-saved-review");if(del){const key=del.dataset.savedKey;if(!confirm("Xóa booking này khỏi lịch sử?"))return;savedReviewItems=savedReviewItems.filter(x=>x.key!==key);persistSavedReview();renderSavedReviewArchive();toast("Đã xóa booking khỏi lịch sử.");return;}
  const saveContact=e.target.closest(".save-contact");
  if(saveContact){updateBookingContact(Number(saveContact.dataset.contactIndex));return;}
  const compose=e.target.closest("#composeSkipped");
