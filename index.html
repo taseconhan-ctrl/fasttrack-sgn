@@ -138,6 +138,7 @@ const WELCOME = "https://drive.google.com/file/d/1oz2djqDYCy15yjs3OCRJOfWDf104Pj
 const copyStore = new Map();
 let copySeq = 0;
 let processedBookings = [];
+let allBookingsCache = [];
 let skippedBookingsCache = [];
 function copyButton(value,label,cls="mini"){
  const key="copy-"+(++copySeq);
@@ -459,7 +460,10 @@ function renderFilteredBookings(){
  const search=($("bookingSearch")?.value||"").trim().toLocaleLowerCase("vi");
  const dir=$("directionFilter")?.value||"ALL";
  const date=$("dateFilter")?.value||"";
- const shown=processedBookings.filter(x=>{
+ // Khi người dùng tìm kiếm, tra trên toàn bộ booking đã đọc được,
+ // không giới hạn theo trạng thái xác nhận hay nhân viên nhận việc.
+ const source=search?allBookingsCache:processedBookings;
+ const shown=source.filter(x=>{
   const partnerOk=partner==="__ALL__"||(x.agency||"Chưa rõ đối tác")===partner;
   const dirOk=dir==="ALL"||x.dir===dir;
   const dateOk=!date||x.date===date.split("-").reverse().join("/");
@@ -527,9 +531,10 @@ function run(){
  const skipped=made.filter(b=>!kept.includes(b));
  $("summary").classList.remove("hidden");
  processedBookings=kept;
- const partners=[...new Set(kept.map(x=>x.agency||"Chưa rõ đối tác"))].sort((a,b)=>a.localeCompare(b,"vi"));
+ allBookingsCache=made;
+ const partners=[...new Set(made.map(x=>x.agency||"Chưa rõ đối tác"))].sort((a,b)=>a.localeCompare(b,"vi"));
  $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?'<p class="hint">Có '+skipped.length+' booking bị loại khỏi kết quả chính; xem bảng BOOKING BỊ BỎ QUA bên dưới để biết lý do từng booking.</p>':""}
- <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm booking</label><input id="bookingSearch" type="text" placeholder="Mã order / tên / chuyến bay / SĐT" style="width:min(340px,85vw);max-width:none"></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="__ALL__">Tất cả (${kept.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${kept.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
+ <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm tất cả booking</label><input id="bookingSearch" type="text" placeholder="Tìm mọi booking: mã order / tên / chuyến bay / SĐT / nhân viên..." style="width:min(340px,85vw);max-width:none"><p class="hint">Khi nhập từ khóa, hệ thống tìm trong toàn bộ booking đã dán, gồm cả booking đã có nhân viên nhận việc, chưa xác nhận và booking cũ. Không giới hạn theo điều kiện lọc mặc định.</p></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="__ALL__">Tất cả (${made.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${made.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
  renderFilteredBookings();
  skippedBookingsCache=skipped;
  $("skippedBookings").innerHTML=renderSkippedBookings(skipped,all);
@@ -539,7 +544,7 @@ function run(){
  $("status").className="status good";
 }
 $("run").addEventListener("click",run);
-$("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("skippedBookings").innerHTML="";processedBookings=[];skippedBookingsCache=[];$("status").textContent="Đã xóa dữ liệu.";});
+$("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("skippedBookings").innerHTML="";processedBookings=[];allBookingsCache=[];skippedBookingsCache=[];$("status").textContent="Đã xóa dữ liệu.";});
 document.addEventListener("click",e=>{
  const compose=e.target.closest("#composeSkipped");
  if(compose){
