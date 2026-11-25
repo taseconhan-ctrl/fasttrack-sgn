@@ -401,11 +401,11 @@ async function testConnection(){
    const res=await fetch(apiUrl,{method:"GET",headers:{"Authorization":"Bearer "+apiKey}});
    const data=await res.json().catch(()=>({}));
    if(!res.ok) throw new Error(data.error||("HTTP "+res.status));
-   const labels={sharedSecret:"APP_SHARED_SECRET",googleClientId:"Google Client ID",googleClientSecret:"Google Client Secret",googleRefreshToken:"Google Refresh Token",database:"D1 database",gmailOAuth:"Google OAuth",gmailScope:"Gmail send scope",gmailApi:"Gmail API"};
+   const labels={sharedSecret:"APP_SHARED_SECRET",googleClientId:"Google Client ID",googleClientSecret:"Google Client Secret",googleRefreshToken:"Google Refresh Token",database:"D1 database",gmailOAuth:"Google OAuth",gmailScope:"Gmail send scope"};
    const lines=Object.entries(labels).map(([key,label])=>label+": "+(data.checks?.[key]?"OK":"LỖI"));
    out.textContent=lines.join(" · ");
    out.className="hint "+(data.ok?"":"danger");
-   if(data.ok) out.textContent="Kết nối Gmail sẵn sàng. Không có email nào được gửi. "+lines.join(" · ");
+   if(data.ok) out.textContent="OAuth và quyền gửi Gmail đã xác nhận; chưa gửi email thử. "+lines.join(" · ");
  }catch(err){out.textContent="Kiểm tra thất bại: "+err.message;out.className="hint danger";}
 }
 $("testConnection").addEventListener("click",testConnection);
