@@ -101,13 +101,13 @@ footer{padding:18px;border-top:1px solid #dfc47e;background:#102b36;color:#f2dfa
 </style>
 
 <style id="santa-reindeer-animation">
-#santa-reindeer-run{position:fixed;top:76px;right:-430px;z-index:9997;display:flex;align-items:center;gap:8px;white-space:nowrap;pointer-events:none;user-select:none;filter:drop-shadow(0 5px 5px rgba(0,0,0,.28));animation:santa-reindeer-cross 11s cubic-bezier(.35,.05,.65,.95) 0.8s 1 both}
-#santa-reindeer-run .santa-team{font-size:clamp(42px,6vw,70px);line-height:1;letter-spacing:-13px}
+#santa-reindeer-run{position:fixed;top:76px;left:100%;right:auto;z-index:99999;display:flex;align-items:center;gap:8px;white-space:nowrap;pointer-events:none;user-select:none;will-change:transform,opacity;filter:drop-shadow(0 5px 5px rgba(0,0,0,.28));animation:santa-reindeer-cross 10s linear .5s 1 both}
+#santa-reindeer-run .santa-team{font-size:clamp(48px,6vw,72px);line-height:1;letter-spacing:-13px}
 #santa-reindeer-run .santa-sparkles{font-size:20px;opacity:.9;animation:santa-sparkle .65s ease-in-out infinite alternate}
-@keyframes santa-reindeer-cross{0%{transform:translateX(0) translateY(0);opacity:0}5%{opacity:1}18%{transform:translateX(-22vw) translateY(-8px)}36%{transform:translateX(-44vw) translateY(2px)}55%{transform:translateX(-66vw) translateY(-9px)}76%{transform:translateX(-88vw) translateY(1px);opacity:1}95%,100%{transform:translateX(calc(-100vw - 500px)) translateY(-4px);opacity:0}}
+@keyframes santa-reindeer-cross{0%{transform:translateX(0) translateY(0);opacity:0}6%{opacity:1}20%{transform:translateX(-22vw) translateY(-8px)}40%{transform:translateX(-44vw) translateY(2px)}60%{transform:translateX(-66vw) translateY(-9px)}82%{transform:translateX(-88vw) translateY(1px);opacity:1}100%{transform:translateX(calc(-100vw - 100% - 40px)) translateY(-4px);opacity:0}}
 @keyframes santa-sparkle{from{transform:translateY(2px) rotate(-8deg);opacity:.45}to{transform:translateY(-5px) rotate(12deg);opacity:1}}
-@media(max-width:600px){#santa-reindeer-run{top:68px;right:-245px;animation-duration:8s}#santa-reindeer-run .santa-team{font-size:42px;letter-spacing:-10px}#santa-reindeer-run .santa-sparkles{font-size:15px}}
-@media(prefers-reduced-motion:reduce){#santa-reindeer-run{animation-duration:1ms;animation-delay:0s}}
+@media(max-width:600px){#santa-reindeer-run{top:82px;left:100%;right:auto;animation-duration:8s}#santa-reindeer-run .santa-team{font-size:52px;letter-spacing:-11px}#santa-reindeer-run .santa-sparkles{font-size:18px}}
+@media(prefers-reduced-motion:reduce){#santa-reindeer-run{animation-duration:8s;animation-delay:.5s}}
 </style>
 </head>
 <body>
