@@ -382,14 +382,19 @@ $("run").addEventListener("click",run);
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("status").textContent="Đã xóa dữ liệu.";});
 function openAllContacts(kind){
  const field=kind==="wa"?"wa":"gm";
- const urls=[...new Set(lastOutput.map(b=>b[field]).filter(Boolean))];
+ // Keep one URL per booking: two bookings may legitimately share the same contact.
+ const urls=lastOutput.map(b=>b[field]).filter(Boolean);
  if(!urls.length){toast(kind==="wa"?"Không có booking nào có link WhatsApp.":"Không có booking nào có link Gmail.",false);return;}
+ // Open blank tabs synchronously inside the user's click gesture first.
+ // Navigate them only after all popup requests have been made.
+ const tabs=urls.map(()=>window.open("about:blank","_blank"));
  let opened=0;
- for(const url of urls){
-   const tab=window.open(url,"_blank");
-   if(tab) opened++;
- }
- toast(`Đã yêu cầu mở ${opened}/${urls.length} tab ${kind==="wa"?"WhatsApp":"Gmail"}; nếu thiếu tab, hãy cho phép pop-up và bấm lại.`,opened===urls.length);
+ tabs.forEach((tab,i)=>{
+   if(!tab) return;
+   try{tab.location.href=urls[i];opened++;}catch(_){}
+ });
+ const blocked=urls.length-opened;
+ toast(`Đã mở ${opened}/${urls.length} booking bằng tab riêng.${blocked?` Trình duyệt đã chặn ${blocked} tab — hãy cho phép Pop-ups cho website rồi bấm lại.`:""}`,blocked===0);
 }
 document.addEventListener("click",e=>{
  const openBtn=e.target.closest("[data-open-all]");
