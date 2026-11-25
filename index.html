@@ -30,7 +30,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 <body>
 <header>
   <h1>Fast Track SGN – làm nhanh rồi đi nhậu</h1>
-  <p>Xử lý booking ngay trên trình duyệt · Không tải dữ liệu lên máy chủ · Tạo bản nháp liên hệ, không tự gửi tin nhắn/email</p>
+  <p>Xử lý booking trên trình duyệt · Có thể gửi qua backend riêng sau khi cấu hình và xác nhận</p>
 </header>
 <main>
 <section class="panel">
@@ -56,7 +56,19 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
   <p class="hint">Có thể sửa các trường này trước khi bấm phân tích. Công cụ dùng các giá trị hiện tại để tạo toàn bộ BODY và link liên hệ.</p>
 </section>
 
-<div id="summary" class="panel hidden"></div>
+
+<section class="panel" id="sendSettings">
+  <h2>3. Kết nối gửi tự động (thiết lập một lần trên trình duyệt)</h2>
+  <div class="grid">
+    <div><label for="apiUrl">Cloudflare Worker URL</label><input id="apiUrl" type="text" placeholder="https://fasttrack-sgn-api.<subdomain>.workers.dev" style="max-width:100%;width:100%"></div>
+    <div><label for="apiKey">Mã truy cập riêng</label><input id="apiKey" type="password" placeholder="Nhập APP_SHARED_SECRET" style="max-width:100%;width:100%"></div>
+    <div><label for="waTemplate">Tên mẫu WhatsApp đã được Meta duyệt</label><input id="waTemplate" type="text" placeholder="Ví dụ: fasttrack_booking_notice" style="max-width:100%;width:100%"></div>
+  </div>
+  <div class="controls"><input id="waWindowOpen" type="checkbox"><label for="waWindowOpen">Khách đã nhắn cho doanh nghiệp trong 24 giờ gần nhất (được phép gửi nội dung tự do)</label></div>
+  <p class="hint">Không lưu mã truy cập vào website hoặc GitHub. Mã chỉ nằm trong phiên trình duyệt hiện tại. Nếu ngoài cửa sổ 24 giờ, cần mẫu tin WhatsApp đã được Meta phê duyệt. Chỉ bấm gửi sau khi kiểm tra đúng khách và nội dung.</p>
+  <div class="status warn">Chưa kết nối backend. Các nút gửi chỉ hoạt động sau khi triển khai Cloudflare Worker và nhập URL/mã truy cập.</div>
+</section>
+\n<div id="summary" class="panel hidden"></div>
 <div id="results"></div>
 <div id="reviews"></div>
 </main>
@@ -312,7 +324,7 @@ function cardHtml(b,i){
  ${block("SUBJECT",b.sub||"Không đủ dữ liệu tạo Subject")}
  ${b.en?block("BODY TIẾNG ANH",b.en):""}
  ${b.vi?block("BODY TIẾNG VIỆT",b.vi):""}
- <div class="actions">${copyButton(b.sub||"","Copy Subject")} ${copyButton(b.en||"","Copy Body EN","mini secondary")}${b.vi?` ${copyButton(b.vi,"Copy Body VI","mini secondary")}`:""}</div>
+ <div class="actions">${copyButton(b.sub||"","Copy Subject")} ${copyButton(b.en||"","Copy Body EN","mini secondary")} ${sendButtons}${b.vi?` ${copyButton(b.vi,"Copy Body VI","mini secondary")}`:""}</div>
  <h3>LIÊN HỆ</h3>${links}${internal}${notes}
  </article>`;
 }
