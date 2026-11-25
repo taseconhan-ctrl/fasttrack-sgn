@@ -98,6 +98,113 @@ footer{padding:18px;border-top:1px solid #dfc47e;background:#102b36;color:#f2dfa
  .item:after{color:#b78d42!important;font-size:21px!important;opacity:.95!important}
  footer{background:linear-gradient(90deg,#10233f,#155647,#792d3a)!important;color:#ffedc2!important;border-top:3px solid #d7b45f!important}
 }
+
+/* Unified SGN operations UI — clean, readable, responsive */
+:root{
+ --ui-ink:#172b3a;--ui-muted:#647586;--ui-green:#17634f;--ui-green-dark:#10483d;
+ --ui-gold:#c7a45b;--ui-line:#dce6e1;--ui-surface:#ffffff;--ui-bg:#f2f6f4;
+ --ui-shadow:0 10px 28px rgba(19,55,45,.08);--ui-radius:18px;
+}
+html{scroll-behavior:smooth;background:var(--ui-bg)}
+body{
+ color:var(--ui-ink)!important;
+ background:radial-gradient(ellipse at 10% 0%,rgba(210,231,220,.7),transparent 34%),
+ radial-gradient(ellipse at 95% 12%,rgba(245,229,199,.45),transparent 28%),
+ linear-gradient(180deg,#f3f7f5 0%,#f8f9f6 52%,#eef4f1 100%)!important;
+ font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif!important;
+}
+header{
+ position:relative;isolation:isolate;
+ background:linear-gradient(112deg,#10253b 0%,#155448 62%,#234b45 100%)!important;
+ border-bottom:4px solid var(--ui-gold)!important;
+ box-shadow:0 8px 26px rgba(13,43,39,.16)!important;
+}
+header h1,.brand{letter-spacing:.7px!important;font-weight:800!important}
+header p,.sub{color:#e1ece5!important}
+main{padding-bottom:52px!important}
+.panel,.booking,.review{
+ border:1px solid var(--ui-line)!important;border-radius:var(--ui-radius)!important;
+ background:rgba(255,255,255,.97)!important;box-shadow:var(--ui-shadow)!important;
+}
+.panel:before{display:none!important;content:none!important}
+.panel h2,.booking h2,.review h2{color:#174b40!important;font-weight:780!important;letter-spacing:.1px}
+h2{line-height:1.35}
+label{color:#314b4a;font-weight:700!important}
+input:not([type=checkbox]):not([type=radio]),select,textarea{
+ border:1px solid #cbd9d2!important;border-radius:11px!important;
+ background:#fff!important;color:#203641!important;
+ transition:border-color .16s ease,box-shadow .16s ease,background .16s ease;
+}
+input:not([type=checkbox]):not([type=radio]),select{min-height:42px}
+textarea{line-height:1.6!important}
+input:focus,select:focus,textarea:focus{
+ outline:none!important;border-color:#31836a!important;
+ box-shadow:0 0 0 3px rgba(49,131,106,.14)!important;
+}
+button,.linkbtn,.back{
+ border-radius:11px!important;font-weight:750!important;letter-spacing:.1px;
+ transition:transform .16s ease,box-shadow .16s ease,filter .16s ease;
+}
+button:not(.secondary):not(.ghost),.linkbtn:not(.secondary),.back{
+ background:linear-gradient(135deg,#17634f,#21836a)!important;
+ color:#fff!important;border:1px solid #17634f!important;
+ box-shadow:0 4px 11px rgba(23,99,79,.16)!important;
+}
+button.secondary,.linkbtn.secondary{
+ background:#edf3f0!important;color:#294a40!important;border:1px solid #d6e2dc!important;
+}
+button.ghost{background:#fff!important;color:#315247!important;border:1px solid #d6e2dc!important}
+button:hover:not(:disabled),.linkbtn:hover,.back:hover{
+ transform:translateY(-1px);filter:brightness(1.035);
+ box-shadow:0 7px 16px rgba(23,75,62,.15)!important;
+}
+button:disabled{transform:none;box-shadow:none!important}
+.status{border:1px solid #dce8df!important;border-radius:12px!important;background:#f0f7f2!important;color:#315b49!important}
+.status.good{background:#eaf7ef!important;color:#17613f!important}
+.status.warn{background:#fff7e7!important;color:#805c19!important}
+.pill,.sectiontag{border-radius:999px!important;font-weight:750!important}
+.pill{padding:5px 10px!important}
+.kv{border:1px solid #e3ebe6!important;border-radius:12px!important;background:#f7faf8!important}
+pre{border:1px solid #e1e9e4!important;border-radius:12px!important;background:#f7faf8!important;line-height:1.65!important}
+.tablewrap{border:1px solid #dce6e1!important;border-radius:13px!important;box-shadow:0 5px 18px rgba(20,56,45,.05)!important}
+table{border-collapse:separate!important;border-spacing:0!important}
+th{background:#eaf2ed!important;color:#244b40!important;font-weight:800!important}
+th:first-child{border-top-left-radius:7px}th:last-child{border-top-right-radius:7px}
+td,th{border-bottom:1px solid #e5ece8!important}
+tbody tr:hover{background:#f4faf6!important}
+.hint,.muted{color:var(--ui-muted)!important;line-height:1.55}
+.intro{
+ border:1px solid #e4d5ad!important;border-top:4px solid var(--ui-green)!important;
+ border-radius:22px!important;background:linear-gradient(125deg,#fff 0%,#fffdf7 58%,#eef6f0 100%)!important;
+ box-shadow:0 14px 34px rgba(20,58,47,.09)!important;
+}
+.intro:before,.intro:after{opacity:.35!important}
+.item{
+ border:1px solid #dce6df!important;border-top:4px solid var(--ui-green)!important;
+ border-radius:20px!important;background:linear-gradient(145deg,#fff 0%,#fff 75%,#f1f7f3 100%)!important;
+ box-shadow:0 12px 30px rgba(19,55,45,.08)!important;
+ transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease!important;
+}
+.item:nth-child(2){border-top-color:#b64b52!important;background:linear-gradient(145deg,#fff 0%,#fff 75%,#fbf1ef 100%)!important}
+.item:hover{transform:translateY(-3px)!important;box-shadow:0 18px 36px rgba(19,55,45,.13)!important}
+.item h3{font-weight:800!important}
+.icon{box-shadow:inset 0 0 0 1px #dce6df!important}
+.go{font-weight:800!important}
+footer{background:#102b36!important;color:#e9dfc2!important;border-top:2px solid var(--ui-gold)!important}
+a:focus-visible,button:focus-visible{outline:3px solid #d6b45f!important;outline-offset:3px!important}
+@media(max-width:700px){
+ header{padding-left:14px!important;padding-right:14px!important}
+ main{padding-left:11px!important;padding-right:11px!important}
+ .panel,.booking,.review{border-radius:14px!important;box-shadow:0 6px 18px rgba(19,55,45,.07)!important}
+ .controls{gap:10px!important}
+ button,.linkbtn,.back{min-height:43px}
+ .tablewrap{border-radius:10px!important}
+ .item{border-radius:16px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
+}
+
 </style>
 
 <style id="santa-reindeer-animation">
