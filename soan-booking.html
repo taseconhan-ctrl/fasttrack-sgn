@@ -496,7 +496,6 @@ function renderFilteredBookings(){
   return partnerOk&&dirOk&&dateOk&&(!search||hay.includes(search));
  });
  $("results").innerHTML=shown.map((b,i)=>cardHtml(b,i,allBookingsCache.indexOf(b))).join("")||`<section class="panel">Không có booking thuộc đối tác này.</section>`;
- renderTicketQrs(shown);
  $("reviews").innerHTML=renderReview(shown,"ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+renderReview(shown,"DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
  const count=$("filterCount");
  if(count) count.textContent=`Đang hiển thị ${shown.length}/${processedBookings.length} booking`;
