@@ -156,52 +156,48 @@ function parseChunk(ls){
  const raw=ls.join("\n");
  const b={raw,order:"",flight:"",service:"",date:"",time:"",names:[],pax:0,staffAssign:"",status:"",agency:"",email:"",phone:"",country:"",tickets:[],notes:""};
  b.order=ls.find(isOrder)||"";
- b.service=ls.find(x=>/(đón khách|tiễn khách|arrival|departure)/i.test(x)&&/(quốc tế|quốc nội|international|domestic)/i.test(x))||"";
+ // Lấy dữ liệu theo nhãn thay vì giả định thứ tự trường trong trang booking.
+ b.flight=getValueAfter(ls,"Số hiệu chuyến bay");
+ b.service=getValueAfter(ls,"Dịch vụ chính")||ls.find(x=>/(đón khách|tiễn khách|arrival|departure)/i.test(x)&&/(quốc tế|quốc nội|international|domestic)/i.test(x))||"";
  const dm=ls.map(dateMatch).find(Boolean);
- if(dm){b.date=`${String(dm[1]).padStart(2,"0")}/${String(dm[2]).padStart(2,"0")}/${dm[3]}`;b.time=`${String(dm[4]).padStart(2,"0")}:${dm[5]}`}
- if(b.service){
-   const si=ls.indexOf(b.service);
-   if(si>0) b.flight=ls[si-1];
-   const di=ls.findIndex(x=>dateMatch(x));
-   if(di>=0 && ls[di+1]) b.names=splitGuestNames(ls[di+1]);
-   if(di>=0 && ls[di+2]) b.staffAssign=ls[di+2];
- } else {
-   b.flight=getValueAfter(ls,"Số hiệu chuyến bay");
-   b.service=getValueAfter(ls,"Dịch vụ chính");
-   const nameIdx=ls.findIndex(x=>/^Họ và tên$/i.test(x));
-   if(nameIdx>=0){
-     for(let i=nameIdx+1;i<ls.length;i++){
-       if(/^(Số vé|Trẻ em|Hành lý|Ghi chú|Tài liệu|Chi phí|Số tiền|Ngày tạo|No rows)$/i.test(ls[i])) break;
-       if(ls[i] && !/^(Không|Có)$/i.test(ls[i])) b.names.push(ls[i]);
-     }
-   } else {
-     const di=ls.findIndex(x=>dateMatch(x));
-     if(di>=0 && ls[di+1]) b.names=splitGuestNames(ls[di+1]);
-     if(di>=0 && ls[di+2]) b.staffAssign=ls[di+2];
+ if(dm){b.date=`${String(dm[1]).padStart(2,"0")}/${String(dm[2]).padStart(2,"0")}/${dm[3]}`;b.time=`${String(dm[4]).padStart(2,"0")}:${dm[5]}`;}
+ b.staffAssign=getValueAfter(ls,"NV Nhận việc");
+ b.status=getValueAfter(ls,"Trạng thái")||ls.find(x=>/đã xác nhận|chờ xác nhận|cancel|hủy/i.test(x))||"";
+ b.email=getValueAfter(ls,"Email khách");
+ b.phone=getValueAfter(ls,"SĐT liên hệ");
+ b.agency=getValueAfter(ls,"Agency")||"";
+ if(!b.agency){b.agency=ls.find(x=>/KLOOK|LINKCARE|VIETTEL|URBOX|TÔ HÒA|TÔ QUÀ|Ctrip|Dragon Pass|Trip\.com|KKday|UOB/i.test(x))||"";}
+ // Trang chi tiết hiển thị tiêu đề các cột trước, sau đó mới đến dữ liệu từng khách.
+ const nameIdx=ls.findIndex(x=>/^Họ và tên$/i.test(x));
+ if(nameIdx>=0){
+   const headers=/^(Số vé|Trẻ em|Hành lý kí gửi|Hành lý ký gửi|Ghi chú)$/i;
+   let dataStart=nameIdx+1;
+   while(dataStart<ls.length && headers.test(ls[dataStart])) dataStart++;
+   for(let i=dataStart;i<ls.length;i++){
+     const x=clean(ls[i]);
+     if(!x)continue;
+     if(/^(Ảnh thực hiện|Cần ít nhất|Tài liệu đính kèm|Chi phí phát sinh|Số tiền|Ngày tạo|No rows|Ghi chú nhân viên)$/i.test(x))break;
+     if(/^(Không|Có|Yes|No)$/i.test(x))continue;
+     if(/^[A-Z0-9-]{6,}$/i.test(x))continue;
+     if(/^(\d{1,2})$/.test(x))continue;
+     if(/^(Thông tin chuyến bay|Khách hàng)$/i.test(x))continue;
+     if(/^[A-Z]{2,3}\d{2,4}$/i.test(x))continue;
+     b.names.push(x);
+     // Một booking có thể có nhiều khách; dừng ở phần nội dung sau bảng khách.
+     if(b.names.length>=20)break;
    }
-   b.staffAssign=getValueAfter(ls,"NV Nhận việc")||b.staffAssign;
-   b.status=getValueAfter(ls,"Trạng thái");
-   b.email=getValueAfter(ls,"Email khách");
-   b.phone=getValueAfter(ls,"SĐT liên hệ");
- }
- if(!b.status) b.status=ls.find(x=>/đã xác nhận|chờ xác nhận|cancel|hủy/i.test(x))||"";
- if(!b.agency){
-   const a=ls.find(x=>/KLOOK|LINKCARE|VIETTEL|URBOX|TÔ HÒA|TÔ QUÀ|Ctrip|Dragon Pass|Trip\.com|KKday|UOB/i.test(x));
-   b.agency=a||"";
+ } else {
+   const di=ls.findIndex(x=>dateMatch(x));
+   if(di>=0 && ls[di+1] && !/^SĐT|^Email/i.test(ls[di+1])) b.names=splitGuestNames(ls[di+1]);
  }
  b.email=b.email.includes("@")?b.email:extractEmail(raw);
- b.phone=(b.phone && /\d{7}/.test(b.phone))?b.phone:extractPhone(raw);
+ b.phone=(b.phone&&/\d{7}/.test(b.phone))?b.phone:extractPhone(raw);
  b.country=countryFrom(raw);
  const paxLine=ls.find(x=>/^\d{1,2}$/.test(x));
  b.pax=paxLine?Number(paxLine):(b.names.length||1);
- if(!b.names.length && b.pax===1){
-   const ix=ls.findIndex(x=>dateMatch(x));
-   if(ix>=0 && ls[ix+1] && !dateMatch(ls[ix+1])) b.names=splitGuestNames(ls[ix+1]);
- }
  b.pax=Math.max(b.pax,b.names.length);
- b.tickets=[];
  const ti=ls.findIndex(x=>/^Số vé$/i.test(x));
- if(ti>=0){for(let j=0;j<b.names.length;j++) if(ls[ti+1+j]) b.tickets.push(ls[ti+1+j]);}
+ if(ti>=0){for(let j=0;j<b.names.length;j++){const ticket=ls[ti+1+j];if(ticket&&/^[A-Z0-9-]{5,}$/i.test(ticket))b.tickets.push(ticket);}}
  b.notes=ls.filter(x=>/special requirements|ghi chú/i.test(x)).join(" ");
  return b;
 }
