@@ -313,6 +313,7 @@ function buildOne(b,staff,phone,hotline){
 function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:`<span class="muted">Không tạo được – thiếu dữ liệu phù hợp</span>`}
 function block(title,content){return `<h3>${title}</h3><pre>${esc(content)}</pre>`}
 function cardHtml(b,i){
+ const sendButtons=`<button type="button" class="mini" data-send-channel="gmail" data-booking-index="${i}" ${b.gm?"":"disabled"}>Gửi Gmail</button> <button type="button" class="mini" data-send-channel="whatsapp" data-booking-index="${i}" ${b.wa?"":"disabled"}>Gửi WhatsApp</button>`;
  const badges=`<span class="pill">${b.dir||"CHƯA RÕ LOẠI"}</span><span class="pill">${esc(b.agency||"Chưa rõ agency")}</span><span class="pill ${b.confirmed&&b.unassigned?"good":"warn"}">${b.confirmed?(b.unassigned?"Đủ điều kiện":"Đã phân công"):"Chưa xác nhận"}</span>`;
  const links=`<div class="actions">${linkHtml(b.wa,"WhatsApp")}${linkHtml(b.gm,"Gmail")}${linkHtml(b.zalo,"Zalo")}</div>`;
  const internal=isDomestic(b)?internalHtml(b):"";
