@@ -65,7 +65,6 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 "use strict";
 const $ = id => document.getElementById(id);
 const WELCOME = "https://drive.google.com/file/d/1oz2djqDYCy15yjs3OCRJOfWDf104PjC2/view?usp=sharing";
-let lastOutput = [];
 const copyStore = new Map();
 let copySeq = 0;
 function copyButton(value,label,cls="mini"){
@@ -370,9 +369,8 @@ function run(){
  const made=parsed.map(b=>buildOne(b,staff,phone,hotline));
  const kept=made.filter(b=>b.sub && (all || (b.confirmed&&b.unassigned)));
  const skipped=made.filter(b=>!kept.includes(b));
- lastOutput=kept;
  $("summary").classList.remove("hidden");
- $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div><div class="actions" style="margin-top:14px"><button type="button" data-open-all="wa">Mở tất cả WhatsApp (${kept.filter(x=>x.wa).length})</button><button type="button" class="secondary" data-open-all="gmail">Mở tất cả Gmail (${kept.filter(x=>x.gm).length})</button></div><p class="hint">Mỗi booking sẽ mở một tab riêng. Nếu trình duyệt chặn cửa sổ bật lên, hãy cho phép Pop-ups/redirects đối với trang này rồi bấm lại.</p>${skipped.length?`<p class="hint">Bỏ qua: ${skipped.map(x=>`${esc(x.order||"Không rõ mã")} (${esc(x.staffAssign||x.status||"không đạt bộ lọc")})`).join("; ")}</p>`:""}`;
+ $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?`<p class="hint">Bỏ qua: ${skipped.map(x=>`${esc(x.order||"Không rõ mã")} (${esc(x.staffAssign||x.status||"không đạt bộ lọc")})`).join("; ")}</p>`:""}`;
  $("results").innerHTML=kept.map(cardHtml).join("")||`<section class="panel">Không có booking nào đủ điều kiện tạo Subject. Kiểm tra định dạng dữ liệu hoặc bật xử lý tất cả.</section>`;
  $("reviews").innerHTML=renderReview(kept,"ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+renderReview(kept,"DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
  $("status").textContent=`Đã phân tích ${made.length} booking; hiển thị ${kept.length} booking. Các link chỉ mở bản nháp, không tự gửi.`;
@@ -380,25 +378,7 @@ function run(){
 }
 $("run").addEventListener("click",run);
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("status").textContent="Đã xóa dữ liệu.";});
-function openAllContacts(kind){
- const field=kind==="wa"?"wa":"gm";
- // Keep one URL per booking: two bookings may legitimately share the same contact.
- const urls=lastOutput.map(b=>b[field]).filter(Boolean);
- if(!urls.length){toast(kind==="wa"?"Không có booking nào có link WhatsApp.":"Không có booking nào có link Gmail.",false);return;}
- // Open blank tabs synchronously inside the user's click gesture first.
- // Navigate them only after all popup requests have been made.
- const tabs=urls.map(()=>window.open("about:blank","_blank"));
- let opened=0;
- tabs.forEach((tab,i)=>{
-   if(!tab) return;
-   try{tab.location.href=urls[i];opened++;}catch(_){}
- });
- const blocked=urls.length-opened;
- toast(`Đã mở ${opened}/${urls.length} booking bằng tab riêng.${blocked?` Trình duyệt đã chặn ${blocked} tab — hãy cho phép Pop-ups cho website rồi bấm lại.`:""}`,blocked===0);
-}
 document.addEventListener("click",e=>{
- const openBtn=e.target.closest("[data-open-all]");
- if(openBtn){openAllContacts(openBtn.getAttribute("data-open-all"));return;}
  const btn=e.target.closest("[data-copy-key]");
  if(!btn)return;
  const key=btn.getAttribute("data-copy-key");
