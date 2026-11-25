@@ -671,6 +671,7 @@ document.addEventListener("click",e=>{
   const drafts=skippedBookingsCache.filter(b=>!existing.has(b.raw));
   if(!drafts.length){toast("Không còn booking bị bỏ qua nào để soạn.",false);return;}
   processedBookings=[...processedBookings,...drafts];
+  saveReviewItems(drafts);
   renderFilteredBookings();
   compose.disabled=true;
   compose.textContent="Đã đưa "+drafts.length+" booking vào danh sách soạn";
