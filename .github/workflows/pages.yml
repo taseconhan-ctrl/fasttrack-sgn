@@ -32,6 +32,11 @@ jobs:
         with:
           path: "."
 
+      # Give the Actions artifact service time to expose the uploaded artifact
+      # before deploy-pages requests its metadata.
+      - name: Wait for Pages artifact metadata
+        run: sleep 15
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
