@@ -566,6 +566,7 @@ function renderSavedReviewArchive(){
  $("savedReviewTables").innerHTML=table("ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+table("DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
 }
 loadSavedReview();
+renderSavedReviewArchive();
 function renderFilteredBookings(){
  const select=$("partnerFilter");
  const partner=select?select.value:"__ALL__";
