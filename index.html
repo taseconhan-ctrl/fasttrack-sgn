@@ -372,7 +372,7 @@ function run(){
  const skipped=made.filter(b=>!kept.includes(b));
  lastOutput=kept;
  $("summary").classList.remove("hidden");
- $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?`<p class="hint">Bỏ qua: ${skipped.map(x=>`${esc(x.order||"Không rõ mã")} (${esc(x.staffAssign||x.status||"không đạt bộ lọc")})`).join("; ")}</p>`:""}`;
+ $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div><div class="actions" style="margin-top:14px"><button type="button" data-open-all="wa">Mở tất cả WhatsApp (${kept.filter(x=>x.wa).length})</button><button type="button" class="secondary" data-open-all="gmail">Mở tất cả Gmail (${kept.filter(x=>x.gm).length})</button></div><p class="hint">Mỗi booking sẽ mở một tab riêng. Nếu trình duyệt chặn cửa sổ bật lên, hãy cho phép Pop-ups/redirects đối với trang này rồi bấm lại.</p>${skipped.length?`<p class="hint">Bỏ qua: ${skipped.map(x=>`${esc(x.order||"Không rõ mã")} (${esc(x.staffAssign||x.status||"không đạt bộ lọc")})`).join("; ")}</p>`:""}`;
  $("results").innerHTML=kept.map(cardHtml).join("")||`<section class="panel">Không có booking nào đủ điều kiện tạo Subject. Kiểm tra định dạng dữ liệu hoặc bật xử lý tất cả.</section>`;
  $("reviews").innerHTML=renderReview(kept,"ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+renderReview(kept,"DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
  $("status").textContent=`Đã phân tích ${made.length} booking; hiển thị ${kept.length} booking. Các link chỉ mở bản nháp, không tự gửi.`;
@@ -380,7 +380,20 @@ function run(){
 }
 $("run").addEventListener("click",run);
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("status").textContent="Đã xóa dữ liệu.";});
+function openAllContacts(kind){
+ const field=kind==="wa"?"wa":"gm";
+ const urls=[...new Set(lastOutput.map(b=>b[field]).filter(Boolean))];
+ if(!urls.length){toast(kind==="wa"?"Không có booking nào có link WhatsApp.":"Không có booking nào có link Gmail.",false);return;}
+ let opened=0;
+ for(const url of urls){
+   const tab=window.open(url,"_blank");
+   if(tab) opened++;
+ }
+ toast(`Đã yêu cầu mở ${opened}/${urls.length} tab ${kind==="wa"?"WhatsApp":"Gmail"}; nếu thiếu tab, hãy cho phép pop-up và bấm lại.`,opened===urls.length);
+}
 document.addEventListener("click",e=>{
+ const openBtn=e.target.closest("[data-open-all]");
+ if(openBtn){openAllContacts(openBtn.getAttribute("data-open-all"));return;}
  const btn=e.target.closest("[data-copy-key]");
  if(!btn)return;
  const key=btn.getAttribute("data-copy-key");
