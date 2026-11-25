@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ĐÓN KHÁCH | TA SẼ CỐ</title>
+<style>
+:root{--navy:#10233f;--blue:#2458bd;--ink:#17243a;--muted:#68758b;--line:#e0e6ef;--paper:#f4f7fb}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+header{background:var(--navy);color:#fff;padding:20px max(18px,calc((100% - 1400px)/2))}header h1{margin:0;font-size:25px}header p{margin:4px 0 0;color:#cbd7ea}
+main{max-width:1440px;margin:22px auto;padding:0 16px 60px}.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;margin-bottom:16px;box-shadow:0 3px 12px #17203308}
+h2{font-size:18px;margin:0 0 10px}label{font-weight:650;display:block;margin-bottom:6px}textarea,input,select{font:inherit;border:1px solid #c6cfdd;border-radius:8px;padding:9px;background:#fff;color:var(--ink)}textarea{width:100%;min-height:180px;font:13px/1.5 ui-monospace,Consolas,monospace;resize:vertical}
+.controls{display:flex;gap:9px;align-items:end;flex-wrap:wrap;margin-top:11px}.controls>div{min-width:180px;flex:1}.controls input,.controls select{width:100%}
+button,.back{border:0;border-radius:8px;background:var(--blue);color:#fff;padding:9px 13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}button.secondary{background:#e9eef7;color:#21304b}button.danger{background:#a22b36}
+.hint{color:var(--muted);font-size:12px}.status{margin-top:10px;padding:9px 11px;border-radius:8px;background:#edf3ff;color:#29436e}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{width:100%;border-collapse:collapse;min-width:1080px;font-size:13px}th,td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{background:#eef2f8;position:sticky;top:0;z-index:1}tbody tr:hover{background:#f8faff}td input{width:130px;padding:6px;font-size:12px}.count{font-weight:750;color:var(--blue)}.top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+@media(max-width:650px){header h1{font-size:21px}.panel{padding:12px}}
+</style></head>
+<body>
+<header><h1>ĐÓN KHÁCH</h1><p>THEO DÕI DANH SÁCH KHÁCH · FAST TRACK SGN</p></header>
+<main>
+<div style="margin-bottom:12px"><a class="back" href="index.html">← Trang chủ</a></div>
+<section class="panel">
+<h2>1. Dán danh sách khách</h2>
+<label for="raw">Dán trực tiếp bảng Excel cũ (có thể dán nhiều dòng cùng lúc)</label>
+<textarea id="raw" placeholder="Agency&#9;&#9;&#9;Flight&#9;Name&#9;Type&#9;Time&#9;Order&#9;NV thực hiện"></textarea>
+<div class="controls"><button id="import">Nạp danh sách</button><button class="secondary" id="append">Thêm vào danh sách hiện tại</button><button class="secondary" id="clearInput">Xóa ô nhập</button></div>
+<p class="hint">Giữ nguyên cấu trúc 9 cột theo mẫu: Agency | cột phụ 1 | cột phụ 2 | Flight | Name | Type | Time | Order | NV thực hiện. Có thể dán dữ liệu copy từ Excel/Google Sheets.</p>
+<div id="status" class="status">Chưa nạp dữ liệu.</div>
+</section>
+<section class="panel">
+<div class="top"><h2>2. Danh sách khách đón</h2><span class="count" id="count">0 khách</span></div>
+<div class="controls">
+<div><label for="search">Tìm kiếm</label><input id="search" placeholder="Tên khách, chuyến bay, agency, order, nhân viên..."></div>
+<div><label for="staffFilter">Lọc nhân viên</label><select id="staffFilter"><option value="">Tất cả nhân viên</option></select></div>
+<div><label for="typeFilter">Loại dịch vụ</label><select id="typeFilter"><option value="">Tất cả</option><option>Arrival</option><option>Arrival FULL</option></select></div>
+</div>
+<div class="controls"><button id="copy">Sao chép danh sách đang hiển thị</button><button class="secondary" id="export">Xuất TSV</button><button class="danger" id="clearAll">Xóa toàn bộ danh sách</button></div>
+<p class="hint">Có thể sửa trực tiếp cột NV thực hiện. Danh sách được lưu trên trình duyệt và thiết bị đang sử dụng.</p>
+<div class="tablewrap"><table><thead><tr><th>Agency</th><th></th><th></th><th>Flight</th><th>Name</th><th>Type</th><th>Time</th><th>Order</th><th>NV thực hiện</th></tr></thead><tbody id="rows"><tr><td colspan="9" style="text-align:center;color:#68758b">Chưa có dữ liệu. Hãy dán danh sách ở phía trên.</td></tr></tbody></table></div>
+</section>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id), KEY="ta_se_co_arrival_list_v1";
+let data=[];try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");if(Array.isArray(v))data=v;}catch(e){}
+const clean=s=>(s||"").replace(/^\uFEFF/,"").trim();
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function parse(text){return text.replace(/\r/g,"").split("\n").filter(x=>x.trim()).map(line=>line.split("\t").map(clean)).filter(c=>c.some(Boolean)).filter(c=>!/^agency$/i.test(c[0]||"")).map(c=>{while(c.length<9)c.push("");return c.slice(0,9);});}
+function save(){localStorage.setItem(KEY,JSON.stringify(data));render();}
+function shown(){const q=$("search").value.toLowerCase(),s=$("staffFilter").value,t=$("typeFilter").value;return data.map((r,i)=>({r,i})).filter(({r})=>(!q||r.join(" ").toLowerCase().includes(q))&&(!s||r[8]===s)&&(!t||r[5]===t));}
+function render(){const list=shown();$("count").textContent=list.length+" / "+data.length+" khách";const staffs=[...new Set(data.map(r=>r[8]).filter(Boolean))].sort();const old=$("staffFilter").value;$("staffFilter").innerHTML='<option value="">Tất cả nhân viên</option>'+staffs.map(s=>'<option value="'+esc(s)+'">'+esc(s)+'</option>').join("");$("staffFilter").value=staffs.includes(old)?old:"";$("rows").innerHTML=list.length?list.map(({r,i})=>'<tr>'+r.slice(0,8).map(v=>'<td>'+esc(v)+'</td>').join("")+'<td><input aria-label="Nhân viên thực hiện" data-index="'+i+'" value="'+esc(r[8])+'" placeholder="Chưa phân công"></td></tr>').join(""):'<tr><td colspan="9" style="text-align:center;color:#68758b">Không có kết quả phù hợp.</td></tr>';document.querySelectorAll("[data-index]").forEach(el=>el.addEventListener("change",e=>{data[Number(e.target.dataset.index)][8]=e.target.value.trim();save();}));}
+function tsv(rows){return rows.map(r=>r.map(v=>String(v??"").replace(/\t/g," ").replace(/\n/g," ")).join("\t")).join("\n");}
+$("import").onclick=()=>{const rows=parse($("raw").value);if(!rows.length){$("status").textContent="Không tìm thấy dòng dữ liệu hợp lệ.";return;}data=rows;save();$("status").textContent="Đã nạp "+rows.length+" dòng khách.";};
+$("append").onclick=()=>{const rows=parse($("raw").value);if(!rows.length){$("status").textContent="Không tìm thấy dòng dữ liệu hợp lệ.";return;}data.push(...rows);save();$("status").textContent="Đã thêm "+rows.length+" dòng. Tổng cộng "+data.length+" dòng.";};
+$("clearInput").onclick=()=>{$("raw").value="";};
+$("clearAll").onclick=()=>{if(confirm("Xóa toàn bộ danh sách khách đã lưu trên trình duyệt này?")){data=[];save();$("status").textContent="Đã xóa danh sách trên thiết bị này.";}}
+$("search").oninput=render;$("staffFilter").onchange=render;$("typeFilter").onchange=render;
+$("copy").onclick=async()=>{const rows=shown().map(x=>x.r);try{await navigator.clipboard.writeText(tsv(rows));$("status").textContent="Đã sao chép "+rows.length+" dòng đang hiển thị.";}catch(e){$("status").textContent="Trình duyệt không cho phép sao chép tự động.";}}
+$("export").onclick=()=>{const blob=new Blob([tsv(data).replace(/\n/g,"\r\n")],{type:"text/tab-separated-values;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="danh-sach-don-khach.tsv";a.click();URL.revokeObjectURL(url);}
+render();
+</script></body></html>
