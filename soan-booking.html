@@ -67,44 +67,13 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
     <p id="staffProfileMessage" class="hint" aria-live="polite">Hồ sơ tự đăng ký được lưu trên trình duyệt hiện tại.</p>
   </div>
 </section>
-<section class="panel"><h2>3. KẾT NỐI GỬI ẢNH VÉ QUA GOOGLE DRIVE</h2>
-<label for="photoAppUrl">URL Google Apps Script (kết thúc bằng /exec)</label>
-<input id="photoAppUrl" type="url" placeholder="Dán URL Web app sau khi triển khai Apps Script" style="width:min(100%,620px);max-width:none">
-<div class="controls"><button type="button" id="savePhotoAppUrl">Lưu cấu hình</button><span id="photoConfigStatus" class="hint">Chưa cấu hình. QR ảnh vé sẽ xuất hiện sau khi kết nối.</span></div>
-<p class="hint">Mỗi booking sẽ có QR riêng. Nhân viên quét bằng điện thoại để gửi ảnh vào Drive.</p></section>
 <div id="summary" class="panel hidden"></div>
 <div id="results"></div>
 <div id="skippedBookings"></div>
 <div id="reviews"></div>
 </main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 "use strict";
-
-const PHOTO_APP_URL_KEY="fasttrack_sgn_photo_app_url_v1", PHOTO_TOKEN_KEY="fasttrack_sgn_photo_tokens_v1";
-function loadPhotoAppUrl(){try{return localStorage.getItem(PHOTO_APP_URL_KEY)||"";}catch(e){return "";}}
-function tokenForOrder(order){
- let tokens={};try{tokens=JSON.parse(localStorage.getItem(PHOTO_TOKEN_KEY)||"{}")||{};}catch(e){}
- if(!tokens[order]){const bytes=new Uint8Array(24);crypto.getRandomValues(bytes);tokens[order]=Array.from(bytes,x=>x.toString(16).padStart(2,"0")).join("");try{localStorage.setItem(PHOTO_TOKEN_KEY,JSON.stringify(tokens));}catch(e){}}
- return tokens[order];
-}
-function savePhotoAppUrl(){
- const value=$("photoAppUrl").value.trim();
- if(value&&!/^https:\/\/script\.google\.com\/macros\/s\/[^\s]+\/exec$/.test(value)){$("photoConfigStatus").textContent="URL chưa đúng. Hãy dùng URL Web app Apps Script kết thúc bằng /exec.";return;}
- try{localStorage.setItem(PHOTO_APP_URL_KEY,value);$("photoConfigStatus").textContent=value?"Đã lưu URL Apps Script trên trình duyệt này.":"Đã xóa cấu hình URL.";renderFilteredBookings();}catch(e){$("photoConfigStatus").textContent="Không lưu được cấu hình.";}
-}
-function ticketPhotoHtml(b){
- const base=loadPhotoAppUrl();if(!base||!b.order||!/^[A-Za-z0-9_-]{4,30}$/.test(b.order))return "";
- const token=tokenForOrder(b.order),url=base+"?order="+encodeURIComponent(b.order)+"&token="+encodeURIComponent(token),id="ticket-qr-"+b.order.replace(/[^A-Za-z0-9_-]/g,"");
- return `<div class="kv" style="margin-top:14px"><b>ẢNH VÉ MÁY BAY – QR GỬI ẢNH</b><p class="hint">Nhân viên quét mã, nhập tên và gửi ảnh vào đúng booking này. Không chia sẻ QR công khai.</p><div id="${id}" style="background:#fff;padding:10px;display:inline-block;margin:8px 0"></div><p class="hint">Mã order: <b>${esc(b.order)}</b></p><a href="${url}" target="_blank" rel="noopener" class="linkbtn secondary">Mở trang gửi ảnh</a></div>`;
-}
-function renderTicketQrs(items){
- if(!window.QRCode)return;
- items.forEach(b=>{if(!loadPhotoAppUrl()||!b.order)return;const id="ticket-qr-"+b.order.replace(/[^A-Za-z0-9_-]/g,""),node=document.getElementById(id);if(!node||node.dataset.ready)return;
- const url=loadPhotoAppUrl()+"?order="+encodeURIComponent(b.order)+"&token="+encodeURIComponent(tokenForOrder(b.order));
- new QRCode(node,{text:url,width:170,height:170,correctLevel:QRCode.CorrectLevel.M});node.dataset.ready="1";});
-}
-document.addEventListener("DOMContentLoaded",()=>{const input=$("photoAppUrl"),status=$("photoConfigStatus");if(input)input.value=loadPhotoAppUrl();if(status&&loadPhotoAppUrl())status.textContent="Đã có cấu hình Apps Script trên trình duyệt này."; $("savePhotoAppUrl")?.addEventListener("click",savePhotoAppUrl);});
 
 const $ = id => document.getElementById(id);
 const STAFF_PROFILES = {
@@ -467,7 +436,7 @@ function cardHtml(b,i,cacheIndex){
  <button type="button" class="save-contact" data-contact-index="${cacheIndex}">Cập nhật & tạo link</button>
  </div>
  </div>
- <div class="contact-links">${links}</div>${ticketPhotoHtml(b)}${internal}${notes}
+ <div class="contact-links">${links}</div>${internal}${notes}
  </article>`;
 }
 function updateBookingContact(index){
