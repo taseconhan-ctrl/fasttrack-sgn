@@ -60,19 +60,23 @@ function terminalOf(s,flight){
  return "";
 }
 function parseMessage(block,index){
- const stamp=(block.match(/^\s*\[(\d{1,2}\/\d{1,2}\/\d{4}\s+\d{2}:\d{2}:\d{2})\]\s*([^:]+):?/m)||[]);
+ const stamp=(block.match(/^\\s*\\[(\\d{1,2}\\/\\d{1,2}\\/\\d{4}\\s+\\d{2}:\\d{2}:\\d{2})\\]\\s*([^:]+):?/m)||[]);
  const sender=clean(stamp[2]||"");
- const namesSection=(block.match(/Tên khách\s*[:：]([\s\S]*?)(?=\n\s*(?:Chuyến bay|Giờ bay|Giờ đến sân bay|Terminal|Ghi chú)\s*[:：]|$)/i)||[])[1]||"";
- let names=namesSection.split("\n").map(x=>clean(x).replace(/^\s*\d+\s*[.)-]\s*/,"").trim()).filter(x=>x&&!/^@/.test(x));
- if(!names.length){const one=clean(namesSection);if(one)names=one.split(/[,;；]/).map(clean).filter(Boolean)}
- const flight=field(block,"Chuyến bay").replace(/\s+/g,"").toUpperCase();
- const flightTime=field(block,"Giờ bay");
- const arrival=field(block,"Giờ đến sân bay");
- const note=field(block,"Ghi chú");
- const explicitTerminal=field(block,"Terminal");
- const serviceDate=dateFromBlock(block);
- const terminal=terminalOf("Terminal: "+explicitTerminal+"\n"+note,flight);
- return {index,sender,names,flight,flightTime,arrival,note,serviceDate,terminal,raw:clean(block)};
+ const chunks=block.split(/(?=^\\s*Tên khách\\s*[:：])/im).filter(x=>/Tên khách\\s*[:：]/i.test(x));
+ const sourceDate=dateFromBlock(block);
+ return (chunks.length?chunks:[block]).map((part,j)=>{
+  const namesSection=(part.match(/Tên khách\\s*[:：]([\\s\\S]*?)(?=\\n\\s*(?:Chuyến bay|Giờ bay|Giờ đến sân bay|Terminal|Ghi chú|Yêu cầu|Lối nội bộ)\\s*[:：]|$)/i)||[])[1]||"";
+  let names=namesSection.split("\\n").map(x=>clean(x).replace(/^\\s*\\d+\\s*[.)-]\\s*/,"").trim()).filter(x=>x&&!/^@/.test(x));
+  if(!names.length){const one=clean(namesSection);if(one)names=one.split(/[,;；]/).map(clean).filter(Boolean)}
+  const flight=field(part,"Chuyến bay").replace(/\\s+/g,"").toUpperCase();
+  const flightTime=field(part,"Giờ bay");
+  const arrival=field(part,"Giờ đến sân bay");
+  const note=[field(part,"Ghi chú"),field(part,"Yêu cầu"),field(part,"Lối nội bộ")].filter(Boolean).join(" · ");
+  const explicitTerminal=field(part,"Terminal");
+  const serviceDate=dateFromBlock(part)||sourceDate;
+  const terminal=terminalOf("Terminal: "+explicitTerminal+"\\n"+note,flight);
+  return {index:index*100+j,sender,names,flight,flightTime,arrival,note,serviceDate,terminal,raw:clean(part)};
+ }).filter(b=>b.names.length||b.flight||b.note);
 }
 function splitMessages(raw){
  const starts=[...raw.matchAll(/^\s*\[\d{1,2}\/\d{1,2}\/\d{4}\s+\d{2}:\d{2}:\d{2}\]/gm)].map(m=>m.index);
@@ -105,7 +109,7 @@ function render(){
 }
 $("analyze").addEventListener("click",()=>{
  const raw=clean($("raw").value);if(!raw){$("status").textContent="Bạn chưa dán tin nhắn.";return}
- parsedAll=splitMessages(raw).map(parseMessage).filter(b=>b.names.length||b.flight||b.note);
+ parsedAll=splitMessages(raw).flatMap((message,i)=>parseMessage(message,i));
  if(!parsedAll.length){$("status").textContent="Không tìm thấy booking phù hợp. Kiểm tra lại định dạng tin nhắn.";return}
  if(!$("targetDate").value){const first=parsedAll.find(b=>b.serviceDate);if(first)$("targetDate").value=first.serviceDate}
  $("filters").classList.remove("hidden");render();
