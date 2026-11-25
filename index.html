@@ -392,7 +392,7 @@ function run(){
  $("status").className="status good";
 }
 async function testConnection(){
- const apiUrl=$("apiUrl").value.trim().replace(/\\/$/,"");
+ const apiUrl=$("apiUrl").value.trim().replace(/\/$/,"");
  const apiKey=$("apiKey").value.trim();
  const out=$("connectionStatus");
  if(!apiUrl||!apiKey){out.textContent="Nhập Worker URL và mã truy cập trước.";return;}
@@ -413,7 +413,7 @@ $("run").addEventListener("click",run);
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("status").textContent="Đã xóa dữ liệu.";});
 async function sendBooking(channel,index){
  const b=lastOutput[index]; if(!b) return;
- const apiUrl=$("apiUrl").value.trim().replace(/\\/$/,"");
+ const apiUrl=$("apiUrl").value.trim().replace(/\/$/,"");
  const apiKey=$("apiKey").value.trim();
  if(!apiUrl||!apiKey){toast("Nhập Worker URL và mã truy cập trước.",false);return;}
  if(!confirm("Xác nhận gửi "+(channel==="gmail"?"Gmail":"WhatsApp")+" cho booking "+b.order+"? Hãy chắc chắn đã kiểm tra đúng người nhận và nội dung.")) return;
