@@ -270,12 +270,10 @@ function getAssignedStaff(lines){
     if(next && !/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next) && !/^[-_]+$/.test(next)) return next;
   }
   const line=lines.map(x=>x.trim()).find(x=>
-    /^SGN\s+/i.test(x) &&
-    !/^SGN\s*[-–—]/i.test(x) &&
-    /^SGN\s+.+?\s+\+?\d[\d\s().-]{6,}\d$/i.test(x)
+    /^SGN\s*[-–—]?\s*.+?\s+\+?\d[\d\s().-]{6,}\d$/i.test(x)
   );
   if(line){
-    const match=line.match(/^SGN\s+(.+?)\s+\+?\d[\d\s().-]{6,}\d$/i);
+    const match=line.match(/^SGN\s*[-–—]?\s*(.+?)\s+\+?\d[\d\s().-]{6,}\d$/i);
     if(match) return match[1].trim();
   }
   return "";
