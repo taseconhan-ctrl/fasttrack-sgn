@@ -111,6 +111,45 @@ textarea:focus,input:focus,select:focus{outline:2px solid #b6d8c4!important;bord
  .panel{padding:15px 12px!important}
 }
 
+
+/* Mobile arrival desk — touch-friendly and compact */
+@media(max-width:700px){
+ body{font-size:13px;line-height:1.45}
+ header{min-height:0!important;padding:19px 13px 17px!important}
+ header h1{font-size:23px!important;letter-spacing:1.5px}
+ header p{font-size:10px!important;letter-spacing:1px;max-width:78%;line-height:1.4}
+ header:before{top:8px!important;right:8px!important;font-size:13px!important;letter-spacing:3px!important}
+ header:after{font-size:9px!important;letter-spacing:.7px!important;margin-top:10px}
+ main{width:100%;max-width:none!important;margin:12px auto 0!important;padding:0 9px 30px!important}
+ main:before{font-size:9px;line-height:1.5;letter-spacing:.4px;padding:10px 7px;margin-bottom:12px}
+ .panel{padding:13px 10px!important;margin-bottom:11px!important;border-radius:13px!important}
+ .panel h2{font-size:16px!important;line-height:1.35}
+ label{font-size:12px}
+ textarea{min-height:145px!important;font-size:12px!important;padding:9px}
+ input,select,textarea{max-width:100%;font-size:16px}
+ .controls{display:flex;flex-direction:column;align-items:stretch;gap:8px;margin-top:9px}
+ .controls>div{width:100%;min-width:0;flex:1 1 auto}
+ .controls input,.controls select{width:100%;min-height:42px}
+ button,.back{min-height:42px;padding:10px 11px;font-size:12px;text-align:center}
+ .top{align-items:flex-start;gap:6px}
+ .top h2{flex:1}
+ .count{font-size:12px;white-space:nowrap}
+ .sectiontag{font-size:10px;padding:3px 7px}
+ .tablewrap{width:100%;max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:9px}
+ table{min-width:850px;font-size:11px}
+ th,td{padding:8px 7px!important}
+ td input{min-width:105px;min-height:36px;font-size:12px}
+ .hint{font-size:11px;line-height:1.45}
+ .status{font-size:12px;padding:9px}
+ #arrivalFullLegend{font-size:11px}
+}
+@media(max-width:380px){
+ header h1{font-size:21px!important}
+ main:before{font-size:8px}
+ .panel{padding:11px 9px!important}
+ .top{flex-wrap:wrap}
+}
+
 </style></head>
 <body>
 <header><h1>ĐÓN KHÁCH</h1><p>CHUẨN HÓA VÀ THEO DÕI DANH SÁCH FAST TRACK SGN</p></header>
