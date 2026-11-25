@@ -149,8 +149,8 @@ th{background:#eaf2ee;color:#214b43}
   <h2>2. Nhân viên đang sử dụng</h2>
   <div class="controls">
     <div><label for="staffProfile">Chọn nhân viên</label><input id="staffProfile" type="text" list="staffProfiles" placeholder="Chọn đúng nhân viên..." value="Nhân" autocomplete="off"><datalist id="staffProfiles"></datalist></div>
-    <div><label for="staff">Tên nhân viên (English, không dấu)</label><input id="staff" type="text" value="Nhan" readonly></div>
-    <div><label for="phone">Điện thoại / WhatsApp</label><input id="phone" type="tel" value="+84 867802129" readonly></div>
+    <div><label for="staff">Tên nhân viên (English, không dấu)</label><input id="staff" type="text" value="Nhan"></div>
+    <div><label for="phone">Điện thoại / WhatsApp</label><input id="phone" type="tel" value="+84 867802129"></div>
     <div><label for="hotline">Hotline</label><input id="hotline" type="tel" value="+84 866624188" readonly></div>
   </div>
   <p class="hint">Nhập hoặc chọn tên nhân viên; hệ thống tự chuẩn hóa tên tiếng Anh và điền số điện thoại / WhatsApp theo hồ sơ đã thiết lập.</p>
@@ -166,21 +166,23 @@ th{background:#eaf2ee;color:#214b43}
 const $ = id => document.getElementById(id);
 const STAFF_PROFILES = {
   "Nhân": { name: "Nhan", phone: "+84 867802129" },
-  "khanh": { name: "Khanh", phone: "" },
-  "Khoa": { name: "Khoa", phone: "" },
-  "Diệp": { name: "Diep", phone: "" },
-  "Quang": { name: "Quang", phone: "" },
+  "khanh": { name: "Khanh", phone: "+84 869392539" },
+  "Khoa": { name: "Khoa", phone: "+84 964845177" },
+  "Diệp": { name: "Diep", phone: "+84 346122841" },
+  "Quang": { name: "Quang", phone: "+84 989902101" },
   "Hưng": { name: "Hung", phone: "+84 816226474" },
   "Dương": { name: "Duong", phone: "" },
   "Hùng": { name: "Hung", phone: "" },
-  "An": { name: "An", phone: "" },
-  "Bình": { name: "Binh", phone: "" },
-  "Nhật Quang": { name: "Nhat Quang", phone: "" }
+  "Hung": { name: "Hung", phone: "+84 816226474" },
+  "An": { name: "An", phone: "+84 366404159" },
+  "Bình": { name: "Binh", phone: "+84 915341007" },
+  "Nhật Quang": { name: "Nhat Quang", phone: "+84 366884210" },
+  "David": { name: "David", phone: "+84 901113978" }
 };
 const STAFF_ALIASES = {
   "Nhan": { name: "Nhan", phone: "+84 867802129" },
-  "David": { name: "David", phone: "+84 901113978" },
   "Hưng": { name: "Hung", phone: "+84 816226474" },
+  "Hung": { name: "Hung", phone: "+84 816226474" },
   "An": { name: "An", phone: "+84 366404159" },
   "khanh": { name: "Khanh", phone: "+84 869392539" },
   "nhatquang": { name: "Quang", phone: "+84 366884210" }
@@ -194,7 +196,8 @@ function renderStaffProfileOptions(){
 function applyStaffProfile(){
   const selected=$("staffProfile").value.trim();
   const profiles=allStaffProfiles();
-  const key=Object.keys(profiles).find(n=>n.toLowerCase()===selected.toLowerCase());
+  const normalized=selected.toLocaleLowerCase("vi").normalize("NFC");
+  const key=Object.keys(profiles).find(n=>n.toLocaleLowerCase("vi").normalize("NFC")===normalized);
   const profile=key?profiles[key]:null;
   if(!profile){$("staff").value="";$("phone").value="";return;}
   $("staffProfile").value=profile.name;
