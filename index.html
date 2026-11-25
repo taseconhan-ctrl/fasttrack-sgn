@@ -205,7 +205,42 @@ function parseChunk(ls){
  b.notes=ls.filter(x=>/special requirements|ghi chú/i.test(x)).join(" ");
  return b;
 }
-function parseSingle(raw){return parseChunk(raw.split("\n").map(x=>x.trim()))}
+function parseInlineSingle(raw){
+ const s=clean(raw).replace(/\\s+/g," ");
+ const b={raw,order:"",flight:"",service:"",date:"",time:"",names:[],pax:0,staffAssign:"",status:"",agency:"",email:"",phone:"",country:"",tickets:[],notes:""};
+ const order=s.match(/^([A-Z0-9]{5,})\\b/i); if(order)b.order=order[1];
+ const flight=s.match(/(?:Tân Sơn Nhất|Tan Son Nhat|SGN)\\s+([A-Z0-9]{2,3}\\d{2,4})\\b/i); if(flight)b.flight=flight[1].toUpperCase();
+ const dm=s.match(/(\\d{1,2})[\\/-](\\d{1,2})[\\/-](\\d{4})\\s+(\\d{1,2}):(\\d{2})/);
+ if(dm){b.date=String(dm[1]).padStart(2,"0")+"/"+String(dm[2]).padStart(2,"0")+"/"+dm[3];b.time=String(dm[4]).padStart(2,"0")+":"+dm[5];}
+ if(dm){
+  const before=s.slice(0,dm.index);
+  const sm=before.match(/((?:Đón khách|Tiễn khách|Arrival|Departure)\\s+(?:Quốc tế|Quốc nội|International|Domestic)[^]*?)$/i);
+  if(sm)b.service=sm[1].trim();
+  const after=s.slice(dm.index+dm[0].length);
+  const stop=after.search(/\\s+(?:Đã xác nhận|Chờ xác nhận|Cancelled|Canceled|Đã hủy)\\b/i);
+  let guestPart=(stop>=0?after.slice(0,stop):after).trim();
+  guestPart=guestPart.replace(/\\s+-\\s*$/,"").replace(/\\s+[_-]\\s*$/,"").trim();
+  b.names=splitGuestNames(guestPart);
+ }
+ const status=s.match(/(Đã xác nhận|Chờ xác nhận|Cancelled|Canceled|Đã hủy)/i); if(status)b.status=status[1];
+ const pax=s.match(/(?:Chưa chốt|Đã chốt|Confirmed|Pending)\\s+(\\d{1,2})\\s+(?:Email|E-mail)/i)||s.match(/\\b(\\d{1,2})\\s+Email\\s*:/i);
+ b.pax=pax?Number(pax[1]):b.names.length;
+ if(!b.pax)b.pax=b.names.length||1;
+ const agency=s.match(/(CTCP\\s+TIẾP THỊ SỐ\\s+TÔ QUÀ|TÔ HÒA|URBOX|CTCP[^,;]*LINKCARE|LINKCARE|VIETTEL|KLOOK[^,;]*|Ctrip[^,;]*|Dragon\\s*Pass|Trip\\.com|KKday)/i);
+ if(agency)b.agency=agency[1].trim();
+ b.email=extractEmail(s); b.country=countryFrom(s); b.phone=extractPhone(s);
+ const assign=s.match(/\\s+([_-])\\s+(?:Đã xác nhận|Chờ xác nhận)/i); if(assign)b.staffAssign=assign[1];
+ if(!b.staffAssign)b.staffAssign="-";
+ return b;
+}
+function parseSingle(raw){
+ const parsed=parseChunk(raw.split("\\n").map(x=>x.trim()));
+ if(!parsed.flight||!parsed.names.length||!parsed.date||!parsed.time) {
+  const inline=parseInlineSingle(raw);
+  return {...parsed,...Object.fromEntries(Object.entries(inline).filter(([k,v])=>v!==""&&v!==null&&(!Array.isArray(v)||v.length)))};
+ }
+ return parsed;
+}
 function direction(b){return /đón khách|arrival/i.test(b.service)?"ARRIVAL":/tiễn khách|departure/i.test(b.service)?"DEPARTURE":""}
 function isDomestic(b){return /quốc nội|domestic/i.test(b.service)}
 function isPartner(b){return ["LINKCARE","VIETTEL","URBOX"].includes(normalizeAgency(b.agency))}
