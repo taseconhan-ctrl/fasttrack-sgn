@@ -108,21 +108,21 @@ function extractPhone(s){
   for(const p of patterns){const m=s.match(p);if(m)return clean(m[1])}
   return "";
 }
-function normalizeCountry(s){return clean(s).normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").toLowerCase().replace(/\\s*\\([^)]*\\)\\s*/g," ").replace(/\\s+/g," ").trim()}
+function normalizeCountry(s){return clean(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s*\([^)]*\)\s*/g," ").replace(/\s+/g," ").trim()}
 function countryFrom(s){
- const labels=/(?:country\\s*\\/\\s*region\\s+of\\s+passport|passport\\s+country|quốc gia\\s*\\/\\s*vùng(?: lãnh thổ)?\\s*hộ chiếu)\\s*[:：]?\\s*([^\\n]+)/i;
+ const labels=/(?:country\s*\/\s*region\s+of\s+passport|passport\s+country|quốc gia\s*\/\s*vùng(?: lãnh thổ)?\s*hộ chiếu)\s*[:：]?\s*([^\n]+)/i;
  const m=s.match(labels);
- if(m && clean(m[1])) return clean(m[1]).replace(/\\*+.*$/,"").trim();
- const ls=s.split(/\\r?\\n/);
- const i=ls.findIndex(x=>/(?:country\\s*\\/\\s*region\\s+of\\s+passport|passport\\s+country|quốc gia\\s*\\/\\s*vùng(?: lãnh thổ)?\\s*hộ chiếu)/i.test(x));
- return i>=0?clean(ls[i+1]||"").replace(/\\*+.*$/,"").trim():"";
+ if(m && clean(m[1])) return clean(m[1]).replace(/\*+.*$/,"").trim();
+ const ls=s.split(/\r?\n/);
+ const i=ls.findIndex(x=>/(?:country\s*\/\s*region\s+of\s+passport|passport\s+country|quốc gia\s*\/\s*vùng(?: lãnh thổ)?\s*hộ chiếu)/i.test(x));
+ return i>=0?clean(ls[i+1]||"").replace(/\*+.*$/,"").trim():"";
 }
 const ccMap={
  "brunei":"673","singapore":"65","japan":"81","australia":"61","new zealand":"64","united states":"1","united states of america":"1","usa":"1","us":"1","canada":"1","united kingdom":"44","uk":"44","great britain":"44","england":"44","malaysia":"60","india":"91","france":"33","germany":"49","italy":"39","philippines":"63","thailand":"66","indonesia":"62","vietnam":"84","viet nam":"84","south korea":"82","republic of korea":"82","korea":"82","china":"86","hong kong":"852","taiwan":"886","macau":"853","macao":"853","russia":"7","united arab emirates":"971","uae":"971","saudi arabia":"966","qatar":"974","kuwait":"965","oman":"968","bahrain":"973","sri lanka":"94","bangladesh":"880","pakistan":"92","nepal":"977","myanmar":"95","cambodia":"855","laos":"856","south africa":"27","nigeria":"234","kenya":"254","egypt":"20","morocco":"212","turkey":"90","türkiye":"90","spain":"34","portugal":"351","netherlands":"31","belgium":"32","switzerland":"41","austria":"43","sweden":"46","norway":"47","denmark":"45","finland":"358","ireland":"353","poland":"48","czech republic":"420","czechia":"420","greece":"30","israel":"972","mexico":"52","brazil":"55","argentina":"54","chile":"56","colombia":"57","peru":"51","ukraine":"380","romania":"40","hungary":"36","croatia":"385","serbia":"381","slovakia":"421","slovenia":"386","bulgaria":"359","iceland":"354","luxembourg":"352","cyprus":"357","maldives":"960","mauritius":"230","fiji":"679","papua new guinea":"675"
 };
 function internationalPhone(raw,country){
  const original=clean(raw);
- let d=original.replace(/\\D/g,"");
+ let d=original.replace(/\D/g,"");
  if(!d)return "";
  if(original.startsWith("+")) return d;
  if(d.startsWith("00")) return d.slice(2);
