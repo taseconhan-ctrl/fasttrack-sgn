@@ -287,52 +287,119 @@ $("exportArrival").onclick=()=>download(rowsFor("Arrival"),"arrival-fasttrack-sg
 render();
 </script>
 <style id="christmas-audio-player-style">
-#christmas-audio-player{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid rgba(255,215,120,.72);border-radius:999px;background:linear-gradient(135deg,#102c27f5,#7d1728f2);box-shadow:0 8px 24px #071b18aa;color:#fff;font:600 13px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;backdrop-filter:blur(8px)}
-#christmas-audio-player button{border:0;border-radius:999px;background:#f4d58a;color:#17372e;padding:10px 14px;font:700 13px system-ui;cursor:pointer;white-space:nowrap}
-#christmas-audio-player button:focus-visible{outline:3px solid #fff;outline-offset:3px}
-#christmas-audio-player .music-note{font-size:18px}
-#christmas-audio-player .music-credit{font-size:10px;opacity:.85;white-space:nowrap}
+#christmas-audio-player{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;align-items:stretch;gap:8px;width:min(270px,calc(100vw - 20px));padding:11px;border:1px solid rgba(255,215,120,.78);border-radius:18px;background:linear-gradient(145deg,#102c27f7,#7d1728f5);box-shadow:0 8px 26px #071b18bb;color:#fff;font:600 13px/1.25 system-ui,-apple-system,Segoe UI,sans-serif;backdrop-filter:blur(9px)}
+#christmas-audio-player .music-toolbar{display:flex;align-items:center;gap:7px}
+#christmas-audio-player .music-note{font-size:20px}
+#christmas-audio-player button{border:0;border-radius:999px;background:#f4d58a;color:#17372e;padding:9px 12px;font:700 12px system-ui;cursor:pointer;white-space:nowrap}
+#christmas-audio-player button:focus-visible,#christmas-audio-player select:focus-visible{outline:3px solid #fff;outline-offset:3px}
+#christmas-audio-player select{min-width:0;flex:1;border:1px solid #d9bd78;border-radius:999px;background:#fff8e8;color:#17372e;padding:9px 8px;font:700 12px system-ui}
+#christmas-audio-player .music-credit{font-size:10px;opacity:.9}
 #christmas-audio-player .music-credit a{color:#ffe6a5}
-@media(max-width:600px){#christmas-audio-player{right:10px;bottom:10px;left:10px;justify-content:center;gap:8px;padding:8px 10px}#christmas-audio-player button{padding:10px 13px;font-size:12px}#christmas-audio-player .music-credit{font-size:9px}}
+#tet-player-shell{display:none;overflow:hidden;border-radius:12px;background:#000;min-height:200px}
+#tet-youtube-player{width:100%;height:200px}
+@media(max-width:600px){#christmas-audio-player{right:10px;bottom:10px;width:min(270px,calc(100vw - 20px));padding:9px}#christmas-audio-player button{padding:9px 10px;font-size:11px}#christmas-audio-player select{font-size:11px}}
 </style>
-<div id="christmas-audio-player" aria-label="Nhạc nền Giáng Sinh">
-  <span class="music-note" aria-hidden="true">🎅</span>
-  <button id="christmas-audio-toggle" type="button" aria-pressed="false">🎵 Bật nhạc Giáng Sinh</button>
-  <span class="music-credit">Jingle Bells · <a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100187" target="_blank" rel="noopener">Kevin MacLeod</a></span>
+<div id="christmas-audio-player" aria-label="Trình phát nhạc Giáng Sinh và nhạc Tết Việt Nam">
+  <div class="music-toolbar">
+    <span class="music-note" aria-hidden="true">🎶</span>
+    <button id="christmas-audio-toggle" type="button" aria-pressed="false">⏸ Tắt nhạc</button>
+    <select id="music-track-select" aria-label="Chọn bài nhạc">
+      <option value="christmas">🎄 Jingle Bells</option>
+      <option value="tet-ngaytet">🧧 Ngày Tết quê em</option>
+      <option value="tet-dongday">🌸 Tết đong đầy</option>
+      <option value="tet-xuandave">🌼 Xuân đã về</option>
+    </select>
+  </div>
+  <div id="tet-player-shell"><div id="tet-youtube-player"></div></div>
+  <div class="music-credit" id="music-track-credit">Jingle Bells · <a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100187" target="_blank" rel="noopener">Kevin MacLeod</a></div>
   <audio id="christmas-background-audio" preload="none" loop>
     <source src="https://incompetech.com/music/royalty-free/mp3-royaltyfree/Jingle%20Bells%203.mp3" type="audio/mpeg">
   </audio>
 </div>
 <script id="christmas-audio-player-script">
 (function(){
+  if(window.__fastTrackMusicInitialized)return;
+  window.__fastTrackMusicInitialized=true;
+  const root=document.getElementById('christmas-audio-player');
   const button=document.getElementById('christmas-audio-toggle');
   const audio=document.getElementById('christmas-background-audio');
-  if(!button||!audio)return;
+  const select=document.getElementById('music-track-select');
+  const shell=document.getElementById('tet-player-shell');
+  const credit=document.getElementById('music-track-credit');
+  if(!root||!button||!audio||!select)return;
   audio.volume=0.2;
-  function showPlaying(){button.textContent='⏸ Tắt nhạc Giáng Sinh';button.setAttribute('aria-pressed','true');}
-  function showPaused(){button.textContent='🎵 Bật nhạc Giáng Sinh';button.setAttribute('aria-pressed','false');}
-  async function tryAutoplay(){
-    try{await audio.play();showPlaying();}
-    catch(error){button.textContent='🎵 Chạm để bật nhạc Giáng Sinh';button.setAttribute('aria-pressed','false');}
+  const tracks={
+    "tet-ngaytet":{id:"JvELlns3OqI",name:"Ngày Tết quê em",credit:"Xuân Mai · Làng Văn Music",url:"https://www.youtube.com/watch?v=JvELlns3OqI"},
+    "tet-dongday":{id:"gOtfJ151ue4",name:"Tết đong đầy",credit:"KHOA x Kay Trần x Duck V · Focus Entertainment",url:"https://www.youtube.com/watch?v=gOtfJ151ue4"},
+    "tet-xuandave":{id:"mvxlpZ9IDcc",name:"Xuân đã về",credit:"Lưu Ánh Loan · Official",url:"https://www.youtube.com/watch?v=mvxlpZ9IDcc"}
+  };
+  let player=null,apiLoading=false,apiReady=false,pendingTrack=null,currentTrack="christmas",playing=false;
+  function label(){button.textContent=playing?"⏸ Tạm dừng":"▶ Phát nhạc";button.setAttribute('aria-pressed',playing?"true":"false");}
+  function setCredit(html){credit.innerHTML=html;}
+  function loadApi(){
+    if(window.YT&&window.YT.Player){apiReady=true;createPlayer();return;}
+    if(apiLoading)return;
+    apiLoading=true;
+    const previous=window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady=function(){
+      if(typeof previous==="function")previous();
+      apiReady=true;apiLoading=false;createPlayer();
+    };
+    const script=document.createElement('script');
+    script.src="https://www.youtube.com/iframe_api";
+    script.async=true;
+    document.head.appendChild(script);
   }
-  tryAutoplay();
-  button.addEventListener('click',async function(){
-    if(audio.paused){
-      try{
-        await audio.play();
-        showPlaying();
-      }catch(error){
-        button.textContent='▶ Thử bật nhạc lại';
-        button.setAttribute('aria-pressed','false');
+  function createPlayer(){
+    if(!apiReady||player||!pendingTrack)return;
+    const track=tracks[pendingTrack];
+    player=new YT.Player('tet-youtube-player',{
+      width:'248',height:'200',videoId:track.id,
+      playerVars:{autoplay:1,controls:1,playsinline:1,rel:0,origin:location.origin},
+      events:{
+        onReady:function(event){event.target.playVideo();},
+        onStateChange:function(event){
+          if(currentTrack==="christmas")return;
+          playing=event.data===YT.PlayerState.PLAYING;
+          label();
+        },
+        onError:function(){playing=false;label();setCredit("Video này hiện không phát được trong trình nhúng. <a href='"+track.url+"' target='_blank' rel='noopener'>Mở trên YouTube</a>");}
       }
-    }else{
-      audio.pause();
-      showPaused();
+    });
+  }
+  function chooseTrack(value){
+    currentTrack=value;
+    if(value==="christmas"){
+      if(player&&player.pauseVideo)player.pauseVideo();
+      shell.style.display="none";
+      setCredit('Jingle Bells · <a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100187" target="_blank" rel="noopener">Kevin MacLeod</a>');
+      audio.play().then(()=>{playing=true;label();}).catch(()=>{playing=false;button.textContent="🎵 Chạm để phát nhạc";label();});
+      return;
+    }
+    audio.pause();
+    playing=false;
+    shell.style.display="block";
+    pendingTrack=value;
+    const track=tracks[value];
+    setCredit(track.name+" · "+track.credit+" · <a href='"+track.url+"' target='_blank' rel='noopener'>YouTube</a>");
+    if(player&&player.loadVideoById){player.loadVideoById(track.id);player.playVideo();}
+    else loadApi();
+    label();
+  }
+  select.addEventListener('change',function(){chooseTrack(select.value);});
+  button.addEventListener('click',function(){
+    if(currentTrack==="christmas"){
+      if(audio.paused){audio.play().then(()=>{playing=true;label();}).catch(()=>{button.textContent="🎵 Chạm để phát nhạc";});}
+      else{audio.pause();playing=false;label();}
+    }else if(player){
+      const state=player.getPlayerState();
+      if(state===YT.PlayerState.PLAYING)player.pauseVideo();else player.playVideo();
     }
   });
-  audio.addEventListener('ended',function(){
-    showPaused();
-  });
+  audio.addEventListener('play',function(){if(currentTrack==="christmas"){playing=true;label();}});
+  audio.addEventListener('pause',function(){if(currentTrack==="christmas"){playing=false;label();}});
+  window.__fastTrackChooseMusic=chooseTrack;
+  try{audio.play().then(()=>{playing=true;label();}).catch(()=>{playing=false;button.textContent="🎵 Chạm để phát nhạc";});}catch(e){playing=false;label();}
 })();
 </script>
 
