@@ -21,10 +21,10 @@ button,.back{border:0;border-radius:8px;background:var(--blue);color:#fff;paddin
 <div style="margin-bottom:12px"><a class="back" href="index.html">← Trang chủ</a></div>
 <section class="panel">
 <h2>1. Dán dữ liệu booking</h2>
-<label for="raw">Dán bảng booking từ Excel / Google Sheets</label>
-<textarea id="raw" placeholder="Dán dữ liệu booking có các cột Agency, Flight, Name, Type, Time, Order, NV thực hiện..."></textarea>
+<label for="raw">Dán dữ liệu booking (Excel / Google Sheets hoặc nội dung chi tiết copy từ booking)</label>
+<textarea id="raw" placeholder="Dán trực tiếp dữ liệu booking đã copy (mỗi trường trên một dòng) hoặc bảng Excel/Google Sheets..."></textarea>
 <div class="controls"><button id="import">Chuẩn hóa & nạp danh sách</button><button class="secondary" id="append">Thêm vào danh sách hiện tại</button><button class="secondary" id="clearInput">Xóa ô nhập</button></div>
-<p class="hint">Tự chuẩn hóa Agency, Flight, Name, Time, Type và nhân viên; tách ARRIVAL / DEPARTURE; sắp xếp theo giờ bay. Hỗ trợ mẫu cũ 9 cột (Agency, 2 cột phụ, Flight, Name, Type, Time, Order, NV thực hiện) và mẫu 7 cột chuẩn.</p>
+<p class="hint">Tự chuẩn hóa Agency, Flight, Name, Time, Type và nhân viên; tách ARRIVAL / DEPARTURE; sắp xếp theo giờ bay. Hỗ trợ bảng 9 cột, bảng 7 cột chuẩn và nội dung chi tiết booking dạng dọc (mỗi trường một dòng: Order, sân bay, chuyến bay, dịch vụ, ngày giờ, tên khách, nhân viên...).</p>
 <div id="status" class="status">Chưa nạp dữ liệu.</div>
 </section>
 <section class="panel">
@@ -57,10 +57,52 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 function normalizeAgency(v,notes){let a=clean(v);const u=a.toUpperCase();if(u==="CTRIP TRAVEL HOLDING (HONG KONG) LIMITED")return "Ctrip";if(u.includes("CTCP GIẢI PHÁP THÔNG MINH LINKCARE"))return "LINKCARE";if(u.includes("CTCP TIẾP THỊ SỐ TÔ QUÀ"))return "URBOX";if(u==="KLOOK TRAVEL TECHNOLOGY LIMITED"||u==="KLOOK TRAVEL")return "KLOOK";if(u==="SGN - DỊCH VỤ"||u==="SGN-DỊCH VỤ")return notes.find(x=>x)||"";return a;}
 function normalizeFlight(v){return clean(v).replace(/[\s-]+/g,"").toUpperCase();}
 function normalizeName(v){let n=clean(v).replace(/\s*,\s*\+\s*(\d+)$/," +$1");if(/\+\d+$/.test(n))return n.replace(/\s*\+\s*/," +");const parts=n.split(/\s*,\s*/).filter(Boolean);if(parts.length>1)return parts[0]+" +"+(parts.length-1);return n;}
-function normalizeTime(v){let t=clean(v);if(!t)return "";let m=t.match(/^(\d{1,2})[.:hH](\d{1,2})$/);if(m)return String(Number(m[1])).padStart(2,"0")+":"+String(Number(m[2])).padStart(2,"0");m=t.match(/^(\d{1,2}):(\d{1,2})$/);if(m)return String(Number(m[1])).padStart(2,"0")+":"+String(Number(m[2])).padStart(2,"0");return t;}
+function normalizeTime(v){let t=clean(v);if(!t)return "";let dated=t.match(/(?:^|\\s)(\\d{1,2}):(\\d{2})(?:\\s*$)/);if(dated)return String(Number(dated[1])).padStart(2,"0")+":"+dated[2];let m=t.match(/^(\\d{1,2})[.:hH](\\d{1,2})$/);if(m)return String(Number(m[1])).padStart(2,"0")+":"+String(Number(m[2])).padStart(2,"0");m=t.match(/^(\\d{1,2}):(\\d{1,2})$/);if(m)return String(Number(m[1])).padStart(2,"0")+":"+String(Number(m[2])).padStart(2,"0");return t;}
 function normalizeType(v){const t=clean(v).toLowerCase();if(!t)return "";const dep=/departure|tiễn/.test(t),full=/full|vip|thương gia|business/.test(t);if(dep)return full?"Departure FULL":"Departure Kci";if(/arrival|đón/.test(t))return full?"Arrival FULL":"Arrival";return "";}
 function normalizeStaff(v){let s=clean(v);if(!s||s==="_")return "";s=s.replace(/\+?\d[\d\s().-]{7,}/g,"").replace(/\bSGN\b/gi,"").replace(/^\s*[-–—]+\s*/,"").replace(/\s*[-–—]+\s*$/,"").trim();s=s.replace(/^(Mr\.?|Ms\.?|Mrs\.?|Miss\.?|Anh|Chị)\s+/i,"").trim();return s;}
-function parseRows(text){const lines=text.replace(/\r/g,"").split("\n").filter(x=>x.trim());const out=[];for(const line of lines){const c=line.split("\t").map(clean);if(!c.some(Boolean))continue;if(/^agency$/i.test(c[0]||""))continue;let a,f,n,tim,typ,ord,staff,notes=[];if(c.length>=9){a=c[0];notes=[c[1],c[2]];f=c[3];n=c[4];typ=c[5];tim=c[6];ord=c[7];staff=c[8];}else{[a,f,n,tim,typ,ord,staff]=c;notes=[];}a=normalizeAgency(a,notes);f=normalizeFlight(f);n=normalizeName(n);tim=normalizeTime(tim);typ=normalizeType(typ);staff=normalizeStaff(staff);if(!a&&!f&&!n&&!typ&&!ord)continue;if(!typ){const raw=clean(c[5]||c[4]);typ=normalizeType(raw);}if(!typ)continue;out.push([a,f,n,tim,typ,clean(ord),staff]);}return out;}
+function parseVerticalRows(text){
+ const lines=text.replace(/\\r/g,"").split("\n").map(clean).filter(Boolean);
+ const starts=[];
+ for(let i=0;i<lines.length-1;i++){
+   if(/^[0-9A-F]{6}$/i.test(lines[i]) && /^(Tân Sơn Nhất|Tan Son Nhat)$/i.test(lines[i+1])) starts.push(i);
+ }
+ if(!starts.length)return [];
+ const out=[];
+ for(let k=0;k<starts.length;k++){
+   const rec=lines.slice(starts[k],starts[k+1]??lines.length);
+   if(rec.length<13)continue;
+   const order=rec[0], flight=rec[2], service=rec[3], dateTime=rec[4], name=rec[5], staff=rec[6];
+   const agencyRaw=rec[rec.length-2];
+   const notes=rec.slice(11,rec.length-2);
+   const agency=normalizeAgency(agencyRaw,notes);
+   const type=normalizeType(service);
+   if(!type)continue;
+   out.push([agency,normalizeFlight(flight),normalizeName(name),normalizeTime(dateTime),type,order,normalizeStaff(staff)]);
+ }
+ return out;
+}
+function parseRows(text){
+ const source=String(text??"").replace(/^\\uFEFF/,"");
+ // Dữ liệu copy dạng chi tiết booking: mỗi trường nằm trên một dòng riêng.
+ const vertical=parseVerticalRows(source);
+ if(vertical.length)return vertical;
+ const lines=source.replace(/\\r/g,"").split("\n").filter(x=>x.trim());
+ const out=[];
+ for(const line of lines){
+   const c=line.split("\t").map(clean);
+   if(!c.some(Boolean))continue;
+   if(/^agency$/i.test(c[0]||""))continue;
+   let a,f,n,tim,typ,ord,staff,notes=[];
+   if(c.length>=9){a=c[0];notes=[c[1],c[2]];f=c[3];n=c[4];typ=c[5];tim=c[6];ord=c[7];staff=c[8];}
+   else{[a,f,n,tim,typ,ord,staff]=c;}
+   a=normalizeAgency(a,notes);f=normalizeFlight(f);n=normalizeName(n);tim=normalizeTime(tim);typ=normalizeType(typ);staff=normalizeStaff(staff);
+   if(!a&&!f&&!n&&!typ&&!ord)continue;
+   if(!typ){const raw=clean(c[5]||c[4]);typ=normalizeType(raw);}
+   if(!typ)continue;
+   out.push([a,f,n,tim,typ,clean(ord),staff]);
+ }
+ return out;
+}
 function mins(t){const m=String(t||"").match(/^(\d{2}):(\d{2})$/);return m?Number(m[1])*60+Number(m[2]):9999;}
 function sorted(rows){return rows.slice().sort((a,b)=>mins(a[3])-mins(b[3])||a[1].localeCompare(b[1]));}
 function filtered(){const q=$("search").value.toLowerCase(),s=$("staffFilter").value;return data.filter(r=>(!q||r.join(" ").toLowerCase().includes(q))&&(!s||r[6]===s));}
