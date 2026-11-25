@@ -334,7 +334,7 @@ function parseChunk(ls){
  // Ưu tiên trường "NV Nhận việc". Nếu trường này trống, nhận diện nhân viên
  // đã nhận việc từ dòng phân công có cấu trúc: "SGN [Tên nhân viên] [Số điện thoại]".
  // Không nhầm dòng "SGN - Dịch vụ" vì dòng đó không có số điện thoại.
- const sgnStaffLine=ls.map(x=>x.match(/^SGN\\s+(?:-\\s*)?(.+?)\\s+((?:\\+?\\d)[\\d\\s().-]{7,})$/i)).find(Boolean);
+ const sgnStaffLine=ls.map(x=>x.match(/^SGN\s+(.+?)\s+(\+?\d[\d\s().-]{6,})$/i)).find(Boolean);
  b.staffAssign=getValueAfter(ls,"NV Nhận việc")||(sgnStaffLine?sgnStaffLine[1].trim():"");
  b.status=getValueAfter(ls,"Trạng thái")||ls.find(x=>/đã xác nhận|chờ xác nhận|cancel|hủy/i.test(x))||"";
  b.email=getValueAfter(ls,"Email khách");
