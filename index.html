@@ -67,6 +67,7 @@ const $ = id => document.getElementById(id);
 const WELCOME = "https://drive.google.com/file/d/1oz2djqDYCy15yjs3OCRJOfWDf104PjC2/view?usp=sharing";
 const copyStore = new Map();
 let copySeq = 0;
+let processedBookings = [];
 function copyButton(value,label,cls="mini"){
  const key="copy-"+(++copySeq);
  copyStore.set(key,String(value??""));
@@ -341,6 +342,15 @@ function renderReview(items,dir,title){
  const all=items.filter(x=>x.dir===dir&&x.sub).map(x=>`${x.order} | ${x.reviewPhone} | ${x.reviewSubject}`).join("\n");
  return `<section class="review"><div class="topline"><h2>${title}</h2>${copyButton(all,"Copy tất cả"," ")}</div><div class="tablewrap"><table><thead><tr><th>#</th><th>Mã order</th><th>Số điện thoại</th><th>Subject (không lặp mã order)</th><th></th></tr></thead><tbody>${rows.join("")||`<tr><td colspan="5" class="muted">Không có booking.</td></tr>`}</tbody></table></div></section>`;
 }
+function renderFilteredBookings(){
+ const select=$("partnerFilter");
+ const partner=select?select.value:"__ALL__";
+ const shown=partner==="__ALL__"?processedBookings:processedBookings.filter(x=>(x.agency||"Chưa rõ đối tác")===partner);
+ $("results").innerHTML=shown.map(cardHtml).join("")||`<section class="panel">Không có booking thuộc đối tác này.</section>`;
+ $("reviews").innerHTML=renderReview(shown,"ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+renderReview(shown,"DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
+ const count=$("filterCount");
+ if(count) count.textContent=`Đang hiển thị ${shown.length}/${processedBookings.length} booking`;
+}
 async function copyText(s){
  const value=String(s??"");
  if(!value){toast("Không có nội dung để sao chép.",false);return;}
@@ -370,9 +380,12 @@ function run(){
  const kept=made.filter(b=>b.sub && (all || (b.confirmed&&b.unassigned)));
  const skipped=made.filter(b=>!kept.includes(b));
  $("summary").classList.remove("hidden");
- $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?`<p class="hint">Bỏ qua: ${skipped.map(x=>`${esc(x.order||"Không rõ mã")} (${esc(x.staffAssign||x.status||"không đạt bộ lọc")})`).join("; ")}</p>`:""}`;
- $("results").innerHTML=kept.map(cardHtml).join("")||`<section class="panel">Không có booking nào đủ điều kiện tạo Subject. Kiểm tra định dạng dữ liệu hoặc bật xử lý tất cả.</section>`;
- $("reviews").innerHTML=renderReview(kept,"ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+renderReview(kept,"DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
+ processedBookings=kept;
+ const partners=[...new Set(kept.map(x=>x.agency||"Chưa rõ đối tác"))].sort((a,b)=>a.localeCompare(b,"vi"));
+ $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?`<p class="hint">Bỏ qua: ${skipped.map(x=>`${esc(x.order||"Không rõ mã")} (${esc(x.staffAssign||x.status||"không đạt bộ lọc")})`).join("; ")}</p>`:""}
+ <div class="controls" style="margin-top:16px"><div class="field"><label for="partnerFilter">Lọc booking đã soạn theo đối tác</label><select id="partnerFilter" style="min-width:220px;padding:9px 10px;border:1px solid #bbc6d8;border-radius:8px"><option value="__ALL__">Tất cả đối tác (${kept.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${kept.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
+ renderFilteredBookings();
+ $("partnerFilter").addEventListener("change",renderFilteredBookings);
  $("status").textContent=`Đã phân tích ${made.length} booking; hiển thị ${kept.length} booking. Các link chỉ mở bản nháp, không tự gửi.`;
  $("status").className="status good";
 }
