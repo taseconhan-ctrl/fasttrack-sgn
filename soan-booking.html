@@ -436,7 +436,7 @@ function parseSingle(raw){
  const parsed=parseChunk(raw.split("\\n").map(x=>x.trim()));
  if(!parsed.flight||!parsed.names.length||!parsed.date||!parsed.time) {
   const inline=parseInlineSingle(raw);
-  return {...parsed,...Object.fromEntries(Object.entries(inline).filter(([k,v])=>v!==""&&v!==null&&(!Array.isArray(v)||v.length)))};
+  return {...parsed,...Object.fromEntries(Object.entries(inline).filter(([k,v])=>k!=="staffAssign"&&v!==""&&v!==null&&(!Array.isArray(v)||v.length))),staffAssign:parsed.staffAssign||inline.staffAssign||""};
  }
  return parsed;
 }
