@@ -12,7 +12,8 @@ h2{font-size:18px;margin:0 0 10px}label{font-weight:650;display:block;margin-bot
 .controls{display:flex;gap:9px;align-items:end;flex-wrap:wrap;margin-top:11px}.controls>div{min-width:180px;flex:1}.controls input,.controls select{width:100%}
 button,.back{border:0;border-radius:8px;background:var(--blue);color:#fff;padding:9px 13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}button.secondary{background:#e9eef7;color:#21304b}button.danger{background:#a22b36}
 .hint{color:var(--muted);font-size:12px}.status{margin-top:10px;padding:9px 11px;border-radius:8px;background:#edf3ff;color:#29436e}
-.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{width:100%;border-collapse:collapse;min-width:900px;font-size:13px}th,td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{background:#eef2f8;position:sticky;top:0;z-index:1}tbody tr:hover{background:#f8faff}td input{width:125px;padding:6px;font-size:12px}.count{font-weight:750;color:var(--blue)}.top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.sectiontag{display:inline-block;border-radius:999px;background:#eaf0ff;color:#2458bd;padding:3px 9px;font-size:12px;font-weight:750}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{width:100%;border-collapse:collapse;min-width:900px;font-size:13px}th,td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{background:#eef2f8;position:sticky;top:0;z-index:1}tbody tr:hover{background:#f8faff}td input{width:125px;padding:6px;font-size:12px}.count{font-weight:750;color:var(--blue)}
+.arrival-full-row td{font-weight:600;border-bottom-color:#fff9}.arrival-full-row td input{background:#ffffffd9;border-color:#ffffff}.top{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.sectiontag{display:inline-block;border-radius:999px;background:#eaf0ff;color:#2458bd;padding:3px 9px;font-size:12px;font-weight:750}
 @media(max-width:650px){header h1{font-size:21px}.panel{padding:12px}}
 </style></head>
 <body>
@@ -32,12 +33,15 @@ button,.back{border:0;border-radius:8px;background:var(--blue);color:#fff;paddin
 <div class="controls">
 <div><label for="search">Tìm kiếm</label><input id="search" placeholder="Tên khách, chuyến bay, agency, order, nhân viên..."></div>
 <div><label for="staffFilter">Nhân viên thực hiện</label><select id="staffFilter"><option value="">Tất cả nhân viên</option></select></div>
+<div><label for="dateFrom">Từ ngày</label><input id="dateFrom" type="date"></div>
+<div><label for="dateTo">Đến ngày</label><input id="dateTo" type="date"></div>
+<div style="flex:0 0 auto;min-width:auto"><button class="secondary" id="clearDate">Xóa lọc ngày</button></div>
 </div>
-<p class="hint">Có thể sửa trực tiếp NV thực hiện trên từng dòng. Thay đổi được lưu trên trình duyệt và thiết bị hiện tại.</p>
+<p class="hint">Có thể lọc theo khoảng ngày, sửa trực tiếp NV thực hiện trên từng dòng. Booking Arrival FULL được tô màu theo Agency để dễ nhận biết.</p>
 </section>
 <section class="panel">
 <div class="top"><h2><span class="sectiontag">ARRIVAL</span> Danh sách khách đón</h2><span class="count" id="arrivalCount">0 booking</span></div>
-<div class="controls"><button id="copyArrival">Copy ARRIVAL</button><button class="secondary" id="exportArrival">Xuất ARRIVAL TSV</button></div>
+<div class="controls"><button id="copyArrival">Copy ARRIVAL</button><button class="secondary" id="exportArrival">Xuất ARRIVAL TSV</button></div><div id="arrivalFullLegend" class="hint" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"></div>
 <div class="tablewrap"><table><thead><tr><th>Agency</th><th>Flight</th><th>Name</th><th>Time</th><th>Type</th><th>Order</th><th>NV thực hiện</th></tr></thead><tbody id="arrivalRows"></tbody></table></div>
 </section>
 <section class="panel">
@@ -57,7 +61,9 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 function normalizeAgency(v,notes){let a=clean(v);const u=a.toUpperCase();if(u==="CTRIP TRAVEL HOLDING (HONG KONG) LIMITED")return "Ctrip";if(u.includes("CTCP GIẢI PHÁP THÔNG MINH LINKCARE"))return "LINKCARE";if(u.includes("CTCP TIẾP THỊ SỐ TÔ QUÀ"))return "URBOX";if(u==="KLOOK TRAVEL TECHNOLOGY LIMITED"||u==="KLOOK TRAVEL")return "KLOOK";if(u==="SGN - DỊCH VỤ"||u==="SGN-DỊCH VỤ")return notes.find(x=>x)||"";return a;}
 function normalizeFlight(v){return clean(v).replace(/[\s-]+/g,"").toUpperCase();}
 function normalizeName(v){let n=clean(v).replace(/\s*,\s*\+\s*(\d+)$/," +$1");if(/\+\d+$/.test(n))return n.replace(/\s*\+\s*/," +");const parts=n.split(/\s*,\s*/).filter(Boolean);if(parts.length>1)return parts[0]+" +"+(parts.length-1);return n;}
+function dateISO(v){const t=clean(v);let m=t.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);if(m)return m[3]+"-"+String(Number(m[2])).padStart(2,"0")+"-"+String(Number(m[1])).padStart(2,"0");m=t.match(/^(\d{4})-(\d{2})-(\d{2})/);return m?m[1]+"-"+m[2]+"-"+m[3]:"";}
 function normalizeTime(v){let t=clean(v);if(!t)return "";let dated=t.match(/(?:^|\s)(\d{1,2}):(\d{2})(?:\s*$)/);if(dated)return String(Number(dated[1])).padStart(2,"0")+":"+dated[2];let m=t.match(/^(\d{1,2})[.:hH](\d{1,2})$/);if(m)return String(Number(m[1])).padStart(2,"0")+":"+String(Number(m[2])).padStart(2,"0");m=t.match(/^(\d{1,2}):(\d{1,2})$/);if(m)return String(Number(m[1])).padStart(2,"0")+":"+String(Number(m[2])).padStart(2,"0");return t;}
+function agencyColor(agency){const colors=["#ffe3dc","#fff0c2","#dff2df","#dcecff","#eadfff","#ffe0f0","#d9f2f0","#f0e8d8","#e5ebc9","#e2e2ff"];let h=0;for(const ch of String(agency||"Chưa rõ"))h=(h*31+ch.charCodeAt(0))>>>0;return colors[h%colors.length];}
 function normalizeType(v){const t=clean(v).toLowerCase();if(!t)return "";const dep=/departure|tiễn/.test(t),full=/full|vip|thương gia|business/.test(t);if(dep)return full?"Departure FULL":"Departure Kci";if(/arrival|đón/.test(t))return full?"Arrival FULL":"Arrival";return "";}
 function normalizeStaff(v){let s=clean(v);if(!s||s==="_")return "";s=s.replace(/\+?\d[\d\s().-]{7,}/g,"").replace(/\bSGN\b/gi,"").replace(/^\s*[-–—]+\s*/,"").replace(/\s*[-–—]+\s*$/,"").trim();s=s.replace(/^(Mr\.?|Ms\.?|Mrs\.?|Miss\.?|Anh|Chị)\s+/i,"").trim();return s;}
 function parseVerticalRows(text){
@@ -77,7 +83,7 @@ function parseVerticalRows(text){
    const agency=normalizeAgency(agencyRaw,notes);
    const type=normalizeType(service);
    if(!type)continue;
-   out.push([agency,normalizeFlight(flight),normalizeName(name),normalizeTime(dateTime),type,order,normalizeStaff(staff)]);
+   out.push([agency,normalizeFlight(flight),normalizeName(name),normalizeTime(dateTime),type,order,normalizeStaff(staff),dateISO(dateTime)]);
  }
  return out;
 }
@@ -99,17 +105,17 @@ function parseRows(text){
    if(!a&&!f&&!n&&!typ&&!ord)continue;
    if(!typ){const raw=clean(c[5]||c[4]);typ=normalizeType(raw);}
    if(!typ)continue;
-   out.push([a,f,n,tim,typ,clean(ord),staff]);
+   out.push([a,f,n,tim,typ,clean(ord),staff,dateISO(c[6]||c[3]||"")]);
  }
  return out;
 }
 function mins(t){const m=String(t||"").match(/^(\d{2}):(\d{2})$/);return m?Number(m[1])*60+Number(m[2]):9999;}
 function sorted(rows){return rows.slice().sort((a,b)=>mins(a[3])-mins(b[3])||a[1].localeCompare(b[1]));}
-function filtered(){const q=$("search").value.toLowerCase(),s=$("staffFilter").value;return data.filter(r=>(!q||r.join(" ").toLowerCase().includes(q))&&(!s||r[6]===s));}
+function filtered(){const q=$("search").value.toLowerCase(),s=$("staffFilter").value,from=$("dateFrom").value,to=$("dateTo").value;return data.filter(r=>(!q||r.join(" ").toLowerCase().includes(q))&&(!s||r[6]===s)&&(!from||((r[7]||"")>=from))&&(!to||((r[7]||"")<=to)));}
 function rowsFor(type){return sorted(filtered().filter(r=>r[4].startsWith(type)));}
 function tsv(rows){return [HEAD.join("\t"),...rows.map(r=>r.map(v=>String(v??"").replace(/[\t\n]/g," ")).join("\t"))].join("\n");}
-function renderTable(id,rows){$(id).innerHTML=rows.length?rows.map((r,i)=>'<tr>'+r.slice(0,6).map(v=>'<td>'+esc(v)+'</td>').join("")+'<td><input aria-label="NV thực hiện" data-index="'+data.indexOf(r)+'" value="'+esc(r[6])+'" placeholder="Chưa phân công"></td></tr>').join(""):'<tr><td colspan="7" style="text-align:center;color:#68758b">Không có booking phù hợp.</td></tr>';}
-function render(){const arr=rowsFor("Arrival"),dep=rowsFor("Departure");$("count").textContent=filtered().length+" / "+data.length+" booking";$("arrivalCount").textContent=arr.length+" booking";$("departureCount").textContent=dep.length+" booking";const staffs=[...new Set(data.map(r=>r[6]).filter(Boolean))].sort();const old=$("staffFilter").value;$("staffFilter").innerHTML='<option value="">Tất cả nhân viên</option>'+staffs.map(s=>'<option value="'+esc(s)+'">'+esc(s)+'</option>').join("");$("staffFilter").value=staffs.includes(old)?old:"";renderTable("arrivalRows",arr);renderTable("departureRows",dep);document.querySelectorAll("[data-index]").forEach(el=>el.addEventListener("change",e=>{data[Number(e.target.dataset.index)][6]=e.target.value.trim();save();}));}
+function renderTable(id,rows){$(id).innerHTML=rows.length?rows.map(r=>{const full=id==="arrivalRows"&&r[4]==="Arrival FULL",bg=full?agencyColor(r[0]):"";return '<tr class="'+(full?"arrival-full-row":"")+'" style="'+(full?"background:"+bg:"")+'">'+r.slice(0,6).map(v=>'<td>'+esc(v)+'</td>').join("")+'<td><input aria-label="NV thực hiện" data-index="'+data.indexOf(r)+'" value="'+esc(r[6])+'" placeholder="Chưa phân công"></td></tr>';}).join(""):'<tr><td colspan="7" style="text-align:center;color:#68758b">Không có booking phù hợp.</td></tr>';}
+function render(){const arr=rowsFor("Arrival"),dep=rowsFor("Departure");$("count").textContent=filtered().length+" / "+data.length+" booking";$("arrivalCount").textContent=arr.length+" booking";$("departureCount").textContent=dep.length+" booking";const staffs=[...new Set(data.map(r=>r[6]).filter(Boolean))].sort();const old=$("staffFilter").value;$("staffFilter").innerHTML='<option value="">Tất cả nhân viên</option>'+staffs.map(s=>'<option value="'+esc(s)+'">'+esc(s)+'</option>').join("");$("staffFilter").value=staffs.includes(old)?old:"";renderTable("arrivalRows",arr);renderTable("departureRows",dep);const fullAgencies=[...new Set(arr.filter(r=>r[4]==="Arrival FULL").map(r=>r[0]||"Chưa rõ"))].sort();$("arrivalFullLegend").innerHTML=fullAgencies.map(a=>'<span style="display:inline-flex;align-items:center;gap:5px;background:'+agencyColor(a)+';padding:3px 8px;border-radius:6px;color:#263348">'+esc(a)+'</span>').join("");document.querySelectorAll("[data-index]").forEach(el=>el.addEventListener("change",e=>{data[Number(e.target.dataset.index)][6]=e.target.value.trim();save();}));}
 function save(){localStorage.setItem(KEY,JSON.stringify(data));render();}
 function download(rows,name){const blob=new Blob([tsv(rows).replace(/\n/g,"\r\n")],{type:"text/tab-separated-values;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name+".tsv";a.click();URL.revokeObjectURL(url);}
 async function copy(rows,label){try{await navigator.clipboard.writeText(tsv(rows));$("status").textContent="Đã sao chép "+label+" ("+rows.length+" booking).";}catch(e){$("status").textContent="Trình duyệt không cho phép sao chép tự động. Hãy thử mở trang bằng HTTPS.";}}
