@@ -141,7 +141,7 @@ th{background:#eaf2ee;color:#214b43}
     <button id="run">Phân tích & tạo kết quả</button>
     <button class="secondary" id="clear">Xóa dữ liệu</button>
   </div>
-  <p class="hint">Mặc định chỉ lấy booking Đã xác nhận và chưa có nhân viên nhận việc. Hệ thống nhận diện cả trường “NV Nhận việc” và dòng phân công “SGN [Tên nhân viên] [Số điện thoại]” (ví dụ SGN An 0366404159); booking đã có nhân viên luôn bị bỏ qua, kể cả khi bật xử lý tất cả.</p>
+  <p class="hint">Mặc định chỉ lấy booking Đã xác nhận và chưa có nhân viên nhận việc. Hệ thống nhận diện trường “NV Nhận việc” và nhiều dạng phân công SGN như “SGN - Tên”, “Tên SGN”, có hoặc không có số điện thoại; booking đã có nhân viên luôn bị bỏ qua, kể cả khi bật xử lý tất cả.</p>
   <div id="status" class="status">Chưa có dữ liệu được xử lý.</div>
 </section>
 
@@ -269,12 +269,18 @@ function getAssignedStaff(lines){
     const next=clean(lines[i+1]||"");
     if(next && !/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next) && !/^[-_]+$/.test(next)) return next;
   }
-  const line=lines.map(x=>x.trim()).find(x=>
-    /^SGN\s*[-–—]?\s*.+?\s+\+?\d[\d\s().-]{6,}\d$/i.test(x)
-  );
-  if(line){
-    const match=line.match(/^SGN\s*[-–—]?\s*(.+?)\s+\+?\d[\d\s().-]{6,}\d$/i);
-    if(match) return match[1].trim();
+  // Nhận diện phân công SGN ở cả hai dạng: "SGN - Tên [SĐT]" và "Tên SGN [SĐT]".
+  // Số điện thoại là tùy chọn; loại trừ dòng "SGN - Dịch vụ" vì đây không phải nhân viên.
+  for(const raw of lines){
+    const value=raw.trim().replace(/^[-*•\\s]+|[-*\\s]+$/g,"");
+    if(!value) continue;
+    if(/^nhatquang$/i.test(value)) return "nhatquang";
+    if(/^(?:SGN\\s*[-–—]?\\s*(?:dịch vụ|dịch vụ fast track))$/i.test(value)) continue;
+    const phoneTail="(?:\\s+\\+?\\d[\\d\\s().-]{5,}\\d)?";
+    let match=value.match(new RegExp("^SGN\\\\s*[-–—]?\\\\s*(.+?)"+phoneTail+"$","i"));
+    if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim())) return match[1].trim();
+    match=value.match(new RegExp("^(.+?)\\\\s+SGN"+phoneTail+"$","i"));
+    if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim())) return match[1].trim();
   }
   return "";
 }
