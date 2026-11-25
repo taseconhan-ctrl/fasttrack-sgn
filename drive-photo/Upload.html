@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gửi ảnh vé - Fast Track SGN</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2f5fa;color:#17243a;font:16px/1.5 system-ui,Arial,sans-serif}.wrap{max-width:520px;margin:32px auto;padding:16px}.card{background:white;border:1px solid #dce3ed;border-radius:18px;padding:22px;box-shadow:0 8px 30px #14233f0d}h1{font-size:22px;margin:0 0 6px}.muted{color:#64748b;font-size:14px}.order{font-size:26px;font-weight:800;color:#2458bd;margin:10px 0 20px}label{display:block;font-weight:700;margin:16px 0 7px}input{width:100%;padding:13px;border:1px solid #bac6d8;border-radius:10px;font:inherit}input[type=file]{background:#f8fafc}button{width:100%;padding:14px;border:0;border-radius:10px;background:#2458bd;color:white;font-weight:800;font-size:16px;margin-top:18px}button:disabled{opacity:.55}#status{margin-top:16px;padding:12px;border-radius:10px;background:#eef3fb;white-space:pre-wrap}.ok{background:#e7f7ee!important;color:#087443}.err{background:#fff0f0!important;color:#a22b36}.preview{width:100%;max-height:320px;object-fit:contain;margin-top:12px;border-radius:10px;display:none}
+</style></head><body><main class="wrap"><section class="card">
+<h1>GỬI ẢNH VÉ MÁY BAY</h1><div class="muted">FAST TRACK SGN · Tan Son Nhat International Airport</div>
+<div>Mã booking</div><div class="order"><?= order ?></div>
+<label for="staff">Tên nhân viên gửi ảnh</label><input id="staff" maxlength="60" placeholder="Nhập tên nhân viên" autocomplete="name">
+<label for="photo">Chụp hoặc chọn ảnh vé máy bay</label><input id="photo" type="file" accept="image/*" capture="environment">
+<img id="preview" class="preview" alt="Xem trước ảnh vé">
+<button id="send" type="button">GỬI ẢNH LÊN DRIVE</button><div id="status" role="status">Chọn ảnh vé rồi bấm gửi. Không chia sẻ đường link QR cho người ngoài.</div>
+</section></main>
+<script>
+const ORDER = '<?= order ?>', TOKEN = '<?= token ?>';
+const photo=document.getElementById('photo'), preview=document.getElementById('preview'), statusBox=document.getElementById('status'), send=document.getElementById('send');
+let dataUrl='';
+photo.addEventListener('change',()=>{
+ const file=photo.files&&photo.files[0];dataUrl='';
+ if(!file){preview.style.display='none';return;}
+ if(!file.type.startsWith('image/')){statusBox.textContent='Tệp đã chọn không phải ảnh.';statusBox.className='err';return;}
+ if(file.size>8*1024*1024){statusBox.textContent='Ảnh vượt quá 8 MB. Vui lòng chọn ảnh nhỏ hơn.';statusBox.className='err';photo.value='';return;}
+ const reader=new FileReader();reader.onload=()=>{dataUrl=reader.result;preview.src=dataUrl;preview.style.display='block';statusBox.textContent='Đã chọn ảnh. Kiểm tra ảnh rồi gửi.';statusBox.className='';};reader.readAsDataURL(file);
+});
+send.addEventListener('click',()=>{
+ const staff=document.getElementById('staff').value.trim();
+ if(!staff){statusBox.textContent='Vui lòng nhập tên nhân viên.';statusBox.className='err';return;}
+ if(!dataUrl){statusBox.textContent='Vui lòng chụp hoặc chọn ảnh vé.';statusBox.className='err';return;}
+ send.disabled=true;send.textContent='ĐANG TẢI ẢNH...';statusBox.textContent='Đang lưu ảnh vào Google Drive...';statusBox.className='';
+ google.script.run.withSuccessHandler(r=>{
+   statusBox.textContent='ĐÃ GỬI ẢNH THÀNH CÔNG\nBooking: '+ORDER+'\nTệp: '+r.fileName+'\nThời gian: '+r.uploadedAt+' (GMT+7)';
+   statusBox.className='ok';send.textContent='ĐÃ GỬI THÀNH CÔNG';
+ }).withFailureHandler(e=>{
+   statusBox.textContent='Gửi ảnh chưa thành công: '+(e&&e.message?e.message:'Lỗi không xác định')+'\nVui lòng thử lại.';
+   statusBox.className='err';send.disabled=false;send.textContent='GỬI ẢNH LÊN DRIVE';
+ }).saveTicketPhoto({order:ORDER,token:TOKEN,staff:staff,dataUrl:dataUrl});
+});
+</script></body></html>
