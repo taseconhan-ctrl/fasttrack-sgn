@@ -24,8 +24,7 @@ export default {
         googleRefreshToken: Boolean(env.GOOGLE_REFRESH_TOKEN),
         database: false,
         gmailOAuth: false,
-        gmailScope: false,
-        gmailApi: false
+        gmailScope: false
       };
       try {
         await env.DB.prepare("SELECT 1").first();
@@ -46,14 +45,10 @@ export default {
           if (tokenRes.ok && tokenData.access_token) {
             checks.gmailOAuth = true;
             checks.gmailScope = String(tokenData.scope || "").split(" ").includes("https://www.googleapis.com/auth/gmail.send");
-            const profileRes = await fetch("https://gmail.googleapis.com/gmail/v1/users/me/profile", {
-              headers: { Authorization: "Bearer " + tokenData.access_token }
-            });
-            checks.gmailApi = profileRes.ok;
           }
         } catch {}
       }
-      return json({ ok: checks.database && checks.gmailOAuth && checks.gmailScope && checks.gmailApi, checks });
+      return json({ ok: checks.database && checks.gmailOAuth && checks.gmailScope, checks });
     }
     if (request.method !== "POST") return json({ error: "POST only" }, 405);
     if (!corsOrigin) return json({ error: "Origin not allowed" }, 403);
