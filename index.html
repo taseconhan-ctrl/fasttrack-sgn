@@ -138,6 +138,7 @@ const WELCOME = "https://drive.google.com/file/d/1oz2djqDYCy15yjs3OCRJOfWDf104Pj
 const copyStore = new Map();
 let copySeq = 0;
 let processedBookings = [];
+let skippedBookingsCache = [];
 function copyButton(value,label,cls="mini"){
  const key="copy-"+(++copySeq);
  copyStore.set(key,String(value??""));
@@ -490,26 +491,27 @@ async function copyText(s){
 function toast(msg,good=true){const el=$("status");el.textContent=msg;el.className="status "+(good?"good":"warn")}
 function skippedReasons(b,all){
  const reasons=[];
- if(!b.order)reasons.push("Thiếu mã order");
- if(!b.flight)reasons.push("Thiếu số hiệu chuyến bay");
- if(!b.date)reasons.push("Thiếu ngày bay");
- if(!b.time)reasons.push("Thiếu giờ bay");
- if(!b.names.length)reasons.push("Thiếu tên khách");
+ if(!b.order)reasons.push("Thiếu mã order – không đủ thông tin định danh booking");
+ if(!b.flight)reasons.push("Thiếu số hiệu chuyến bay – không thể tạo nội dung hỗ trợ");
+ if(!b.date)reasons.push("Thiếu ngày bay – không thể tạo Subject và Body");
+ if(!b.time)reasons.push("Thiếu giờ bay – không thể tạo Subject");
+ if(!b.names.length)reasons.push("Thiếu tên khách – không thể tạo Subject và lời chào");
  if(!b.dir)reasons.push("Không xác định được loại dịch vụ ĐÓN/TIỄN");
- if(!b.sub)reasons.push("Không đủ dữ liệu bắt buộc để tạo Subject");
+ if(!b.sub && !reasons.length)reasons.push("Dữ liệu chưa đáp ứng điều kiện tạo Subject");
  if(!all){
-  if(!b.confirmed)reasons.push("Trạng thái không phải Đã xác nhận");
-  if(!b.unassigned)reasons.push("Booking đã có nhân viên nhận việc: "+(b.staffAssign||"không rõ"));
+  if(!b.confirmed)reasons.push("Trạng thái booking không phải “Đã xác nhận”");
+  if(!b.unassigned)reasons.push("Đã có nhân viên nhận việc: "+(b.staffAssign||"không rõ"));
  }
  return [...new Set(reasons)];
 }
-function renderSkippedBookings(items){
+function renderSkippedBookings(items,all){
  if(!items.length)return "";
+ const draftable=items.filter(b=>b.order&&b.sub&&b.dir);
  const rows=items.map((b,i)=>{
-  const reason=skippedReasons(b,$("allBookings").checked);
+  const reason=skippedReasons(b,all);
   return `<article class="booking"><div class="topline"><h3>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.dir||"Chưa xác định loại")}</h3><span class="pill bad">ĐÃ BỎ QUA</span></div><div class="meta"><span class="pill">${esc(b.flight||"Thiếu flight")}</span><span class="pill">${esc(b.date||"Thiếu ngày")} ${esc(b.time||"Thiếu giờ")}</span><span class="pill">${b.pax||b.names.length||0} khách</span></div><div class="grid"><div class="kv"><small>Khách</small><b>${esc(b.names.join(", ")||"Chưa có tên")}</b></div><div class="kv"><small>Nhân viên nhận việc</small><b>${esc(b.staffAssign||"Trống")}</b></div><div class="kv"><small>Trạng thái</small><b>${esc(b.status||"Không rõ")}</b></div></div><div class="status warn"><b>Lý do bỏ qua (bắt buộc):</b><ul>${reason.map(x=>"<li>"+esc(x)+"</li>").join("")||"<li>Không đạt điều kiện tạo kết quả.</li>"}</ul></div></article>`;
  }).join("");
- return `<section class="panel"><div class="topline"><h2>BOOKING BỊ BỎ QUA (${items.length})</h2><span class="pill bad">Có lý do cho từng booking</span></div><p class="hint">Tất cả booking không được đưa vào kết quả chính đều hiển thị tại đây. Mỗi booking bắt buộc có lý do bỏ qua cụ thể.</p>${rows}</section>`;
+ return `<section class="panel"><div class="topline"><h2>BOOKING BỊ BỎ QUA (${items.length})</h2><span class="pill bad">Có lý do cho từng booking</span></div><p class="hint">Lý do được đối chiếu trực tiếp với điều kiện lọc: thiếu dữ liệu định danh/nội dung, chưa xác nhận hoặc đã có nhân viên nhận việc.</p><div class="controls"><button type="button" id="composeSkipped" ${draftable.length?"":"disabled"}>Soạn các booking đã bỏ qua (${draftable.length} có đủ dữ liệu)</button></div><p class="hint">Nút này đưa các booking có đủ mã order, Subject và loại dịch vụ vào danh sách soạn, kể cả booking bị loại do trạng thái hoặc đã có nhân viên nhận việc. Booking thiếu dữ liệu bắt buộc vẫn được giữ lại để kiểm tra.</p>${rows}</section>`;
 }
 function run(){
  const raw=$("raw").value;
@@ -518,7 +520,7 @@ function run(){
  const staff=$("staff").value.trim()||"Nhan",phone=$("phone").value.trim()||"+84 867802129",hotline=$("hotline").value.trim()||"+84 866624188";
  const all=$("allBookings").checked;
  const made=parsed.map(b=>buildOne(b,staff,phone,hotline));
- const kept=made.filter(b=>b.sub && (all || (b.confirmed&&b.unassigned)));
+ const kept=made.filter(b=>b.order && b.sub && b.dir && (all || (b.confirmed&&b.unassigned)));
  const skipped=made.filter(b=>!kept.includes(b));
  $("summary").classList.remove("hidden");
  processedBookings=kept;
@@ -526,7 +528,8 @@ function run(){
  $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?'<p class="hint">Có '+skipped.length+' booking bị loại khỏi kết quả chính; xem bảng BOOKING BỊ BỎ QUA bên dưới để biết lý do từng booking.</p>':""}
  <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm booking</label><input id="bookingSearch" type="text" placeholder="Mã order / tên / chuyến bay / SĐT" style="width:min(340px,85vw);max-width:none"></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="__ALL__">Tất cả (${kept.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${kept.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
  renderFilteredBookings();
- $("skippedBookings").innerHTML=renderSkippedBookings(skipped);
+ skippedBookingsCache=skipped;
+ $("skippedBookings").innerHTML=renderSkippedBookings(skipped,all);
  ["partnerFilter","directionFilter","dateFilter"].forEach(id=>$(id).addEventListener("change",renderFilteredBookings));
  $("bookingSearch").addEventListener("input",renderFilteredBookings);
  $("status").textContent=`Đã phân tích ${made.length} booking; hiển thị ${kept.length} booking. Các link chỉ mở bản nháp, không tự gửi.`;
@@ -535,6 +538,18 @@ function run(){
 $("run").addEventListener("click",run);
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("status").textContent="Đã xóa dữ liệu.";});
 document.addEventListener("click",e=>{
+ const compose=e.target.closest("#composeSkipped");
+ if(compose){
+  const existing=new Set(processedBookings.map(b=>b.order));
+  const drafts=skippedBookingsCache.filter(b=>b.order&&b.sub&&b.dir&&!existing.has(b.order));
+  if(!drafts.length){toast("Không còn booking bị bỏ qua nào đủ dữ liệu để soạn.",false);return;}
+  processedBookings=[...processedBookings,...drafts];
+  renderFilteredBookings();
+  compose.disabled=true;
+  compose.textContent="Đã đưa "+drafts.length+" booking vào danh sách soạn";
+  toast("Đã đưa "+drafts.length+" booking bị bỏ qua vào kết quả để soạn. Kiểm tra lý do trước khi liên hệ.");
+  return;
+ }
  const btn=e.target.closest("[data-copy-key]");
  if(!btn)return;
  const key=btn.getAttribute("data-copy-key");
