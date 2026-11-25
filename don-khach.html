@@ -105,7 +105,8 @@ function parseRows(text){
    if(!a&&!f&&!n&&!typ&&!ord)continue;
    if(!typ){const raw=clean(c[5]||c[4]);typ=normalizeType(raw);}
    if(!typ)continue;
-   out.push([a,f,n,tim,typ,clean(ord),staff,dateISO(c[6]||c[3]||"")]);
+   const rawDate=c.length>=9?c[6]:c[3];
+   out.push([a,f,n,tim,typ,clean(ord),staff,dateISO(rawDate||"")]);
  }
  return out;
 }
@@ -123,7 +124,7 @@ $("import").onclick=()=>{const rows=parseRows($("raw").value);if(!rows.length){$
 $("append").onclick=()=>{const rows=parseRows($("raw").value);if(!rows.length){$("status").textContent="Không tìm thấy booking hợp lệ để thêm.";return;}data.push(...rows);save();$("status").textContent="Đã thêm "+rows.length+" booking. Tổng cộng "+data.length+" booking.";};
 $("clearInput").onclick=()=>{$("raw").value="";};
 $("clearAll").onclick=()=>{if(confirm("Xóa toàn bộ danh sách đã lưu trên trình duyệt này?")){data=[];save();$("status").textContent="Đã xóa toàn bộ danh sách trên thiết bị này.";}}
-$("search").oninput=render;$("staffFilter").onchange=render;
+$("search").oninput=render;$("staffFilter").onchange=render;$("dateFrom").onchange=render;$("dateTo").onchange=render;$("clearDate").onclick=()=>{$("dateFrom").value="";$("dateTo").value="";render();};
 $("copyArrival").onclick=()=>copy(rowsFor("Arrival"),"ARRIVAL");$("copyDeparture").onclick=()=>copy(rowsFor("Departure"),"DEPARTURE");$("copyAll").onclick=()=>copy([...rowsFor("Arrival"),...rowsFor("Departure")],"toàn bộ danh sách");
 $("exportArrival").onclick=()=>download(rowsFor("Arrival"),"arrival-fasttrack-sgn");$("exportDeparture").onclick=()=>download(rowsFor("Departure"),"departure-fasttrack-sgn");$("exportAll").onclick=()=>download([...rowsFor("Arrival"),...rowsFor("Departure")],"fasttrack-sgn");
 render();
