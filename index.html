@@ -391,7 +391,24 @@ function run(){
 }
 $("run").addEventListener("click",run);
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("status").textContent="Đã xóa dữ liệu.";});
+async function sendBooking(channel,index){
+ const b=lastOutput[index]; if(!b) return;
+ const apiUrl=$("apiUrl").value.trim().replace(/\\/$/,"");
+ const apiKey=$("apiKey").value.trim();
+ if(!apiUrl||!apiKey){toast("Nhập Worker URL và mã truy cập trước.",false);return;}
+ if(!confirm("Xác nhận gửi "+(channel==="gmail"?"Gmail":"WhatsApp")+" cho booking "+b.order+"? Hãy chắc chắn đã kiểm tra đúng người nhận và nội dung.")) return;
+ const payload={channel,bookingId:b.order,to:channel==="gmail"?b.email:b.intl,subject:b.sub,body:b.en,waWindowOpen:$("waWindowOpen").checked,templateName:$("waTemplate").value.trim(),templateLanguage:"en"};
+ try{
+   toast("Đang gửi "+channel+" cho "+b.order+"...",true);
+   const res=await fetch(apiUrl,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},body:JSON.stringify(payload)});
+   const data=await res.json().catch(()=>({}));
+   if(!res.ok) throw new Error(data.error||("HTTP "+res.status));
+   toast("Đã gửi "+channel+" thành công cho "+b.order+".",true);
+ }catch(err){toast("Gửi thất bại: "+err.message,false);}
+}
 document.addEventListener("click",e=>{
+ const send=e.target.closest("[data-send-channel]");
+ if(send){sendBooking(send.dataset.sendChannel,Number(send.dataset.bookingIndex));return;}
  const btn=e.target.closest("[data-copy-key]");
  if(!btn)return;
  const key=btn.getAttribute("data-copy-key");
