@@ -178,5 +178,54 @@ footer{padding:18px;border-top:1px solid #dfc47e;background:#102b36;color:#f2dfa
 })();
 </script>
 
+
+<script id="persistent-music-navigation">
+(function(){
+  if(window.__fastTrackPersistentNavInstalled)return;
+  window.__fastTrackPersistentNavInstalled=true;
+  const allowed=new Set(['/fasttrack-sgn/','/fasttrack-sgn/index.html','/fasttrack-sgn/soan-booking.html','/fasttrack-sgn/don-khach.html']);
+  async function navigate(url,addHistory){
+    const target=new URL(url,location.href);
+    if(target.origin!==location.origin||!allowed.has(target.pathname)){location.href=url;return;}
+    try{
+      const response=await fetch(target.href,{credentials:'same-origin'});
+      if(!response.ok)throw new Error('Navigation failed');
+      const html=await response.text();
+      const next=new DOMParser().parseFromString(html,'text/html');
+      const player=document.getElementById('christmas-audio-player');
+      const pageScripts=[...next.body.querySelectorAll('script')].filter(s=>s.id!=='christmas-audio-player-script'&&s.id!=='persistent-music-navigation');
+      const navScriptSource=next.getElementById('persistent-music-navigation')?.textContent||'';
+      document.title=next.title||document.title;
+      document.head.querySelectorAll('style').forEach(s=>s.remove());
+      next.head.querySelectorAll('style').forEach(s=>document.head.appendChild(s.cloneNode(true)));
+      document.body.replaceChildren(...[...next.body.childNodes].filter(n=>!(n.nodeType===1&&(n.id==='christmas-audio-player'||n.id==='persistent-music-navigation'||n.id==='christmas-audio-player-script'))));
+      if(player)document.body.appendChild(player);
+      if(addHistory)history.pushState({},'',target.pathname+target.search+target.hash);
+      window.scrollTo(0,0);
+      for(const oldScript of pageScripts){
+        const script=document.createElement('script');
+        script.textContent='(function(){\n'+oldScript.textContent+'\n}).call(window);';
+        document.body.appendChild(script);
+      }
+      if(navScriptSource){
+        const script=document.createElement('script');
+        script.id='persistent-music-navigation';
+        script.textContent=navScriptSource;
+        document.body.appendChild(script);
+      }
+    }catch(error){location.href=url;}
+  }
+  document.addEventListener('click',function(event){
+    if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+    const link=event.target.closest('a[href]');
+    if(!link||link.target&&link.target!=='_self'||link.hasAttribute('download'))return;
+    const url=new URL(link.href,location.href);
+    if(url.origin!==location.origin||!allowed.has(url.pathname))return;
+    event.preventDefault();
+    navigate(url.href,true);
+  });
+  window.addEventListener('popstate',function(){navigate(location.href,false);});
+})();
+</script>
 </body>
 </html>
