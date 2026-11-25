@@ -5,4 +5,4 @@ compatibility_date = "2026-11-25"
 [[d1_databases]]
 binding = "DB"
 database_name = "fasttrack-sgn-sendlog"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "f0bbea59-c8a3-4747-82ce-0d34425995a1"
