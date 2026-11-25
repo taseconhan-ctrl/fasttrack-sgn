@@ -69,7 +69,6 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 
 
 <div id="summary" class="panel hidden"></div>
-<section id="employeeHistory" class="panel"><div class="topline"><h2>3. LỊCH SỬ NHÂN VIÊN ĐÃ LÀM</h2><button type="button" class="ghost mini" id="clearEmployeeHistory">Xóa lịch sử</button></div><p class="hint">Tự lưu nhân viên có tên trong trường NV Nhận việc. Dữ liệu lưu trên trình duyệt này.</p><div id="employeeHistoryContent" class="muted">Chưa có lịch sử.</div></section>
 <div id="results"></div>
 <div id="skippedBookings"></div>
 <div id="reviews"></div>
@@ -489,25 +488,6 @@ async function copyText(s){
  }
 }
 function toast(msg,good=true){const el=$("status");el.textContent=msg;el.className="status "+(good?"good":"warn")}
-const EMPLOYEE_HISTORY_KEY="fasttrack_sgn_employee_history_v1";
-function readEmployeeHistory(){try{const v=JSON.parse(localStorage.getItem(EMPLOYEE_HISTORY_KEY)||"[]");return Array.isArray(v)?v:[];}catch(e){return [];}}
-function renderEmployeeHistory(){
- const rows=readEmployeeHistory(), target=$("employeeHistoryContent");
- if(!rows.length){target.textContent="Chưa có lịch sử nhân viên.";return;}
- const counts={}; rows.forEach(r=>counts[r.employee]=(counts[r.employee]||0)+1);
- const cards=Object.keys(counts).sort().map(n=>"<div class=\"kv\"><small>Nhân viên</small><b>"+esc(n)+"</b><div class=\"hint\">"+counts[n]+" booking</div></div>").join("");
- const body=rows.slice().reverse().map(r=>"<tr><td>"+esc(r.employee)+"</td><td>"+esc(r.order)+"</td><td>"+esc(r.direction)+"</td><td>"+esc(r.flight)+"</td><td>"+esc(r.date)+"</td><td>"+esc(r.guest)+"</td></tr>").join("");
- target.innerHTML="<div class=\"grid\">"+cards+"</div><h3>Chi tiết lịch sử</h3><div class=\"tablewrap\"><table><thead><tr><th>Nhân viên</th><th>Mã order</th><th>ĐÓN/TIỄN</th><th>Chuyến bay</th><th>Ngày bay</th><th>Khách</th></tr></thead><tbody>"+body+"</tbody></table></div>";
-}
-function recordEmployees(bookings){
- const rows=readEmployeeHistory(), seen=new Set(rows.map(r=>r.key));
- bookings.forEach(b=>{const employee=clean(b.staffAssign);if(!employee||employee==="_"||/^[-_]+$/.test(employee)||/chưa phân công/i.test(employee))return;
- const key=[b.order,employee,b.date,b.flight].join("|");if(seen.has(key))return;
- rows.push({key:key,employee:employee,order:b.order||"",date:b.date||"",flight:b.flight||"",guest:b.names.join(", "),direction:direction(b)});seen.add(key);});
- try{localStorage.setItem(EMPLOYEE_HISTORY_KEY,JSON.stringify(rows));}catch(e){toast("Không lưu được lịch sử trong trình duyệt.",false);} renderEmployeeHistory();
-}
-$("clearEmployeeHistory").addEventListener("click",()=>{if(confirm("Xóa toàn bộ lịch sử nhân viên đã lưu trên trình duyệt này?")){localStorage.removeItem(EMPLOYEE_HISTORY_KEY);renderEmployeeHistory();}});
-renderEmployeeHistory();
 function skippedReasons(b,all){
  const reasons=[];
  if(!b.order)reasons.push("Thiếu mã order");
@@ -538,7 +518,6 @@ function run(){
  const staff=$("staff").value.trim()||"Nhan",phone=$("phone").value.trim()||"+84 867802129",hotline=$("hotline").value.trim()||"+84 866624188";
  const all=$("allBookings").checked;
  const made=parsed.map(b=>buildOne(b,staff,phone,hotline));
- recordEmployees(made);
  const kept=made.filter(b=>b.sub && (all || (b.confirmed&&b.unassigned)));
  const skipped=made.filter(b=>!kept.includes(b));
  $("summary").classList.remove("hidden");
