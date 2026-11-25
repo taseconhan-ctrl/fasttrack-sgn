@@ -44,15 +44,18 @@ function clean(s){return String(s||"").replace(/\r/g,"").trim()}
 function dateToISO(d){const m=String(d||"").match(/(\d{1,2})[/-](\d{1,2})[/-](\d{4})/);return m?m[3]+"-"+m[2].padStart(2,"0")+"-"+m[1].padStart(2,"0"):""}
 function isoToVN(iso){const p=iso.split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:""}
 function dateFromBlock(s){
- let m=s.match(/(?:ngày|ngay|ngày bay)\s*(\d{1,2})[/-](\d{1,2})(?:[/-](\d{4}))?/i);
- if(m){const y=m[3]||((s.match(/^\[(\d{1,2})\/(\d{1,2})\/(\d{4})/)||[])[3])||String(new Date().getFullYear());return y+"-"+m[2].padStart(2,"0")+"-"+m[1].padStart(2,"0")}
- m=s.match(/(?:ngày hỗ trợ|ngày bay|date)\s*[:：]\s*(\d{1,2})[/-](\d{1,2})[/-](\d{4})/i);
- if(m)return m[3]+"-"+m[2].padStart(2,"0")+"-"+m[1].padStart(2,"0");
- return "";
+ const m=s.match(/(?:ngày|ngay|ngày bay|ngày hỗ trợ)\s*(?:[:：]\s*)?(\d{1,2})[/-](\d{1,2})(?:[/-](\d{4}))?/i);
+ if(!m)return "";
+ const stamp=s.match(/^\s*\[(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+ const y=m[3]||(stamp&&stamp[3])||String(new Date().getFullYear());
+ return y+"-"+m[2].padStart(2,"0")+"-"+m[1].padStart(2,"0");
 }
-function field(s,label){const re=new RegExp("^\\s*"+label+"\\s*[:：]\\s*(.*)$","im");const m=s.match(re);return m?clean(m[1]):""}
+function field(s,label){
+ const re=new RegExp("^\\s*"+label+"\\s*[:：]\\s*(.*)$","im");
+ const m=s.match(re);return m?clean(m[1]):"";
+}
 function terminalOf(s,flight){
- let m=s.match(/(?:terminal|nhà ga)\s*[:：]?\s*T?([13])\b/i)||s.match(/lối nội bộ\s*T?([13])\b/i);
+ const m=s.match(/(?:terminal|nhà ga)\s*[:：]?\s*T?([13])\b/i)||s.match(/lối nội bộ\s*T?([13])\b/i);
  if(m)return "T"+m[1];
  const f=String(flight||"").replace(/\s/g,"").toUpperCase();
  if(/^VJ/.test(f))return "T1";
@@ -60,23 +63,19 @@ function terminalOf(s,flight){
  return "";
 }
 function parseMessage(block,index){
- const stamp=(block.match(/^\\s*\\[(\\d{1,2}\\/\\d{1,2}\\/\\d{4}\\s+\\d{2}:\\d{2}:\\d{2})\\]\\s*([^:]+):?/m)||[]);
- const sender=clean(stamp[2]||"");
- const chunks=block.split(/(?=^\\s*Tên khách\\s*[:：])/im).filter(x=>/Tên khách\\s*[:：]/i.test(x));
+ const stamp=block.match(/^\s*\[(\d{1,2}\/\d{1,2}\/\d{4})\s+\d{2}:\d{2}:\d{2}\]\s*([^:]+):?/m);
+ const sender=clean(stamp&&stamp[2]||"");
  const sourceDate=dateFromBlock(block);
- return (chunks.length?chunks:[block]).map((part,j)=>{
-  const namesSection=(part.match(/Tên khách\\s*[:：]([\\s\\S]*?)(?=\\n\\s*(?:Chuyến bay|Giờ bay|Giờ đến sân bay|Terminal|Ghi chú|Yêu cầu|Lối nội bộ)\\s*[:：]|$)/i)||[])[1]||"";
-  let names=namesSection.split("\\n").map(x=>clean(x).replace(/^\\s*\\d+\\s*[.)-]\\s*/,"").trim()).filter(x=>x&&!/^@/.test(x));
-  if(!names.length){const one=clean(namesSection);if(one)names=one.split(/[,;；]/).map(clean).filter(Boolean)}
-  const flight=field(part,"Chuyến bay").replace(/\\s+/g,"").toUpperCase();
-  const flightTime=field(part,"Giờ bay");
-  const arrival=field(part,"Giờ đến sân bay");
-  const note=[field(part,"Ghi chú"),field(part,"Yêu cầu"),field(part,"Lối nội bộ")].filter(Boolean).join(" · ");
-  const explicitTerminal=field(part,"Terminal");
-  const serviceDate=dateFromBlock(part)||sourceDate;
-  const terminal=terminalOf("Terminal: "+explicitTerminal+"\\n"+note,flight);
-  return {index:index*100+j,sender,names,flight,flightTime,arrival,note,serviceDate,terminal,raw:clean(part)};
- }).filter(b=>b.names.length||b.flight||b.note);
+ const namesSection=(block.match(/Tên khách\s*[:：]([\s\S]*?)(?=\n\s*(?:Chuyến bay|Giờ bay|Giờ đến sân bay|Terminal|Ghi chú|Yêu cầu|Lối nội bộ)\s*[:：]|$)/i)||[])[1]||"";
+ let names=namesSection.split(/\n/).map(x=>clean(x).replace(/^\s*\d+\s*[.)-]\s*/,"").trim()).filter(x=>x&&!/^@/.test(x)&&!/^(?:\d+\.?)?$/.test(x));
+ if(!names.length){const one=clean(namesSection);if(one)names=one.split(/[,;；]/).map(clean).filter(Boolean);}
+ const flight=field(block,"Chuyến bay").trim();
+ const flightTime=field(block,"Giờ bay");
+ const arrival=field(block,"Giờ đến sân bay");
+ const note=field(block,"Ghi chú")||field(block,"Yêu cầu")||field(block,"Lối nội bộ");
+ const explicitTerminal=field(block,"Terminal");
+ const terminal=terminalOf("Terminal: "+explicitTerminal+"\n"+note,flight);
+ return {index,sender,names,flight,flightTime,arrival,note,serviceDate:sourceDate,terminal,raw:clean(block)};
 }
 function splitMessages(raw){
  const starts=[...raw.matchAll(/^\s*\[\d{1,2}\/\d{1,2}\/\d{4}\s+\d{2}:\d{2}:\d{2}\]/gm)].map(m=>m.index);
@@ -84,7 +83,8 @@ function splitMessages(raw){
  const out=[];for(let i=0;i<starts.length;i++)out.push(raw.slice(starts[i],starts[i+1]??raw.length));return out;
 }
 function formatBooking(b){
- return ["Tên khách:",...b.names.map((n,i)=>(i+1)+". "+n),"Chuyến bay: "+(b.flight||"Chưa có"),"Giờ bay: "+(b.flightTime||"Chưa có"),"Giờ đến sân bay: "+(b.arrival||"Chưa có"),"Terminal: "+b.terminal,"Ghi chú: "+(b.note||"Không có")].join("\n");
+ const requirement=b.terminal?"yêu cầu lối nội bộ "+b.terminal:"yêu cầu lối nội bộ (chưa xác định Terminal)";
+ return [...b.names.map((n,i)=>(i+1)+". "+n),"","Chuyến bay: "+(b.flight||""),"Giờ bay: "+(b.flightTime||""),"Giờ đến sân bay: "+(b.arrival||""),"",requirement].join("\n");
 }
 async function copyText(value){
  try{await navigator.clipboard.writeText(value);$("status").textContent="Đã sao chép nội dung."; $("status").className="status good"}
