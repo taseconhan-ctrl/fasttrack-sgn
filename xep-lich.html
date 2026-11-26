@@ -52,9 +52,10 @@ const hasRequests=employees.some(e=>parseDays(e.offText).length||parseDays(e.pTe
 const q3=eligible.filter(i=>q[i]===3).sort((a,b)=>(employees[a].prev==="C")-(employees[b].prev==="C"));
 const q4=eligible.filter(i=>q[i]===4).sort((a,b)=>(employees[a].prev==="C")-(employees[b].prev==="C"));
 if(!hasRequests&&!employees.some(e=>e.consecutiveC)&&q3.length+q4.length===eligible.length&&2*(q3.length+2*q4.length)+q3.length===n&&!eligible.some(i=>employees[i].prev==="C"&&((q3[0]===i)||(q4[0]===i)))){
-let day=1;q3.concat(q4).forEach(i=>{plans[i]=[day,day+1];day+=2;});
+let day=1,pairIndex=0,singleIndex=0;const firstPairs=q3.concat(q4);
+while(pairIndex<firstPairs.length){const i=firstPairs[pairIndex++];plans[i]=[day,day+1];day+=2;if(pairIndex%2===0&&singleIndex<q3.length){plans[q3[singleIndex++]].push(day);day++;}}
+while(singleIndex<q3.length){plans[q3[singleIndex++]].push(day);day++;}
 q4.forEach(i=>{plans[i].push(day,day+1);day+=2;});
-q3.forEach(i=>{plans[i].push(day);day++;});
 for(const i of eligible){const ds=plans[i]||[],runs=[];let last=-1;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}reserved[i]=runs.map(first=>{let lastDay=first;while(ds.includes(lastDay+1))lastDay++;return lastDay+1;}).filter(d=>d<=n);}
 return {plans,reserved,q};
 }
