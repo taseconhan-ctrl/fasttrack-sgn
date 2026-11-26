@@ -91,11 +91,9 @@ const off=offSets[i],pdays=pSets[i],cdays=cSets[i];
 while(off.size<offTarget){
 const candidates=Array.from({length:n},(_,k)=>k+1).filter(d=>!off.has(d)&&!pdays.has(d)&&!cdays.has(d)&&restCounts[d]<3);
 if(!candidates.length)return null;
-const rests=[...off,...pdays];candidates.sort((a,b)=>{
-const gap=d=>rests.length?Math.min(...rests.map(r=>Math.abs(d-r))):n;
-const spread=gap(b)-gap(a);if(spread)return spread;
-return restCounts[a]-restCounts[b];
-});
+const rests=new Set([...off,...pdays]);
+const maxStreakWith=chosen=>{let streak=WORK.includes(employees[i].prev)?1:0,max=streak;for(let day=1;day<=n;day++){if(rests.has(day)||day===chosen)streak=0;else{streak++;max=Math.max(max,streak);}}return max;};
+candidates.sort((a,b)=>{const streakDiff=maxStreakWith(a)-maxStreakWith(b);if(streakDiff)return streakDiff;const load=restCounts[a]-restCounts[b];if(load)return load;const gap=d=>rests.size?Math.min(...[...rests].map(r=>Math.abs(d-r))):n;return gap(b)-gap(a);});
 const chosen=candidates[0];off.add(chosen);restCounts[chosen]++;
 }
 for(const d of pdays)out[d][i]="P";
