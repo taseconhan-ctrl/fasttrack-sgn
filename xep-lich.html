@@ -92,9 +92,9 @@ while(off.size<offTarget){
 const candidates=Array.from({length:n},(_,k)=>k+1).filter(d=>!off.has(d)&&!pdays.has(d)&&!cdays.has(d)&&restCounts[d]<3);
 if(!candidates.length)return null;
 const rests=[...off,...pdays];candidates.sort((a,b)=>{
-const load=restCounts[a]-restCounts[b];if(load)return load;
 const gap=d=>rests.length?Math.min(...rests.map(r=>Math.abs(d-r))):n;
-return gap(b)-gap(a);
+const spread=gap(b)-gap(a);if(spread)return spread;
+return restCounts[a]-restCounts[b];
 });
 const chosen=candidates[0];off.add(chosen);restCounts[chosen]++;
 }
