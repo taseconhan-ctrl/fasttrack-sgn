@@ -268,6 +268,25 @@ html,body{font-family:Arial,"Segoe UI",Tahoma,sans-serif!important}
 body,body *{font-family:Arial,"Segoe UI",Tahoma,sans-serif!important}
 input,select,textarea,button{font-family:Arial,"Segoe UI",Tahoma,sans-serif!important;font-synthesis:none}
 </style>
+
+<style id="fasttrack-performance-optimization">
+/* Performance: preserve the festive look while reducing expensive paint/compositing work. */
+html{scroll-behavior:auto}
+header,.panel,.booking,.review,.item,.staff,.tablewrap,#christmas-audio-player{
+  box-shadow:0 3px 12px rgba(0,0,0,.12)!important;
+}
+#christmas-audio-player{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+button:hover,.btn:hover,.back:hover,.item:hover{filter:none!important}
+@media (prefers-reduced-motion:no-preference){
+  #santa-reindeer-run .santa-sparkles{animation-duration:1.8s!important}
+}
+@media (max-width:700px){
+  #christmas-audio-player{right:8px!important;bottom:8px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
 </head>
 <body>
 <header>
