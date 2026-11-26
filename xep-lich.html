@@ -37,7 +37,38 @@ function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||"null");if(x){
 function renderStaff(){ $("staff").innerHTML=employees.map((e,i)=>'<div class="staff"><strong>'+esc(e.name)+' <small>· '+esc(e.role)+'</small></strong><div class="fields"><label>Ca cuối tháng trước<select data-i="'+i+'" data-k="prev"><option value="">Chưa nhập</option>'+SHIFTS.map(s=>'<option '+(e.prev===s?'selected':'')+'>'+s+'</option>').join("")+'</select></label><label>Số ca C tháng trước<input type="number" min="0" max="31" data-i="'+i+'" data-k="prevC" value="'+Number(e.prevC||0)+'"></label><label class="wide">Ngày OFF mong muốn<input type="text" data-i="'+i+'" data-k="offText" value="'+esc(e.offText||"")+'" placeholder="Ví dụ: 3, 12, 25"></label><label class="wide">Ngày P đã đăng ký<input type="text" data-i="'+i+'" data-k="pText" value="'+esc(e.pText||"")+'" placeholder="Ví dụ: 8, 18"></label><label class="wide check"><input type="checkbox" data-i="'+i+'" data-k="consecutiveC" '+(e.consecutiveC?'checked':'')+'> Gom toàn bộ ca C liên tục</label></div></div>').join("");}
 function bindStaff(){ $("staff").addEventListener("change",ev=>{const el=ev.target,i=Number(el.dataset.i),k=el.dataset.k;if(!Number.isInteger(i)||!k)return;employees[i][k]=el.type==="checkbox"?el.checked:el.type==="number"?Number(el.value):el.value;save();});}
 function normalizeName(s){return String(s||"").normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D").toLowerCase().replace(/[^a-z0-9]/g,"")}
-function importPreviousSchedule(){const raw=$("prevImport").value.trim();if(!raw){$("importStatus").textContent="Chưa có dữ liệu để đọc.";return;}const rows=raw.split(/\\r?\\n/).map(line=>line.split("\\t"));let imported=0,unknown=[];const valid=new Set(SHIFTS);for(const row of rows){if(row.length<2)continue;const key=normalizeName(row[0]);const i=employees.findIndex(e=>normalizeName(e.name)===key);if(i<0){if(key&&!/nhanvien|tennhanvien/.test(key))unknown.push(row[0].trim());continue;}const shifts=row.slice(1).map(v=>String(v||"").trim().toUpperCase()).filter(v=>valid.has(v));if(!shifts.length)continue;employees[i].prev=shifts[shifts.length-1];employees[i].prevC=shifts.filter(v=>v==="C").length;imported++;}renderStaff();save();$("importStatus").textContent=imported+" nhân viên đã được cập nhật"+(unknown.length?"; không nhận diện: "+[...new Set(unknown)].join(", "):"")+". Kiểm tra lại dữ liệu bên dưới.";}
+function importPreviousSchedule(){
+const raw=$("prevImport").value.trim();
+if(!raw){$("importStatus").textContent="Chưa có dữ liệu để đọc.";return;}
+const lines=raw.split(/\r?\n/);
+let imported=0,unknown=[];
+const valid=new Set(SHIFTS);
+const cleanCell=v=>String(v||"").replace(/<[^>]*>/g,"").replace(/\*\*/g,"").replace(/\*/g,"").replace(/&#x20;|&#32;|&nbsp;/gi," ").replace(/&amp;/gi,"&").trim();
+for(const line of lines){
+ let cells;
+ if(line.includes("|")){
+   cells=line.trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(cleanCell);
+   if(cells.every(v=>!v||/^:?-{2,}:?$/.test(v)))continue;
+ }else{
+   cells=line.split("\t").map(cleanCell);
+ }
+ if(cells.length<2)continue;
+ let nameIndex=-1,employeeIndex=-1;
+ for(let k=0;k<cells.length;k++){
+   const key=normalizeName(cells[k]);
+   const found=employees.findIndex(e=>normalizeName(e.name)===key);
+   if(found>=0){nameIndex=k;employeeIndex=found;break;}
+ }
+ if(employeeIndex<0)continue;
+ const shifts=cells.slice(nameIndex+1).map(v=>cleanCell(v).toUpperCase()).filter(v=>valid.has(v));
+ if(!shifts.length)continue;
+ employees[employeeIndex].prev=shifts[shifts.length-1];
+ employees[employeeIndex].prevC=shifts.filter(v=>v==="C").length;
+ imported++;
+}
+renderStaff();save();
+$("importStatus").textContent=imported+" nhân viên đã được cập nhật"+(imported<employees.length?"; tìm thấy "+imported+"/"+employees.length+" nhân viên":"")+". Đã bỏ qua tiêu đề và dòng định dạng Markdown. Kiểm tra lại dữ liệu bên dưới.";
+}
 
 function quotaC(){const n=days(),ids=employees.map((e,i)=>e.role==="Nhân viên"?i:-1).filter(i=>i>=0),q={};ids.forEach(i=>q[i]=Math.max(1,Math.min(5,Number(employees[i].prevC)||3)));let sum=Object.values(q).reduce((a,b)=>a+b,0);while(sum>n){const i=ids.slice().sort((a,b)=>q[b]-q[a])[0];if(q[i]<=1)break;q[i]--;sum--;}while(sum<n){const i=ids.slice().sort((a,b)=>q[a]-q[b])[0];q[i]++;sum++;}return q}
 function patterns(q,n,group){const out=[];const add=ds=>{const sorted=[...ds].sort((a,b)=>a-b);if(sorted.some(d=>d<1||d>n))return;const runs=[];let run=0,last=0;sorted.forEach(d=>{if(d===last+1)run++;else{if(run)runs.push(run);run=1;}last=d;});if(run)runs.push(run);if(!group&&runs.some(x=>x>2))return;out.push(sorted);};
