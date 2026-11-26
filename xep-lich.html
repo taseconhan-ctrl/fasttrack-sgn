@@ -68,7 +68,7 @@ if(++nodes>nodeLimit)return false;
 const i=order[pos];
 for(const ds of options[i]){
 if(ds.some(d=>occupied.has(d)))continue;
-const runs=[];let last=0;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}
+const runs=[];let last=-1;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}
 const after=runs.map(first=>{let lastDay=first;while(ds.includes(lastDay+1))lastDay++;return lastDay+1;}).filter(d=>d<=n);
 if(after.some(d=>req[d]?.[i]&&req[d][i]!=="OFF"))continue;
 const offSet=new Set([...parseDays(employees[i].offText).slice(0,sundayCount()),...after,...(employees[i].prev==="C"?[1]:[])]);
