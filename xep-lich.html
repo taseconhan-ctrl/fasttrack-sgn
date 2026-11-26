@@ -99,43 +99,89 @@ function autoSingle(silent=false){try{$("autoRepairPanel").hidden=true;autoNotes
 
 function rosterPenalty(candidate){
  const n=days(),req=requests();let p=0;
+ const daily=[];
  for(let d=1;d<=n;d++){
-  const counts=Object.fromEntries(WORK.map(s=>[s,0]));
+  const counts=Object.fromEntries(WORK.map(sh=>[sh,0]));
   employees.forEach((e,i)=>{const v=candidate[d]?.[i]||"OFF";if(WORK.includes(v))counts[v]++;});
-  for(const sh of ["A0","B0","C","HC"])p+=Math.abs(counts[sh]-1)*100;
-  for(const sh of ["A","B"])p+=Math.max(0,2-counts[sh])*100+Math.max(0,counts[sh]-3)*60;
+  daily.push(counts);
+  for(const sh of ["A0","B0","C","HC"])p+=Math.abs(counts[sh]-1)*1200;
+  for(const sh of ["A","B"])p+=Math.max(0,2-counts[sh])*1200+Math.max(0,counts[sh]-3)*900;
+  if(counts.A===3)p-=8;
+  if(counts.B===3)p-=8;
+  if(counts.A1>0)p-=Math.min(2,counts.A1)*3;
  }
+ const quota=cQuotas(n);
  employees.forEach((e,i)=>{
-  let off=0,leave=0,streak=0,actualC=0;
+  let off=0,leave=0,worked=0,actualC=0,streak=0,maxStreak=0;
+  const offDays=[],cDays=[],shiftCounts=Object.fromEntries(WORK.map(sh=>[sh,0]));
   for(let d=1;d<=n;d++){
    const v=candidate[d]?.[i]||"OFF";
-   if(v==="OFF")off++;if(v==="P")leave++;if(v==="C")actualC++;
-   if(WORK.includes(v)){streak++;if(streak>=8)p+=100;}else streak=0;
-   if(v==="P"&&req[d]?.[i]!=="P")p+=1000;
-   if(req[d]?.[i]&&v!==req[d][i])p+=1000;
+   if(v==="OFF"){off++;offDays.push(d);}
+   if(v==="P")leave++;
+   if(WORK.includes(v)){worked++;streak++;maxStreak=Math.max(maxStreak,streak);}else streak=0;
+   if(WORK.includes(v))shiftCounts[v]++;
+   if(v==="C"){actualC++;cDays.push(d);}
+   if(v==="P"&&req[d]?.[i]!=="P")p+=5000;
+   if(req[d]?.[i]&&v!==req[d][i])p+=5000;
    const prev=d===1?e.prev:candidate[d-1]?.[i];
-   if(prev==="C"&&v!=="OFF")p+=100;
-   if(prev==="B"&&v==="A")p+=25;
-   if(prev==="B0"&&v==="A0")p+=100;
-   if(prev==="C"&&["A0","A","A1","HC"].includes(v))p+=100;
-   if(["HC","A1","B0"].includes(v)&&d>=3&&["HC","A1","B0"].includes(candidate[d-1]?.[i])&&["HC","A1","B0"].includes(candidate[d-2]?.[i]))p+=60;
+   if(prev==="C"&&v!=="OFF")p+=1800;
+   if(prev==="B"&&v==="A")p+=260;
+   if(prev==="B0"&&v==="A0")p+=1800;
+   if(prev==="B0"&&v==="A")p+=500;
+   if(prev==="C"&&["A0","A","A1","HC","B"].includes(v))p+=1800;
+   if(["HC","A1","B0"].includes(v)&&d>=3&&["HC","A1","B0"].includes(candidate[d-1]?.[i])&&["HC","A1","B0"].includes(candidate[d-2]?.[i]))p+=1000;
+   if(WORK.includes(v)&&WORK.includes(prev)){
+    const rest=restHours(prev,v);
+    if(rest!==null&&rest<10)p+=(10-rest)*45;
+   }
   }
-  p+=Math.max(0,off-sundayCount())*100+Math.max(0,off+leave-7)*100;
-  if(e.role==="Nhân viên")p+=Math.abs(actualC-(cQuotas(n)[i]||0))*20;
-  else if(actualC)p+=1000;
-  if(e.consecutiveC){const ds=Array.from({length:n},(_,k)=>k+1).filter(d=>candidate[d]?.[i]==="C");if(ds.length&&ds[ds.length-1]-ds[0]+1!==ds.length)p+=100;}
+  p+=Math.max(0,off-sundayCount())*5000;
+  p+=Math.max(0,off+leave-7)*5000;
+  p+=Math.max(0,7-maxStreak)*0 + Math.max(0,maxStreak-6)*180;
+  const expectedWork=Math.max(0,n-sundayCount()-leave);
+  p+=Math.abs(worked-expectedWork)*180;
+  p+=Math.abs(actualC-(quota[i]||0))*700;
+  if(e.role!=="Nhân viên"&&actualC)p+=5000;
+  if(e.consecutiveC&&cDays.length){
+   if(cDays[cDays.length-1]-cDays[0]+1!==cDays.length)p+=4000;
+  }else{
+   const runs=[];let run=0,last=0;
+   cDays.forEach(d=>{if(d===last+1)run++;else{if(run)runs.push(run);run=1;}last=d;});
+   if(run)runs.push(run);
+   if(runs.some(x=>x>2))p+=3000*runs.filter(x=>x>2).length;
+   if(actualC===3&&!(runs.filter(x=>x===2).length===1&&runs.filter(x=>x===1).length===1))p+=180;
+   if(actualC===4&&!(runs.length===2&&runs.every(x=>x===2)))p+=180;
+  }
+  // Prefer spreading OFF evenly rather than clustering rest days.
+  if(offDays.length>1){
+   const ideal=n/offDays.length;
+   const gaps=offDays.slice(1).map((d,k)=>d-offDays[k]);
+   gaps.forEach(g=>p+=Math.abs(g-ideal)*9);
+  }
+  // Balance common shifts across eligible employees over the full month.
+  for(const sh of ["A","B","A0","B0","HC","A1"])p+=Math.pow(shiftCounts[sh],2)*0.12;
+  for(let d=1;d<=n;d++){
+   const prev=d===1?e.prev:candidate[d-1]?.[i],cur=candidate[d]?.[i];
+   if(prev===cur&&WORK.includes(cur))p-=5;
+  }
  });
+ // Coverage for the four-person core group is optimized, but remains a soft rule.
+ for(let d=1;d<=n;d++){
+  const vals=employees.map((e,i)=>candidate[d]?.[i]);
+  if(!employees.some((e,i)=>i<4&&DAY.includes(vals[i])))p+=90;
+  const gap=groupCoverageGap(vals);if(gap)p+=Math.max(0,gap[1]-gap[0])*12;
+ }
  return p;
 }
 function auto(silent=false){
- let best=null,bestScore=Infinity,foundValid=false;
- const attempts=24;
+ let best=null,bestScore=Infinity,bestValid=false;
+ const attempts=120;
  for(let k=0;k<attempts;k++){
   autoSingle(true);
   const candidate=JSON.parse(JSON.stringify(schedule||{}));
   const valid=check(false),score=rosterPenalty(candidate);
-  if(valid){best=candidate;bestScore=score;foundValid=true;break;}
-  if(score<bestScore){best=candidate;bestScore=score;}
+  if(valid&&(!bestValid||score<bestScore)){best=candidate;bestScore=score;bestValid=true;}
+  else if(!bestValid&&score<bestScore){best=candidate;bestScore=score;}
  }
  if(best)schedule=best;
  renderSchedule();
@@ -143,12 +189,11 @@ function auto(silent=false){
  saveData();
  $("autoRepairPanel").hidden=valid;
  if(!valid){
-  const msg="Đã thử "+attempts+" phương án. Chưa tìm được lịch thỏa mãn toàn bộ điều kiện; đang hiển thị phương án có điểm vi phạm thấp nhất ("+bestScore+").";
+  const msg="Đã thử "+attempts+" phương án trên toàn tháng. Chưa tìm được lịch thỏa mãn toàn bộ điều kiện; đang hiển thị phương án có điểm vi phạm thấp nhất ("+Math.round(bestScore)+").";
   showAutoRepair(msg);
-  $("autoRepairReason").textContent=msg+" Vui lòng xem danh sách kiểm tra và chỉnh các ngày được cảnh báo.";
- }else if(!silent)alert("Đã thử nhiều phương án và chọn lịch đạt các điều kiện kiểm tra.");
+  $("autoRepairReason").textContent=msg+" Kiểm tra danh sách lỗi, đặc biệt các ngày OFF/P đăng ký và quota ca C.";
+ }else if(!silent)alert("Đã thử "+attempts+" phương án và chọn lịch đạt điều kiện có điểm cân bằng tốt nhất.");
 }
-
 function shiftBlock(sh){if(["A0","A","A1","HC"].includes(sh))return "EARLY";if(["B0","B","C"].includes(sh))return "LATE";return null}
 function lastWorked(d,i,next){for(let day=d-1;day>=1;day--){const v=next[day]?.[i];if(WORK.includes(v))return v;}return d===1&&WORK.includes(employees[i].prev)?employees[i].prev:null}
 function managerOppositeScore(a,b){if(!a||!b)return 0;const pairs=[["A","B"],["A","B0"],["A","C"],["A0","HC"],["A0","B0"],["A0","B"],["A1","B0"],["A1","B"],["HC","A0"],["HC","A"],["B0","A"],["B0","A0"],["B","A"],["B","A0"],["C","A"],["C","A0"]];if(pairs.some(([x,y])=>x===a&&y===b||x===b&&y===a))return -9;const ba=shiftBlock(a),bb=shiftBlock(b);return ba&&bb&&ba===bb?7:ba&&bb?-5:0}
