@@ -92,48 +92,52 @@ const missing=employees.filter((e,i)=>!seen.has(i)).map(e=>e.name);
 $("importStatus").textContent="Đã đọc "+imported+"/"+employees.length+" nhân viên. "+(dayCols.length?"Đã lấy đúng các cột ngày 1–"+dayCols.length+". ":"Không tìm thấy hàng tiêu đề ngày; đã dùng chế độ dự phòng. ")+(missing.length?"Chưa nhận diện: "+missing.join(", ")+". ":"")+"Kiểm tra ca cuối tháng và số ca C trước khi lưu.";
 }
 function quotaC(){const n=days(),ids=employees.map((e,i)=>e.role==="Nhân viên"?i:-1).filter(i=>i>=0),q={};ids.forEach(i=>q[i]=Math.max(1,Math.min(5,Number(employees[i].prevC)||3)));let sum=Object.values(q).reduce((a,b)=>a+b,0);while(sum>n){const i=ids.slice().sort((a,b)=>q[b]-q[a])[0];if(q[i]<=1)break;q[i]--;sum--;}while(sum<n){const i=ids.slice().sort((a,b)=>q[a]-q[b])[0];q[i]++;sum++;}return q}
-function patterns(q,n,group){const out=[];const add=ds=>{const sorted=[...ds].sort((a,b)=>a-b);if(sorted.some(d=>d<1||d>n))return;const runs=[];let run=0,last=0;sorted.forEach(d=>{if(d===last+1)run++;else{if(run)runs.push(run);run=1;}last=d;});if(run)runs.push(run);if(!group&&runs.some(x=>x>2))return;out.push(sorted);};
-if(group){for(let s=1;s+q-1<=n;s++)add(Array.from({length:q},(_,k)=>s+k));}
-else if(q===1){for(let a=1;a<=n;a++)add([a]);}
-else if(q===2){for(let a=1;a<n;a++)add([a,a+1]);}
-else if(q===3){for(let a=1;a<n;a++)for(let b=1;b<=n;b++)if(Math.abs(a-b)>2)add([a,a+1,b]);}
-else if(q===4){for(let a=1;a<n;a++)for(let b=a+3;b<n;b++)add([a,a+1,b,b+1]);}
-else {for(let a=1;a+q-1<=n;a++)add(Array.from({length:q},(_,k)=>a+k));}
-return out}
+function patterns(q,n,group){
+const out=[],seen=new Set(),add=ds=>{const sorted=[...ds].sort((a,b)=>a-b),key=sorted.join(",");if(sorted.some(d=>d<1||d>n)||seen.has(key))return;const runs=[];let run=0,last=0;sorted.forEach(d=>{if(d===last+1)run++;else{if(run)runs.push(run);run=1;}last=d;});if(run)runs.push(run);if(!group&&runs.some(x=>x>2))return;out.push(sorted);seen.add(key);};
+if(group){for(let s=1;s+q-1<=n;s++)add(Array.from({length:q},(_,k)=>s+k));return out;}
+if(q<=0)return out;
+const minGap=Math.max(5,Math.floor(n/5));
+const parts=[];
+function partition(rem,arr){if(rem===0){parts.push(arr);return;}if(rem>=2)partition(rem-2,[...arr,2]);partition(rem-1,[...arr,1]);}
+partition(q,[]);
+const uniqueParts=[...new Set(parts.map(p=>p.slice().sort((a,b)=>b-a).join(",")))].map(s=>s.split(",").map(Number));
+function permute(a,l=0){if(l===a.length){place(a,0,[],0);return;}const used=new Set();for(let j=l;j<a.length;j++){if(used.has(a[j]))continue;used.add(a[j]);[a[l],a[j]]=[a[j],a[l]];permute(a,l+1);[a[l],a[j]]=[a[j],a[l]];}}
+function place(parts,idx,chosen,nextStart){
+ if(idx===parts.length){add(chosen);return;}
+ const len=parts[idx],remaining=parts.slice(idx+1).reduce((s,v)=>s+v+minGap,0);
+ for(let s=nextStart;s+len-1+remaining<=n;s++){
+  const segment=Array.from({length:len},(_,k)=>s+k);
+  place(parts,idx+1,[...chosen,...segment],s+len+minGap);
+ }
+}
+uniqueParts.forEach(p=>permute(p.slice()));
+return out;
+}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a}
 function makeCPlan(req){
 const n=days(),q=quotaC(),eligible=employees.map((e,i)=>e.role==="Nhân viên"?i:-1).filter(i=>i>=0),occupied=new Set(),plans={},reserved={};
-const hasRequests=employees.some(e=>parseDays(e.offText).length||parseDays(e.pText).length);
-const q3=eligible.filter(i=>q[i]===3).sort((a,b)=>(employees[a].prev==="C")-(employees[b].prev==="C"));
-const q4=eligible.filter(i=>q[i]===4).sort((a,b)=>(employees[a].prev==="C")-(employees[b].prev==="C"));
-if(!hasRequests&&!employees.some(e=>e.consecutiveC)&&q3.length+q4.length===eligible.length&&2*(q3.length+2*q4.length)+q3.length===n&&!eligible.some(i=>employees[i].prev==="C"&&((q3[0]===i)||(q4[0]===i)))){
-let day=1,pairIndex=0,singleIndex=0;const firstPairs=q3.concat(q4);
-while(pairIndex<firstPairs.length){const i=firstPairs[pairIndex++];plans[i]=[day,day+1];day+=2;if(pairIndex%2===0&&singleIndex<q3.length){plans[q3[singleIndex++]].push(day);day++;}}
-while(singleIndex<q3.length){plans[q3[singleIndex++]].push(day);day++;}
-q4.forEach(i=>{plans[i].push(day,day+1);day+=2;});
-for(const i of eligible){const ds=plans[i]||[],runs=[];let last=-1;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}reserved[i]=runs.map(first=>{let lastDay=first;while(ds.includes(lastDay+1))lastDay++;return lastDay+1;}).filter(d=>d<=n);}
-return {plans,reserved,q};
-}
 const options={};
-for(const i of eligible){options[i]=shuffle(patterns(q[i],n,employees[i].consecutiveC).filter(ds=>!ds.some(d=>req[d]?.[i]||(d===1&&employees[i].prev==="C"))));}
-const order=eligible.slice().sort((a,b)=>options[a].length-options[b].length);
-let nodes=0;const nodeLimit=12000;
-function visit(pos){
-if(pos===order.length)return occupied.size===n;
-if(++nodes>nodeLimit)return false;
-const i=order[pos];
-for(const ds of options[i]){
-if(ds.some(d=>occupied.has(d)))continue;
-const runs=[];let last=-1;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}
-const after=runs.map(first=>{let lastDay=first;while(ds.includes(lastDay+1))lastDay++;return lastDay+1;}).filter(d=>d<=n);
-if(after.some(d=>req[d]?.[i]&&req[d][i]!=="OFF"))continue;
-const offSet=new Set([...parseDays(employees[i].offText).slice(0,sundayCount()),...after,...(employees[i].prev==="C"?[1]:[])]);
-if(offSet.size>sundayCount())continue;
-plans[i]=ds;reserved[i]=after;ds.forEach(d=>occupied.add(d));
-if(visit(pos+1))return true;
-ds.forEach(d=>occupied.delete(d));delete plans[i];delete reserved[i];
+for(const i of eligible){
+ options[i]=shuffle(patterns(q[i],n,employees[i].consecutiveC).filter(ds=>!ds.some(d=>req[d]?.[i]||(d===1&&employees[i].prev==="C"))));
 }
-return false;
+const order=eligible.slice().sort((a,b)=>options[a].length-options[b].length);
+let nodes=0;const nodeLimit=50000;
+function visit(pos){
+ if(pos===order.length)return occupied.size===n;
+ if(++nodes>nodeLimit)return false;
+ const i=order[pos];
+ for(const ds of options[i]){
+  if(ds.some(d=>occupied.has(d)))continue;
+  const runs=[];let last=-1;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}
+  const after=runs.map(first=>{let lastDay=first;while(ds.includes(lastDay+1))lastDay++;return lastDay+1;}).filter(d=>d<=n);
+  if(after.some(d=>req[d]?.[i]&&req[d][i]!=="OFF"))continue;
+  const offSet=new Set([...parseDays(employees[i].offText).slice(0,sundayCount()),...after,...(employees[i].prev==="C"?[1]:[])]);
+  if(offSet.size>sundayCount())continue;
+  plans[i]=ds;reserved[i]=after;ds.forEach(d=>occupied.add(d));
+  if(visit(pos+1))return true;
+  ds.forEach(d=>occupied.delete(d));delete plans[i];delete reserved[i];
+ }
+ return false;
 }
 return visit(0)?{plans,reserved,q}:null;
 }
