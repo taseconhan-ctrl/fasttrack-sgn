@@ -287,6 +287,47 @@ button:hover,.btn:hover,.back:hover,.item:hover{filter:none!important}
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 </style>
+
+<style id="fasttrack-contrast-refresh">
+/* Contrast system: dark festive surfaces, readable light text, distinct data/input surfaces. */
+:root{--ft-ink:#f5f0e5;--ft-muted:#c2cec5;--ft-gold:#f0d28c;--ft-line:#657568}
+body{color:var(--ft-ink)!important}
+.panel,.booking,.review,.staff,.item,.metric,.kv,.status,.tag{
+  color:var(--ft-ink)!important;
+  background:linear-gradient(145deg,#263a32 0%,#1b2b26 100%)!important;
+  border:1px solid #687966!important;
+}
+.panel:nth-of-type(even),.booking:nth-of-type(even),.staff:nth-child(even),.metric:nth-child(even),.kv:nth-child(even){
+  background:linear-gradient(145deg,#30463b 0%,#22352d 100%)!important;
+}
+.panel h2,.booking h2,.review h2,.staff strong,h2,h3{color:#f4d99e!important}
+.panel p,.booking p,.review p,.staff label,.muted,small,.item p{color:#d0d9d0}
+.item{border-top:3px solid #d0ad62!important}
+.item h3{color:#fff0cc!important}
+.item .go{color:#f0d28c!important}
+input:not([type=checkbox]):not([type=radio]),select,textarea{
+  background:#fff8e9!important;color:#20352e!important;
+  border:1px solid #b9a878!important;
+}
+input::placeholder,textarea::placeholder{color:#68766d!important;opacity:1}
+input:focus,select:focus,textarea:focus{outline:2px solid #e5c77e!important;outline-offset:1px}
+pre,code,.output,.result,.copybox{
+  background:#111e1a!important;color:#f3ead6!important;border-color:#687966!important;
+}
+.tablewrap{background:#192722!important;border:1px solid #657568!important}
+table{color:#f3eddf!important}
+thead th,th{background:#34483d!important;color:#ffe6ae!important}
+tbody td{background:#21332c!important;color:#f1ecdf!important;border-color:#4b6053!important}
+tbody tr:nth-child(even) td{background:#293d33!important}
+tbody tr:hover td{background:#354d40!important}
+td a{color:#f1d28b!important}
+.status.good,.pill.good{background:#d9f0df!important;color:#145b35!important;border-color:#80b995!important}
+.status.warn,.pill.warn{background:#fff0c9!important;color:#75500b!important;border-color:#d6b65f!important}
+.status.bad,.pill.bad{background:#f8dadd!important;color:#812b34!important;border-color:#d28b91!important}
+button.secondary,.ghost{background:#f5eddb!important;color:#284137!important;border-color:#c6b37d!important}
+button.danger{background:#9c3942!important;color:#fff!important}
+#christmas-audio-player{color:#fff!important}
+</style>
 </head>
 <body>
 <header>
