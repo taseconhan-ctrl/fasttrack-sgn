@@ -235,6 +235,12 @@ a:focus-visible,button:focus-visible{outline:3px solid #d6b45f!important;outline
       <p>Phân tích booking, tạo Subject và nội dung tin nhắn, đồng thời tạo các liên kết liên hệ để xử lý nhanh.</p>
       <span class="go">Mở chức năng <span aria-hidden="true">→</span></span>
     </a>
+    <a class="item" href="xep-lich.html">
+      <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h3M8 17h7"/></svg></span>
+      <h3>XẾP LỊCH NHÂN VIÊN</h3>
+      <p>Tự động phân ca theo quy tắc Fast Track SGN, chỉnh sửa lịch từng ngày, kiểm tra điều kiện và xuất bảng phân ca.</p>
+      <span class="go">Mở chức năng <span aria-hidden="true">→</span></span>
+    </a>
     <a class="item" href="don-khach.html">
       <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
       <h3>ĐÓN KHÁCH</h3>
@@ -368,7 +374,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #d6b45f!important;outline
 (function(){
   if(window.__fastTrackPersistentNavInstalled)return;
   window.__fastTrackPersistentNavInstalled=true;
-  const allowed=new Set(['/fasttrack-sgn/','/fasttrack-sgn/index.html','/fasttrack-sgn/soan-booking.html','/fasttrack-sgn/don-khach.html']);
+  const allowed=new Set(['/fasttrack-sgn/','/fasttrack-sgn/index.html','/fasttrack-sgn/soan-booking.html','/fasttrack-sgn/don-khach.html','/fasttrack-sgn/xep-lich.html']);
   async function navigate(url,addHistory){
     const target=new URL(url,location.href);
     if(target.origin!==location.origin||!allowed.has(target.pathname)){location.href=url;return;}
