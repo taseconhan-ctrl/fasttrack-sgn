@@ -283,7 +283,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #d6b45f!important;outline
 </style>
 <style id="winter-village-theme">
 :root{--wv-bg:#101918;--wv-panel:#192321;--wv-panel2:#202b28;--wv-ink:#f5f0e5;--wv-muted:#b8c2b9;--wv-gold:#d8b878;--wv-green:#315b4d;--wv-red:#a94b4d;--wv-line:#4a554b}
-html{scroll-behavior:smooth}body{background:radial-gradient(ellipse at 50% -12%,#29443c 0,transparent 45%),linear-gradient(180deg,#101918,#151d1b 58%,#101615)!important;color:var(--wv-ink)!important;font-family:Georgia,"Times New Roman",serif!important;position:relative}
+html{scroll-behavior:smooth}body{background:radial-gradient(ellipse at 50% -12%,#29443c 0,transparent 45%),linear-gradient(180deg,#101918,#151d1b 58%,#101615)!important;color:var(--wv-ink)!important;font-family:Arial,"Segoe UI",Tahoma,sans-serif!important;position:relative}
 body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.13;background-image:radial-gradient(#d8b878 1px,transparent 1.8px),radial-gradient(#fff 1px,transparent 1.8px);background-size:130px 150px,190px 210px;background-position:0 0,55px 80px}
 header{position:relative;z-index:2!important;background:linear-gradient(110deg,#0c211e,#1b3830 60%,#202c29)!important;border:0!important;border-bottom:1px solid #8f7547!important;box-shadow:0 12px 36px #0007!important;color:#f8f0df!important}
 header h1,.brand{color:#f7efdf!important;text-shadow:0 3px 20px #0008;letter-spacing:1px}
@@ -313,7 +313,12 @@ footer,.foot{color:#9da99e!important}
 .winter-nav+main{margin-top:24px}
 @media(max-width:680px){.winter-nav{align-items:flex-start;flex-direction:column;padding:12px 15px}.nav-links{justify-content:flex-start;width:100%;gap:3px}.nav-links a{padding:8px 9px;font-size:9px}header{padding-left:16px!important;padding-right:16px!important}main{padding-left:12px!important;padding-right:12px!important}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
-</style></head>
+</style><style id="vietnamese-font-fix">
+html,body{font-family:Arial,"Segoe UI",Tahoma,sans-serif!important}
+body,body *{font-family:Arial,"Segoe UI",Tahoma,sans-serif!important}
+input,select,textarea,button{font-family:Arial,"Segoe UI",Tahoma,sans-serif!important;font-synthesis:none}
+</style>
+</head>
 <body>
 <header><h1>ĐÓN KHÁCH</h1><p>CHUẨN HÓA VÀ THEO DÕI DANH SÁCH FAST TRACK SGN</p></header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav>
 <main>
