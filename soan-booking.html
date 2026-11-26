@@ -337,7 +337,18 @@ button.danger{background:#9c3942!important;color:#fff!important}
 </header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav>
 <main>
 <section class="panel">
-  <h2>1. Dán dữ liệu booking</h2>
+  <h2>1. Nhân viên đang sử dụng</h2>
+  <div class="controls">
+    <div><label for="staffProfile">Chọn nhân viên</label><input id="staffProfile" type="text" list="staffProfiles" placeholder="Chọn đúng nhân viên..." value="Nhân" autocomplete="off"><datalist id="staffProfiles"></datalist></div>
+    <div><label for="staff">Tên nhân viên (English, không dấu)</label><input id="staff" type="text" value="Nhan"></div>
+    <div><label for="phone">Điện thoại / WhatsApp</label><input id="phone" type="tel" value="+84 867802129"></div>
+    <div><label for="hotline">Hotline</label><input id="hotline" type="tel" value="+84 866624188" readonly></div>
+  </div>
+  <p class="hint">Nhập hoặc chọn tên nhân viên; hệ thống tự chuẩn hóa tên tiếng Anh và điền số điện thoại / WhatsApp theo hồ sơ đã thiết lập.</p>
+</section>
+
+<section class="panel">
+  <h2>2. Dán dữ liệu booking</h2>
   <label for="raw">Dán nguyên văn danh sách booking hoặc nội dung trang chi tiết booking</label>
   <textarea id="raw" placeholder="Dán dữ liệu booking Fast Track vào đây..."></textarea>
   <div class="controls">
@@ -347,17 +358,6 @@ button.danger{background:#9c3942!important;color:#fff!important}
   </div>
   <p class="hint">Mặc định chỉ lấy booking Đã xác nhận và chưa có nhân viên nhận việc. Hệ thống nhận diện trường “NV Nhận việc” và nhiều dạng phân công SGN như “SGN - Tên”, “Tên SGN”, có hoặc không có số điện thoại; booking đã có nhân viên luôn bị bỏ qua, kể cả khi bật xử lý tất cả.</p>
   <div id="status" class="status">Chưa có dữ liệu được xử lý.</div>
-</section>
-
-<section class="panel">
-  <h2>2. Nhân viên đang sử dụng</h2>
-  <div class="controls">
-    <div><label for="staffProfile">Chọn nhân viên</label><input id="staffProfile" type="text" list="staffProfiles" placeholder="Chọn đúng nhân viên..." value="Nhân" autocomplete="off"><datalist id="staffProfiles"></datalist></div>
-    <div><label for="staff">Tên nhân viên (English, không dấu)</label><input id="staff" type="text" value="Nhan"></div>
-    <div><label for="phone">Điện thoại / WhatsApp</label><input id="phone" type="tel" value="+84 867802129"></div>
-    <div><label for="hotline">Hotline</label><input id="hotline" type="tel" value="+84 866624188" readonly></div>
-  </div>
-  <p class="hint">Nhập hoặc chọn tên nhân viên; hệ thống tự chuẩn hóa tên tiếng Anh và điền số điện thoại / WhatsApp theo hồ sơ đã thiết lập.</p>
 </section>
 <div id="summary" class="panel hidden"></div>
 <div id="results"></div>
