@@ -278,6 +278,33 @@ input,select,textarea,button{font-family:Arial,"Segoe UI",Tahoma,sans-serif!impo
 @keyframes heroTwinkle{from{opacity:.25}to{opacity:.85}}
 @media(prefers-reduced-motion:reduce){.winter-village .tree-bulbs circle,.winter-hero:after{animation:none!important;opacity:.9}}
 </style>
+<style id="festive-border-bulbs">
+/* Dây đèn bóng tròn chạy quanh khung trang chủ và từng thẻ chức năng */
+.winter-hero{position:relative;border:1px solid #9c8558!important;box-shadow:0 0 0 2px #d5b86a22,0 25px 55px #0008,0 0 22px #e9c87520!important}
+.winter-hero:before{
+ content:"";position:absolute;z-index:8;inset:3px;pointer-events:none;border-radius:2px;
+ background:
+ radial-gradient(circle,#fff0b0 0 2.3px, #f6c85e 2.8px,transparent 5px) left top/28px 12px repeat-x,
+ radial-gradient(circle,#fff0b0 0 2.3px, #f6c85e 2.8px,transparent 5px) left bottom/28px 12px repeat-x,
+ radial-gradient(circle,#fff0b0 0 2.3px, #f6c85e 2.8px,transparent 5px) left top/12px 28px repeat-y,
+ radial-gradient(circle,#fff0b0 0 2.3px, #f6c85e 2.8px,transparent 5px) right top/12px 28px repeat-y;
+ filter:drop-shadow(0 0 4px #ffd96b);opacity:.92;animation:frameBulbGlow 2.2s ease-in-out infinite alternate
+}
+.item{position:relative;overflow:hidden}
+.item:before{
+ content:"";position:absolute;z-index:3;inset:4px;pointer-events:none;border:1px solid #d8bd8050;border-radius:15px;
+ background:
+ radial-gradient(circle,#fff0b0 0 1.8px,#e8bd62 2.2px,transparent 4px) left top/25px 9px repeat-x,
+ radial-gradient(circle,#fff0b0 0 1.8px,#e8bd62 2.2px,transparent 4px) left bottom/25px 9px repeat-x,
+ radial-gradient(circle,#fff0b0 0 1.8px,#e8bd62 2.2px,transparent 4px) left top/9px 25px repeat-y,
+ radial-gradient(circle,#fff0b0 0 1.8px,#e8bd62 2.2px,transparent 4px) right top/9px 25px repeat-y;
+ opacity:.8;filter:drop-shadow(0 0 3px #f5cf75);animation:frameBulbGlow 2.7s ease-in-out infinite alternate
+}
+.item>*{position:relative;z-index:2}
+.item:hover:before{opacity:1;filter:drop-shadow(0 0 6px #ffdc86)}
+@keyframes frameBulbGlow{0%{opacity:.48;filter:brightness(.8) drop-shadow(0 0 2px #f6c85e)}100%{opacity:1;filter:brightness(1.35) drop-shadow(0 0 8px #ffe6a0)}}
+@media(prefers-reduced-motion:reduce){.winter-hero:before,.item:before{animation:none;opacity:.85}}
+</style>
 </head>
 <body>
 <header></header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav><main>
