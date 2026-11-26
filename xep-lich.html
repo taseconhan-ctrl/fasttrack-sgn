@@ -107,10 +107,10 @@ if(!candidates.length)return null;
 candidates.sort((a,b)=>maxStreak(i,a)-maxStreak(i,b)||restCounts[a]-restCounts[b]);
 const chosen=candidates[0];off.add(chosen);restCounts[chosen]++;
 }
-if(maxStreak(i,-1)>7)return null;
+
 }
 for(let i=0;i<employees.length;i++){
-if(offSets[i].size!==offTarget||maxStreak(i,-1)>7)return null;
+if(offSets[i].size!==offTarget)return null;
 for(const d of pSets[i])out[d][i]="P";
 for(const d of offSets[i])out[d][i]="OFF";
 for(const d of cSets[i])out[d][i]="C";
