@@ -34,7 +34,7 @@ function parseDays(text){return [...new Set((text||"").split(/[,;\s]+/).map(x=>N
 function reqData(){const r={};employees.forEach((e,i)=>{const off=parseDays(e.offText),p=parseDays(e.pText);off.slice(0,sundayCount()).forEach(d=>((r[d]??={})[i]="OFF"));p.forEach(d=>((r[d]??={})[i]="P"));});return r}
 function save(){localStorage.setItem(KEY,JSON.stringify({month:$("month").value,employees,schedule}));}
 function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||"null");if(x){if(x.month)$("month").value=x.month;if(Array.isArray(x.employees))employees=STAFF.map((s,i)=>({...s,...x.employees[i]}));schedule=x.schedule||{};}}catch(e){}}
-function renderStaff(){ $("staff").innerHTML=employees.map((e,i)=>'<div class="staff"><strong>'+esc(e.name)+' <small>· '+esc(e.role)+'</small></strong><div class="fields"><label>Ca cuối tháng trước<select data-i="'+i+'" data-k="prev"><option value="">Chưa nhập</option>'+WORK.map(s=>'<option '+(e.prev===s?'selected':'')+'>'+s+'</option>').join("")+'</select></label><label>Số ca C tháng trước<input type="number" min="0" max="31" data-i="'+i+'" data-k="prevC" value="'+Number(e.prevC||0)+'"></label><label class="wide">Ngày OFF mong muốn<input type="text" data-i="'+i+'" data-k="offText" value="'+esc(e.offText||"")+'" placeholder="Ví dụ: 3, 12, 25"></label><label class="wide">Ngày P đã đăng ký<input type="text" data-i="'+i+'" data-k="pText" value="'+esc(e.pText||"")+'" placeholder="Ví dụ: 8, 18"></label><label class="wide check"><input type="checkbox" data-i="'+i+'" data-k="consecutiveC" '+(e.consecutiveC?'checked':'')+'> Gom toàn bộ ca C liên tục</label></div></div>').join("");}
+function renderStaff(){ $("staff").innerHTML=employees.map((e,i)=>'<div class="staff"><strong>'+esc(e.name)+' <small>· '+esc(e.role)+'</small></strong><div class="fields"><label>Ca cuối tháng trước<select data-i="'+i+'" data-k="prev"><option value="">Chưa nhập</option>'+SHIFTS.map(s=>'<option '+(e.prev===s?'selected':'')+'>'+s+'</option>').join("")+'</select></label><label>Số ca C tháng trước<input type="number" min="0" max="31" data-i="'+i+'" data-k="prevC" value="'+Number(e.prevC||0)+'"></label><label class="wide">Ngày OFF mong muốn<input type="text" data-i="'+i+'" data-k="offText" value="'+esc(e.offText||"")+'" placeholder="Ví dụ: 3, 12, 25"></label><label class="wide">Ngày P đã đăng ký<input type="text" data-i="'+i+'" data-k="pText" value="'+esc(e.pText||"")+'" placeholder="Ví dụ: 8, 18"></label><label class="wide check"><input type="checkbox" data-i="'+i+'" data-k="consecutiveC" '+(e.consecutiveC?'checked':'')+'> Gom toàn bộ ca C liên tục</label></div></div>').join("");}
 function bindStaff(){ $("staff").addEventListener("change",ev=>{const el=ev.target,i=Number(el.dataset.i),k=el.dataset.k;if(!Number.isInteger(i)||!k)return;employees[i][k]=el.type==="checkbox"?el.checked:el.type==="number"?Number(el.value):el.value;save();});}
 function quotaC(){const n=days(),ids=employees.map((e,i)=>e.role==="Nhân viên"?i:-1).filter(i=>i>=0),q={};ids.forEach(i=>q[i]=Math.max(1,Math.min(5,Number(employees[i].prevC)||3)));let sum=Object.values(q).reduce((a,b)=>a+b,0);while(sum>n){const i=ids.slice().sort((a,b)=>q[b]-q[a])[0];if(q[i]<=1)break;q[i]--;sum--;}while(sum<n){const i=ids.slice().sort((a,b)=>q[a]-q[b])[0];q[i]++;sum++;}return q}
 function patterns(q,n,group){const out=[];const add=ds=>{const sorted=[...ds].sort((a,b)=>a-b);if(sorted.some(d=>d<1||d>n))return;const runs=[];let run=0,last=0;sorted.forEach(d=>{if(d===last+1)run++;else{if(run)runs.push(run);run=1;}last=d;});if(run)runs.push(run);if(!group&&runs.some(x=>x>2))return;out.push(sorted);};
@@ -50,7 +50,7 @@ function makeCPlan(req){const n=days(),q=quotaC(),eligible=employees.map((e,i)=>
 const order=eligible.slice().sort((a,b)=>patterns(q[b],n,employees[b].consecutiveC).length-patterns(q[a],n,employees[a].consecutiveC).length);
 let nodes=0;
 function visit(pos){if(pos===order.length)return occupied.size===n;if(++nodes>45000)return false;const i=order[pos],opts=shuffle(patterns(q[i],n,employees[i].consecutiveC));
-for(const ds of opts){if(ds.some(d=>req[d]?.[i]||occupied.has(d)))continue;const runs=[];let last=0;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}const after=runs.map(start=>{let end=start;while(ds.includes(end+1))end++;return end+1;}).filter(d=>d<=n);
+for(const ds of opts){if(ds.some(d=>req[d]?.[i]||occupied.has(d)||(d===1&&employees[i].prev==="C")))continue;const runs=[];let last=0;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}const after=runs.map(start=>{let end=start;while(ds.includes(end+1))end++;return end+1;}).filter(d=>d<=n);
 if(after.some(d=>req[d]?.[i]&&req[d][i]!=="OFF"))continue;
 const offSet=new Set([...parseDays(employees[i].offText).slice(0,sundayCount()),...after]);if(offSet.size>sundayCount())continue;
 plans[i]=ds;reserved[i]=after;ds.forEach(d=>occupied.add(d));
@@ -59,14 +59,14 @@ ds.forEach(d=>occupied.delete(d));delete plans[i];delete reserved[i];
 }return false}
 return visit(0)?{plans,reserved,q}:null}
 function prior(d,i,out){if(d===1)return employees[i].prev||null;return out[d-1]?.[i]||null}
-function adminOK(d,i,out,sh){const admin=["HC","A1","B0"],a=out[d-1]?.[i],b=out[d-2]?.[i];return !(admin.includes(a)&&admin.includes(b)&&admin.includes(sh));}
+function adminOK(d,i,out,sh){const admin=["HC","A1","B0"],a=d===1?employees[i].prev:out[d-1]?.[i],b=d===2?employees[i].prev:out[d-2]?.[i];return !(admin.includes(a)&&admin.includes(b)&&admin.includes(sh));}
 function validTransition(p,s){if(p==="C")return s==="OFF"||s==="C";if(p==="B"&&s==="A")return false;if(p==="B0"&&(s==="A0"||s==="A"))return false;if(p==="C"&&["A0","A","A1","HC","B"].includes(s))return false;return true}
 function createCandidate(req){const n=days(),plan=makeCPlan(req);if(!plan)return null;const out={};for(let d=1;d<=n;d++)out[d]={};
 const offTarget=sundayCount();
 for(let i=0;i<employees.length;i++){
  const requested=parseDays(employees[i].offText).slice(0,offTarget),pdays=parseDays(employees[i].pText);
  const cdays=plan.plans[i]||[],after=plan.reserved[i]||[];
- const off=new Set([...requested,...after]);if(off.size>offTarget||pdays.some(d=>off.has(d)||cdays.includes(d)))return null;
+ if(employees[i].prev==="C"&&pdays.includes(1))return null;const off=new Set([...requested,...after,...(employees[i].prev==="C"?[1]:[])]);if(off.size>offTarget||pdays.some(d=>off.has(d)||cdays.includes(d)))return null;
  // Fill remaining OFF evenly, never replace a registered P or C day.
  const candidates=shuffle(Array.from({length:n},(_,k)=>k+1).filter(d=>!off.has(d)&&!pdays.includes(d)&&!cdays.includes(d)));
  while(off.size<offTarget){if(!candidates.length)return null;let best=candidates.shift();off.add(best);}
