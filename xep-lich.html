@@ -91,16 +91,18 @@ const totalSlots=employees.length*offTarget;
 for(let i=0;i<employees.length;i++){
 const off=offSets[i],pdays=pSets[i],cdays=cSets[i],ideal=[];
 for(let k=0;k<offTarget;k++){const slot=(i*offTarget+k*employees.length)%totalSlots;ideal.push(Math.floor(slot*n/totalSlots)+1);}
+for(const target of ideal){
+if(off.size>=offTarget)break;
+if(off.has(target)||pdays.has(target))continue;
+const candidates=Array.from({length:n},(_,k)=>k+1).filter(d=>!off.has(d)&&!pdays.has(d)&&!cdays.has(d)&&restCounts[d]<3);
+if(!candidates.length)return null;
+candidates.sort((a,b)=>Math.abs(a-target)-Math.abs(b-target)||restCounts[a]-restCounts[b]);
+const chosen=candidates[0];off.add(chosen);restCounts[chosen]++;
+}
 while(off.size<offTarget){
 const candidates=Array.from({length:n},(_,k)=>k+1).filter(d=>!off.has(d)&&!pdays.has(d)&&!cdays.has(d)&&restCounts[d]<3);
 if(!candidates.length)return null;
-const remainingIdeal=ideal.filter(d=>!off.has(d));
-candidates.sort((a,b)=>{
-const streakDiff=maxStreak(i,a)-maxStreak(i,b);if(streakDiff)return streakDiff;
-const distance=d=>remainingIdeal.length?Math.min(...remainingIdeal.map(x=>Math.abs(d-x))):0;
-const idealDiff=distance(a)-distance(b);if(idealDiff)return idealDiff;
-return restCounts[a]-restCounts[b];
-});
+candidates.sort((a,b)=>maxStreak(i,a)-maxStreak(i,b)||restCounts[a]-restCounts[b]);
 const chosen=candidates[0];off.add(chosen);restCounts[chosen]++;
 }
 if(maxStreak(i,-1)>7)return null;
