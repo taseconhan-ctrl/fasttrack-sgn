@@ -46,18 +46,30 @@ else if(q===4){for(let a=1;a<n;a++)for(let b=a+3;b<n;b++)add([a,a+1,b,b+1]);}
 else {for(let a=1;a+q-1<=n;a++)add(Array.from({length:q},(_,k)=>a+k));}
 return out}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a}
-function makeCPlan(req){const n=days(),q=quotaC(),eligible=employees.map((e,i)=>e.role==="Nhân viên"?i:-1).filter(i=>i>=0),occupied=new Set(),plans={},reserved={};
-const order=eligible.slice().sort((a,b)=>patterns(q[b],n,employees[b].consecutiveC).length-patterns(q[a],n,employees[a].consecutiveC).length);
-let nodes=0;
-function visit(pos){if(pos===order.length)return occupied.size===n;if(++nodes>45000)return false;const i=order[pos],opts=shuffle(patterns(q[i],n,employees[i].consecutiveC));
-for(const ds of opts){if(ds.some(d=>req[d]?.[i]||occupied.has(d)||(d===1&&employees[i].prev==="C")))continue;const runs=[];let last=0;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}const after=runs.map(start=>{let end=start;while(ds.includes(end+1))end++;return end+1;}).filter(d=>d<=n);
+function makeCPlan(req){
+const n=days(),q=quotaC(),eligible=employees.map((e,i)=>e.role==="Nhân viên"?i:-1).filter(i=>i>=0),occupied=new Set(),plans={},reserved={},options={};
+for(const i of eligible){options[i]=shuffle(patterns(q[i],n,employees[i].consecutiveC).filter(ds=>!ds.some(d=>req[d]?.[i]|| (d===1&&employees[i].prev==="C"))));}
+const order=eligible.slice().sort((a,b)=>options[a].length-options[b].length);
+let nodes=0;const nodeLimit=12000;
+function visit(pos){
+if(pos===order.length)return occupied.size===n;
+if(++nodes>nodeLimit)return false;
+const i=order[pos];
+for(const ds of options[i]){
+if(ds.some(d=>occupied.has(d)))continue;
+const runs=[];let last=0;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}
+const after=runs.map(first=>{let end=first;while(ds.includes(end+1))end++;return end+1;}).filter(d=>d<=n);
 if(after.some(d=>req[d]?.[i]&&req[d][i]!=="OFF"))continue;
-const offSet=new Set([...parseDays(employees[i].offText).slice(0,sundayCount()),...after]);if(offSet.size>sundayCount())continue;
+const offSet=new Set([...parseDays(employees[i].offText).slice(0,sundayCount()),...after,...(employees[i].prev==="C"?[1]:[])]);
+if(offSet.size>sundayCount())continue;
 plans[i]=ds;reserved[i]=after;ds.forEach(d=>occupied.add(d));
 if(visit(pos+1))return true;
 ds.forEach(d=>occupied.delete(d));delete plans[i];delete reserved[i];
-}return false}
-return visit(0)?{plans,reserved,q}:null}
+}
+return false;
+}
+return visit(0)?{plans,reserved,q}:null;
+}
 function prior(d,i,out){if(d===1)return employees[i].prev||null;return out[d-1]?.[i]||null}
 function adminOK(d,i,out,sh){const admin=["HC","A1","B0"],a=d===1?employees[i].prev:out[d-1]?.[i],b=d===2?employees[i].prev:out[d-2]?.[i];return !(admin.includes(a)&&admin.includes(b)&&admin.includes(sh));}
 function validTransition(p,s){if(p==="C")return s==="OFF"||s==="C";if(p==="B"&&s==="A")return false;if(p==="B0"&&(s==="A0"||s==="A"))return false;if(p==="C"&&["A0","A","A1","HC","B"].includes(s))return false;return true}
@@ -108,8 +120,8 @@ async function auto(){
 const n=days();if(!n){alert("Vui lòng chọn tháng.");return;}
 for(let i=0;i<employees.length;i++){const pd=parseDays(employees[i].pText),od=parseDays(employees[i].offText).slice(0,sundayCount());if(pd.some(d=>od.includes(d))){alert(employees[i].name+": một ngày không thể vừa OFF vừa P.");return;}if(pd.length+od.length>7){alert(employees[i].name+": OFF + P đăng ký vượt 7 ngày.");return;}}
 $("auto").disabled=true;$("auto").textContent="Đang tìm phương án…";$("status").textContent="Đang tạo lịch, vui lòng chờ…";
-let best=null,bestScore=Infinity,tries=45,validCount=0;
-try{for(let k=0;k<tries;k++){const candidate=createCandidate(reqData());if(candidate){const issues=checkSchedule(candidate);if(!issues.some(x=>!x.startsWith("Khuyến nghị:"))){validCount++;const score=scoreSchedule(candidate);if(score<bestScore){best=candidate;bestScore=score;}}}if(k%3===2){$("status").textContent="Đã thử "+(k+1)+"/"+tries+" phương án…";await new Promise(resolve=>setTimeout(resolve,0));}}
+let best=null,bestScore=Infinity,tries=12,validCount=0;
+try{for(let k=0;k<tries;k++){const candidate=createCandidate(reqData());if(candidate){const issues=checkSchedule(candidate);if(!issues.some(x=>!x.startsWith("Khuyến nghị:"))){validCount++;const score=scoreSchedule(candidate);if(score<bestScore){best=candidate;bestScore=score;}}}if(k%1===0){$("status").textContent="Đã thử "+(k+1)+"/"+tries+" phương án…";await new Promise(resolve=>setTimeout(resolve,0));}}
 if(!best){$("status").innerHTML='<b class="bad">Chưa tìm được lịch đạt toàn bộ điều kiện.</b>';$("issues").innerHTML="<li>Kiểm tra ca cuối tháng trước (đặc biệt nếu là C), OFF/P đã đăng ký và số ca C. Hệ thống không tự ý thêm ngày P hoặc vượt định mức OFF.</li><li>Nếu vẫn không tạo được, thử điều chỉnh ngày OFF mong muốn hoặc bỏ chọn gom C liên tục ở một số nhân viên.</li>";return;}
 schedule=best;renderSchedule();runCheck();save();alert("Đã tạo lịch từ "+validCount+" phương án hợp lệ, chọn phương án cân bằng tốt nhất.");
 }catch(err){console.error(err);$("status").innerHTML='<b class="bad">Lỗi khi xếp lịch: '+esc(err.message||err)+'</b>';$("issues").innerHTML="<li>Vui lòng tải lại trang và thử lại.</li>";}
