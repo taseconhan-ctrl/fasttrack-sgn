@@ -267,6 +267,17 @@ html,body{font-family:Arial,"Segoe UI",Tahoma,sans-serif!important}
 body,body *{font-family:Arial,"Segoe UI",Tahoma,sans-serif!important}
 input,select,textarea,button{font-family:Arial,"Segoe UI",Tahoma,sans-serif!important;font-synthesis:none}
 </style>
+<style id="home-festive-tree-lights">
+.winter-hero{isolation:isolate}
+.winter-village .festive-tree{transform-box:fill-box;transform-origin:center bottom;filter:drop-shadow(0 0 13px #f4d78a55)}
+.winter-village .tree-bulbs circle{animation:treeGlow 2.1s ease-in-out infinite alternate;filter:drop-shadow(0 0 7px currentColor)}
+.winter-village .tree-bulbs circle:nth-child(2n){animation-delay:.55s}
+.winter-village .tree-bulbs circle:nth-child(3n){animation-delay:1.1s}
+@keyframes treeGlow{0%{opacity:.48;filter:brightness(.85) drop-shadow(0 0 2px #ffe6a0)}100%{opacity:1;filter:brightness(1.45) drop-shadow(0 0 11px #ffe6a0)}}
+.winter-hero:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(circle at 9% 22%,#fff8d5 0 1px,transparent 3px),radial-gradient(circle at 83% 18%,#fff 0 1px,transparent 3px),radial-gradient(circle at 58% 10%,#f5d994 0 1.5px,transparent 4px);background-size:137px 121px,181px 153px,223px 179px;animation:heroTwinkle 5s ease-in-out infinite alternate}
+@keyframes heroTwinkle{from{opacity:.25}to{opacity:.85}}
+@media(prefers-reduced-motion:reduce){.winter-village .tree-bulbs circle,.winter-hero:after{animation:none!important;opacity:.9}}
+</style>
 </head>
 <body>
 <header></header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav><main>
@@ -335,6 +346,28 @@ input,select,textarea,button{font-family:Arial,"Segoe UI",Tahoma,sans-serif!impo
  <path d="M-4 115Q125 91 269 115" fill="none" stroke="#fff" stroke-width="5"/>
  <g fill="#e8bd6a"><circle cx="35" cy="100" r="5"/><circle cx="70" cy="68" r="5"/><circle cx="111" cy="39" r="5"/><circle cx="153" cy="53" r="5"/><circle cx="205" cy="80" r="5"/><circle cx="244" cy="105" r="5"/></g>
  <path d="M-5 220H258" stroke="#e8d4ae" stroke-width="7"/>
+</g>
+<!-- illuminated Christmas fir trees -->
+<g class="festive-tree" transform="translate(18 92)">
+ <path d="M92 280L135 208 112 208 151 145 129 145 168 82 146 82 184 18 222 82 200 82 239 145 217 145 256 208 233 208 276 280Z" fill="#123d30" stroke="#52745a" stroke-width="4"/>
+ <path d="M104 213Q151 188 226 213M127 151Q169 129 214 151M151 91Q185 73 202 91" fill="none" stroke="#d9e9d7" stroke-width="9" stroke-linecap="round"/>
+ <path d="M112 224Q164 180 238 226Q174 246 120 174Q179 135 222 174Q180 191 137 116Q181 92 207 116Q182 127 166 70" fill="none" stroke="#e8c77d" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 5"/>
+ <g class="tree-bulbs">
+  <circle cx="132" cy="206" r="7" fill="#ffdf7a"/><circle cx="174" cy="221" r="7" fill="#f38c76"/><circle cx="220" cy="211" r="7" fill="#8de0c0"/>
+  <circle cx="151" cy="160" r="7" fill="#8de0c0"/><circle cx="196" cy="153" r="7" fill="#ffdf7a"/><circle cx="174" cy="119" r="7" fill="#f38c76"/>
+  <circle cx="184" cy="78" r="7" fill="#ffdf7a"/><circle cx="184" cy="18" r="11" fill="#ffe6a0" stroke="#fff2c5" stroke-width="3"/>
+ </g>
+ <path d="M168 280V248H200V280" fill="#76513a" stroke="#d8bd8a" stroke-width="4"/>
+</g>
+<g class="festive-tree" transform="translate(650 118) scale(.82)">
+ <path d="M92 280L135 208 112 208 151 145 129 145 168 82 146 82 184 18 222 82 200 82 239 145 217 145 256 208 233 208 276 280Z" fill="#123d30" stroke="#52745a" stroke-width="4"/>
+ <path d="M104 213Q151 188 226 213M127 151Q169 129 214 151M151 91Q185 73 202 91" fill="none" stroke="#d9e9d7" stroke-width="9" stroke-linecap="round"/>
+ <path d="M112 224Q164 180 238 226Q174 246 120 174Q179 135 222 174Q180 191 137 116Q181 92 207 116Q182 127 166 70" fill="none" stroke="#e8c77d" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 5"/>
+ <g class="tree-bulbs">
+  <circle cx="132" cy="206" r="7" fill="#ffdf7a"/><circle cx="174" cy="221" r="7" fill="#f38c76"/><circle cx="220" cy="211" r="7" fill="#8de0c0"/>
+  <circle cx="151" cy="160" r="7" fill="#8de0c0"/><circle cx="196" cy="153" r="7" fill="#ffdf7a"/><circle cx="174" cy="119" r="7" fill="#f38c76"/>
+  <circle cx="184" cy="78" r="7" fill="#ffdf7a"/><circle cx="184" cy="18" r="11" fill="#ffe6a0" stroke="#fff2c5" stroke-width="3"/>
+ </g><path d="M168 280V248H200V280" fill="#76513a" stroke="#d8bd8a" stroke-width="4"/>
 </g>
 <!-- foreground firs, ornaments and snow -->
 <g>
