@@ -47,8 +47,19 @@ else {for(let a=1;a+q-1<=n;a++)add(Array.from({length:q},(_,k)=>a+k));}
 return out}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a}
 function makeCPlan(req){
-const n=days(),q=quotaC(),eligible=employees.map((e,i)=>e.role==="Nhân viên"?i:-1).filter(i=>i>=0),occupied=new Set(),plans={},reserved={},options={};
-for(const i of eligible){options[i]=shuffle(patterns(q[i],n,employees[i].consecutiveC).filter(ds=>!ds.some(d=>req[d]?.[i]|| (d===1&&employees[i].prev==="C"))));}
+const n=days(),q=quotaC(),eligible=employees.map((e,i)=>e.role==="Nhân viên"?i:-1).filter(i=>i>=0),occupied=new Set(),plans={},reserved={};
+const hasRequests=employees.some(e=>parseDays(e.offText).length||parseDays(e.pText).length);
+const q3=eligible.filter(i=>q[i]===3).sort((a,b)=>(employees[a].prev==="C")-(employees[b].prev==="C"));
+const q4=eligible.filter(i=>q[i]===4).sort((a,b)=>(employees[a].prev==="C")-(employees[b].prev==="C"));
+if(!hasRequests&&!employees.some(e=>e.consecutiveC)&&q3.length+q4.length===eligible.length&&2*(q3.length+2*q4.length)+q3.length===n&&!eligible.some(i=>employees[i].prev==="C"&&((q3[0]===i)||(q4[0]===i)))){
+let day=1;q3.concat(q4).forEach(i=>{plans[i]=[day,day+1];day+=2;});
+q4.forEach(i=>{plans[i].push(day,day+1);day+=2;});
+q3.forEach(i=>{plans[i].push(day);day++;});
+for(const i of eligible){const ds=plans[i]||[],runs=[];let last=0;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}reserved[i]=runs.map(first=>{let lastDay=first;while(ds.includes(lastDay+1))lastDay++;return lastDay+1;}).filter(d=>d<=n);}
+return {plans,reserved,q};
+}
+const options={};
+for(const i of eligible){options[i]=shuffle(patterns(q[i],n,employees[i].consecutiveC).filter(ds=>!ds.some(d=>req[d]?.[i]||(d===1&&employees[i].prev==="C"))));}
 const order=eligible.slice().sort((a,b)=>options[a].length-options[b].length);
 let nodes=0;const nodeLimit=12000;
 function visit(pos){
@@ -58,7 +69,7 @@ const i=order[pos];
 for(const ds of options[i]){
 if(ds.some(d=>occupied.has(d)))continue;
 const runs=[];let last=0;for(const d of ds){if(d!==last+1)runs.push(d);last=d;}
-const after=runs.map(first=>{let end=first;while(ds.includes(end+1))end++;return end+1;}).filter(d=>d<=n);
+const after=runs.map(first=>{let lastDay=first;while(ds.includes(lastDay+1))lastDay++;return lastDay+1;}).filter(d=>d<=n);
 if(after.some(d=>req[d]?.[i]&&req[d][i]!=="OFF"))continue;
 const offSet=new Set([...parseDays(employees[i].offText).slice(0,sundayCount()),...after,...(employees[i].prev==="C"?[1]:[])]);
 if(offSet.size>sundayCount())continue;
