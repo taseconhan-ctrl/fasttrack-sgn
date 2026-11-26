@@ -225,6 +225,11 @@ body:has(.winter-hero) main{width:min(100% - 32px,1260px);max-width:1260px;margi
 .intro{max-width:700px;margin:48px auto 28px!important;text-align:center;padding:10px 20px!important;background:transparent!important;border:0!important;box-shadow:none!important}.intro h2{font-size:30px!important}.menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.item{min-height:250px;padding:25px!important;border:1px solid #635a43!important;border-top:3px solid #b3955b!important;background:linear-gradient(145deg,#202c28,#151f1d)!important;transition:transform .25s,border-color .25s}.item:hover{transform:translateY(-7px);border-color:#d9bc83!important}.icon{width:56px;height:56px;border-radius:50%;background:#34483c!important;color:#e7c988!important}.item h3{font-size:18px!important;letter-spacing:1px}.item p{font:13px/1.7 system-ui;color:#b9c4ba!important}.go{font:700 10px system-ui;text-transform:uppercase;letter-spacing:1.5px;color:#dfc185!important}
 @media(max-width:820px){.winter-hero{grid-template-columns:1fr;min-height:auto;padding-top:45px}.hero-copy{padding-bottom:0}.winter-village{height:260px}.menu{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){body:has(.winter-hero) main{width:calc(100% - 22px)}.winter-hero{padding:35px 18px 0}.winter-village{height:210px;gap:2px}.house{height:95px}.house-b{height:115px}.menu{grid-template-columns:1fr}.item{min-height:200px}.intro{margin-top:30px!important}}
+/* Detailed miniature alpine village illustration */
+.winter-village{display:block!important;height:420px!important;min-width:0;filter:drop-shadow(0 18px 20px #0008)}
+.winter-village .village-art{position:absolute;inset:auto 0 0;width:100%;height:100%;overflow:visible;display:block}
+@media(max-width:820px){.winter-village{height:310px!important}}
+@media(max-width:560px){.winter-village{height:245px!important}}
 </style><style id="winter-village-theme">
 :root{--wv-bg:#101918;--wv-panel:#192321;--wv-panel2:#202b28;--wv-ink:#f5f0e5;--wv-muted:#b8c2b9;--wv-gold:#d8b878;--wv-green:#315b4d;--wv-red:#a94b4d;--wv-line:#4a554b}
 html{scroll-behavior:smooth}body{background:radial-gradient(ellipse at 50% -12%,#29443c 0,transparent 45%),linear-gradient(180deg,#101918,#151d1b 58%,#101615)!important;color:var(--wv-ink)!important;font-family:Georgia,"Times New Roman",serif!important;position:relative}
@@ -260,7 +265,81 @@ footer,.foot{color:#9da99e!important}
 </style></head>
 <body>
 <header></header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav><main>
-  <section class="winter-hero"><div class="hero-copy"><span class="hero-kicker">✦ MERRY CHRISTMAS · SAFE FLIGHTS ✦</span><h2>Chạm vào mùa đông<br><em>vận hành thật mượt mà</em></h2><p>Không gian điều hành Fast Track SGN — ấm áp, tinh tế và sẵn sàng cho từng chuyến bay.</p><a class="hero-cta" href="#workspace">Khám phá hệ thống <span>↓</span></a></div><div class="winter-village" aria-hidden="true"><span class="village-star">✧</span><span class="tree tree-a">🎄</span><span class="tree tree-b">🌲</span><span class="tree tree-c">🎄</span><span class="house house-a"><i></i><b>▦</b></span><span class="house house-b"><i></i><b>▦ ▦</b></span><span class="tree tree-d">🌲</span><span class="snow-ground"></span><span class="village-lights">●　✦　●　✧　●</span></div></section><section class="intro" id="workspace"><span class="hero-kicker">✦ OPERATIONS HUB · TAN SON NHAT ✦</span><h2>Không gian điều hành</h2><p>Chọn một công cụ để bắt đầu công việc của bạn.</p></section>
+  <section class="winter-hero"><div class="hero-copy"><span class="hero-kicker">✦ MERRY CHRISTMAS · SAFE FLIGHTS ✦</span><h2>Chạm vào mùa đông<br><em>vận hành thật mượt mà</em></h2><p>Không gian điều hành Fast Track SGN — ấm áp, tinh tế và sẵn sàng cho từng chuyến bay.</p><a class="hero-cta" href="#workspace">Khám phá hệ thống <span>↓</span></a></div><div class="winter-village" aria-hidden="true">
+<svg class="village-art" viewBox="0 0 900 430" role="presentation" xmlns="http://www.w3.org/2000/svg">
+<defs>
+ <linearGradient id="snowRoof" x2="0" y2="1"><stop stop-color="#fffef5"/><stop offset=".58" stop-color="#e8e5d9"/><stop offset="1" stop-color="#b9c2b8"/></linearGradient>
+ <linearGradient id="redWall"><stop stop-color="#71352f"/><stop offset=".45" stop-color="#b65345"/><stop offset="1" stop-color="#6d302d"/></linearGradient>
+ <linearGradient id="goldWall"><stop stop-color="#65432e"/><stop offset=".5" stop-color="#bd8952"/><stop offset="1" stop-color="#69432e"/></linearGradient>
+ <linearGradient id="roofRed" x2="0" y2="1"><stop stop-color="#8e3d36"/><stop offset="1" stop-color="#492b29"/></linearGradient>
+ <linearGradient id="glass"><stop stop-color="#fff3b0"/><stop offset=".55" stop-color="#ffbd55"/><stop offset="1" stop-color="#a94b2d"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="shadow"><feGaussianBlur stdDeviation="9"/></filter>
+</defs>
+<ellipse cx="450" cy="395" rx="430" ry="24" fill="#030b09" opacity=".45" filter="url(#shadow)"/>
+<!-- distant fir trees -->
+<g fill="#173c32" stroke="#42604a" stroke-width="3">
+ <path d="M70 340L116 235 93 235 132 160 111 160 151 83 191 160 170 160 209 235 186 235 226 340Z"/>
+ <path d="M700 345L744 245 722 245 760 173 740 173 779 95 818 173 798 173 837 245 814 245 855 345Z"/>
+ <path d="M245 352L278 275 260 275 292 215 276 215 308 151 340 215 323 215 355 275 337 275 369 352Z"/>
+</g>
+<g fill="#dfe9df" opacity=".94">
+ <path d="M115 236l17-76 19-77 20 77 20 77-28-17-12 22-13-22z"/>
+ <path d="M727 246l33-73 19-78 20 78 30 73-29-16-18 20-17-20z"/>
+ <path d="M263 276l29-61 16-64 16 64 30 61-25-13-21 18-18-18z"/>
+</g>
+<!-- left cottage -->
+<g transform="translate(135 184)">
+ <path d="M0 118L116 18 238 118V235H0Z" fill="url(#redWall)" stroke="#e3cba6" stroke-width="7"/>
+ <path d="M-24 121L112 -2 254 121 232 127 113 28 0 128Z" fill="url(#roofRed)" stroke="#54312c" stroke-width="5"/>
+ <path d="M-30 111Q-8 91 13 103L111 15Q126 5 141 20L252 106Q266 123 248 132L229 128 113 43 7 133Q-13 145-27 127Z" fill="url(#snowRoof)" stroke="#fffdf4" stroke-width="5"/>
+ <path d="M10 128L113 48 228 132" fill="none" stroke="#fff" stroke-width="7" opacity=".8"/>
+ <rect x="23" y="-25" width="30" height="62" rx="3" fill="#6b3d31" stroke="#d8c5a4" stroke-width="5"/>
+ <path d="M17 -25Q37 -39 59 -25L59 -15H17Z" fill="#f6f2e5"/>
+ <g fill="#4b2c27" stroke="#edc98a" stroke-width="5">
+  <rect x="27" y="142" width="43" height="57" rx="3"/><rect x="157" y="142" width="44" height="53" rx="3"/>
+  <rect x="82" y="87" width="45" height="54" rx="3"/>
+ </g>
+ <g fill="url(#glass)" filter="url(#glow)">
+  <rect x="33" y="148" width="31" height="44"/><rect x="163" y="148" width="32" height="40"/><rect x="88" y="93" width="33" height="42"/>
+ </g>
+ <g stroke="#71452e" stroke-width="4"><path d="M48 148v44M33 170h31M179 148v40M163 168h32M104 93v42M88 113h33"/></g>
+ <rect x="92" y="164" width="42" height="71" rx="3" fill="#4a2924" stroke="#e5c38b" stroke-width="5"/>
+ <rect x="99" y="172" width="28" height="30" fill="url(#glass)"/>
+ <circle cx="124" cy="211" r="3" fill="#f6d78d"/>
+ <path d="M-5 132Q112 108 241 134" fill="none" stroke="#fff" stroke-width="5"/>
+ <g fill="#e7bd69"><circle cx="20" cy="124" r="5"/><circle cx="54" cy="105" r="5"/><circle cx="88" cy="77" r="5"/><circle cx="151" cy="79" r="5"/><circle cx="190" cy="110" r="5"/><circle cx="220" cy="129" r="5"/></g>
+ <path d="M74 235v-17q17-24 34 0v17" fill="#744133" stroke="#e4cda7" stroke-width="4"/>
+</g>
+<!-- right alpine lodge -->
+<g transform="translate(520 202)">
+ <path d="M0 100L118 8 254 100V220H0Z" fill="url(#goldWall)" stroke="#d8bd91" stroke-width="7"/>
+ <path d="M-25 105L116 -12 278 104 253 113 117 25 0 118Z" fill="#49312a" stroke="#302622" stroke-width="5"/>
+ <path d="M-30 96Q-7 77 15 91L111 2Q127 -9 143 6L278 88Q296 107 275 119L251 113 116 34 5 123Q-17 135-30 113Z" fill="url(#snowRoof)" stroke="#fffdf6" stroke-width="5"/>
+ <rect x="190" y="-42" width="35" height="79" fill="#70442f" stroke="#d3b88b" stroke-width="5"/>
+ <path d="M184 -43Q207 -56 231 -43L231 -31H184Z" fill="#f9f4e8"/>
+ <rect x="18" y="133" width="47" height="53" fill="#51362b" stroke="#e7c98d" stroke-width="5"/>
+ <rect x="24" y="139" width="35" height="41" fill="url(#glass)" filter="url(#glow)"/>
+ <path d="M41 139v41M24 159h35" stroke="#765032" stroke-width="4"/>
+ <rect x="84" y="111" width="50" height="57" fill="#52352a" stroke="#e9c98d" stroke-width="5"/>
+ <rect x="91" y="118" width="36" height="43" fill="url(#glass)" filter="url(#glow)"/>
+ <path d="M109 118v43M91 139h36" stroke="#765032" stroke-width="4"/>
+ <rect x="163" y="130" width="45" height="90" rx="3" fill="#4a2e27" stroke="#e4c18a" stroke-width="5"/>
+ <rect x="170" y="138" width="31" height="32" fill="url(#glass)"/>
+ <circle cx="195" cy="183" r="3" fill="#f5d58e"/>
+ <path d="M-4 115Q125 91 269 115" fill="none" stroke="#fff" stroke-width="5"/>
+ <g fill="#e8bd6a"><circle cx="35" cy="100" r="5"/><circle cx="70" cy="68" r="5"/><circle cx="111" cy="39" r="5"/><circle cx="153" cy="53" r="5"/><circle cx="205" cy="80" r="5"/><circle cx="244" cy="105" r="5"/></g>
+ <path d="M-5 220H258" stroke="#e8d4ae" stroke-width="7"/>
+</g>
+<!-- foreground firs, ornaments and snow -->
+<g>
+ <path d="M28 375l36-80 36 80zM790 377l40-96 40 96zM425 385l31-74 31 74z" fill="#174638" stroke="#45624b" stroke-width="3"/>
+ <path d="M48 333l16-38 17 38M808 324l22-43 22 43M440 350l16-39 16 39" fill="none" stroke="#e5eee3" stroke-width="8" stroke-linecap="round"/>
+ <circle cx="92" cy="356" r="12" fill="#a83b3c" stroke="#e6c58d" stroke-width="3"/><circle cx="755" cy="359" r="13" fill="#c18a4e" stroke="#f0d6a1" stroke-width="3"/><circle cx="385" cy="371" r="9" fill="#a83b3c" stroke="#e6c58d" stroke-width="3"/>
+ <path d="M0 383Q150 364 300 384T600 382T900 380V430H0Z" fill="url(#snowRoof)"/>
+ <path d="M0 397Q170 382 330 400T650 397T900 393" fill="none" stroke="#fff" stroke-width="9" opacity=".9"/>
+</g>
+</svg></div></section><section class="intro" id="workspace"><span class="hero-kicker">✦ OPERATIONS HUB · TAN SON NHAT ✦</span><h2>Không gian điều hành</h2><p>Chọn một công cụ để bắt đầu công việc của bạn.</p></section>
   <nav class="menu" aria-label="Các chức năng chính">
     <a class="item" href="soan-booking.html">
       <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></span>
