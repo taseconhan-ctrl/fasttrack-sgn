@@ -59,7 +59,7 @@ ds.forEach(d=>occupied.delete(d));delete plans[i];delete reserved[i];
 }return false}
 return visit(0)?{plans,reserved,q}:null}
 function prior(d,i,out){if(d===1)return employees[i].prev||null;return out[d-1]?.[i]||null}
-function adminOK(d,i,out){const admin=["HC","A1","B0"],a=out[d-1]?.[i],b=out[d-2]?.[i];return !(admin.includes(a)&&admin.includes(b)&&admin.includes(out[d]?.[i]));}
+function adminOK(d,i,out,sh){const admin=["HC","A1","B0"],a=out[d-1]?.[i],b=out[d-2]?.[i];return !(admin.includes(a)&&admin.includes(b)&&admin.includes(sh));}
 function validTransition(p,s){if(p==="C")return s==="OFF"||s==="C";if(p==="B"&&s==="A")return false;if(p==="B0"&&(s==="A0"||s==="A"))return false;if(p==="C"&&["A0","A","A1","HC","B"].includes(s))return false;return true}
 function createCandidate(req){const n=days(),plan=makeCPlan(req);if(!plan)return null;const out={};for(let d=1;d<=n;d++)out[d]={};
 const offTarget=sundayCount();
@@ -79,13 +79,13 @@ for(let d=1;d<=n;d++){
  const jobs=["A0","A","A","B","B","B0","HC"];
  shuffle(jobs);const used=new Set(Object.keys(out[d]).map(Number));
  for(const sh of jobs){
-  const opts=employees.map((e,i)=>({i,e,p:prior(d,i,out)})).filter(x=>!used.has(x.i)&&validTransition(x.p,sh)&&!(sh==="C"&&x.e.role!=="Nhân viên")&&(!["HC","B0"].includes(sh)||adminOK(d,x.i,out)));
+  const opts=employees.map((e,i)=>({i,e,p:prior(d,i,out)})).filter(x=>!used.has(x.i)&&validTransition(x.p,sh)&&!(sh==="C"&&x.e.role!=="Nhân viên")&&(!["HC","B0"].includes(sh)||adminOK(d,x.i,out,sh)));
   if(!opts.length)return null;
   opts.sort((a,b)=>candidateRank(a,sh,d,out)-candidateRank(b,sh,d,out));
   const chosen=opts[0];out[d][chosen.i]=sh;used.add(chosen.i);
  }
  for(let i=0;i<employees.length;i++)if(!used.has(i)){
-  const p=prior(d,i,out),opts=["A1","A","B"].filter(sh=>validTransition(p,sh)&&!(sh==="A"&&count("A")>=3)&&!(sh==="B"&&count("B")>=3)&&adminOK(d,i,out));
+  const p=prior(d,i,out),opts=["A1","A","B"].filter(sh=>validTransition(p,sh)&&!(sh==="A"&&count("A")>=3)&&!(sh==="B"&&count("B")>=3)&&adminOK(d,i,out,sh));
   if(!opts.length)return null;
   opts.sort((a,b)=>(count(a)-count(b))-(count(b)-count(a)));out[d][i]=opts[0];used.add(i);
  }
@@ -97,7 +97,7 @@ function scoreSchedule(out){let score=0,n=days();for(let i=0;i<employees.length;
 for(let d=1;d<=n;d++){const vals=employees.map((e,i)=>out[d][i]);if(!employees.some((e,i)=>i<4&&DAY.includes(vals[i])))score+=30;}
 return score}
 function checkSchedule(out){const errors=[],warnings=[],n=days(),req=reqData(),q=quotaC();if(!out||!Object.keys(out).length)return ["Chưa có lịch để kiểm tra."];
-for(let i=0;i<employees.length;i++){let off=0,p=0,c=0,streak=0;const cd=[];for(let d=1;d<=n;d++){const v=out[d]?.[i];if(!SHIFTS.includes(v))errors.push("Ngày "+d+" · "+employees[i].name+": chưa được xếp ca.");if(v==="OFF")off++;if(v==="P")p++;if(v==="C"){c++;cd.push(d);}if(WORK.includes(v))streak++;else streak=0;if(streak>=8)errors.push(employees[i].name+": làm liên tục 8 ngày trở lên.");if(req[d]?.[i]&&v!==req[d][i])errors.push(employees[i].name+": ngày "+d+" không giữ đúng "+req[d][i]+" đã đăng ký.");if(v==="P"&&req[d]?.[i]!=="P")errors.push(employees[i].name+": phát sinh P không đăng ký.");if(prior(d,i,out)==="C"&&v!=="OFF"&&v!=="C")errors.push(employees[i].name+": sau C không được chuyển sang "+v+".");if(prior(d,i,out)==="B"&&v==="A")errors.push(employees[i].name+": B → A không hợp lệ.");if(prior(d,i,out)==="B0"&&["A","A0"].includes(v))errors.push(employees[i].name+": B0 → "+v+" không hợp lệ.");}
+for(let i=0;i<employees.length;i++){let off=0,p=0,c=0,streak=0;const cd=[];for(let d=1;d<=n;d++){const v=out[d]?.[i];if(!SHIFTS.includes(v))errors.push("Ngày "+d+" · "+employees[i].name+": chưa được xếp ca.");if(v==="OFF")off++;if(v==="P")p++;if(v==="C"){c++;cd.push(d);}if(WORK.includes(v))streak++;else streak=0;if(streak>=8)errors.push(employees[i].name+": làm liên tục 8 ngày trở lên.");if(req[d]?.[i]&&v!==req[d][i])errors.push(employees[i].name+": ngày "+d+" không giữ đúng "+req[d][i]+" đã đăng ký.");if(v==="P"&&req[d]?.[i]!=="P")errors.push(employees[i].name+": phát sinh P không đăng ký.");if(prior(d,i,out)==="C"&&v!=="OFF"&&v!=="C")errors.push(employees[i].name+": sau C không được chuyển sang "+v+".");if(prior(d,i,out)==="B"&&v==="A")errors.push(employees[i].name+": B → A không hợp lệ.");if(prior(d,i,out)==="B0"&&["A","A0"].includes(v))errors.push(employees[i].name+": B0 → "+v+" không hợp lệ.");if(["HC","A1","B0"].includes(v)&&d>=3&&["HC","A1","B0"].includes(out[d-1]?.[i])&&["HC","A1","B0"].includes(out[d-2]?.[i]))errors.push(employees[i].name+": HC/A1/B0 không được quá 2 ngày liên tiếp.");}
 if(off>sundayCount())errors.push(employees[i].name+": OFF vượt định mức "+sundayCount()+".");if(off+p>7)errors.push(employees[i].name+": OFF + P vượt 7 ngày.");if(c!==(q[i]||0))errors.push(employees[i].name+": thiếu quota C ("+c+"/"+(q[i]||0)+").");if(employees[i].role!=="Nhân viên"&&c)errors.push(employees[i].name+": quản lý không được làm C.");if(employees[i].consecutiveC&&cd.length&&cd[cd.length-1]-cd[0]+1!==cd.length)errors.push(employees[i].name+": quota C không liền một cụm.");if(!employees[i].consecutiveC){const runs=[];let run=0,last=0;cd.forEach(d=>{if(d===last+1)run++;else{if(run)runs.push(run);run=1;}last=d;});if(run)runs.push(run);if(runs.some(x=>x>2))errors.push(employees[i].name+": C không gom nhưng có cụm 3 ngày trở lên.");if(c===3&&!(runs.filter(x=>x===2).length===1&&runs.filter(x=>x===1).length===1))warnings.push(employees[i].name+": 3 C nên là 1 cặp + 1 ngày lẻ.");if(c===4&&!(runs.length===2&&runs.every(x=>x===2)))warnings.push(employees[i].name+": 4 C nên chia thành 2 cặp.");}}
 for(let d=1;d<=n;d++){const count=sh=>employees.filter((e,i)=>out[d]?.[i]===sh).length;for(const sh of ["A0","B0","C","HC"])if(count(sh)!==1)errors.push("Ngày "+d+": "+sh+" phải đúng 1 người.");for(const sh of ["A","B"])if(count(sh)<2||count(sh)>3)errors.push("Ngày "+d+": "+sh+" phải có 2–3 người.");}
 return [...new Set([...errors,...warnings.map(x=>"Khuyến nghị: "+x)])]}
