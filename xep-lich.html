@@ -117,7 +117,7 @@ for(const d of cSets[i])out[d][i]="C";
 }
 for(let d=1;d<=n;d++){
 const count=sh=>employees.filter((e,i)=>out[d][i]===sh).length;
-const jobs=["A0","B0","HC","A","A","B","B"];
+const jobs=shuffle(["A0","B0","HC","A","A","B","B"]);
 for(const sh of jobs){
 const opts=employees.map((e,i)=>({i,e,p:prior(d,i,out)})).filter(x=>!Object.prototype.hasOwnProperty.call(out[d],x.i)&&validTransition(x.p,sh)&&!(sh==="C"&&x.e.role!=="Nhân viên")&&(!["HC","B0"].includes(sh)||adminOK(d,x.i,out,sh)));
 if(!opts.length)return null;
@@ -150,7 +150,7 @@ async function auto(){
 const n=days();if(!n){alert("Vui lòng chọn tháng.");return;}
 for(let i=0;i<employees.length;i++){const pd=parseDays(employees[i].pText),od=parseDays(employees[i].offText).slice(0,sundayCount());if(pd.some(d=>od.includes(d))){alert(employees[i].name+": một ngày không thể vừa OFF vừa P.");return;}if(pd.length+od.length>7){alert(employees[i].name+": OFF + P đăng ký vượt 7 ngày.");return;}}
 $("auto").disabled=true;$("auto").textContent="Đang tìm phương án…";$("status").textContent="Đang tạo lịch, vui lòng chờ…";
-let best=null,bestScore=Infinity,tries=12,validCount=0;
+let best=null,bestScore=Infinity,tries=30,validCount=0;
 try{for(let k=0;k<tries;k++){const candidate=createCandidate(reqData());if(candidate){const issues=checkSchedule(candidate);if(!issues.some(x=>!x.startsWith("Khuyến nghị:"))){validCount++;const score=scoreSchedule(candidate);if(score<bestScore){best=candidate;bestScore=score;}}}if(k%1===0){$("status").textContent="Đã thử "+(k+1)+"/"+tries+" phương án…";await new Promise(resolve=>setTimeout(resolve,0));}}
 if(!best){$("status").innerHTML='<b class="bad">Chưa tìm được lịch đạt toàn bộ điều kiện.</b>';$("issues").innerHTML="<li>Kiểm tra ca cuối tháng trước (đặc biệt nếu là C), OFF/P đã đăng ký và số ca C. Hệ thống không tự ý thêm ngày P hoặc vượt định mức OFF.</li><li>Nếu vẫn không tạo được, thử điều chỉnh ngày OFF mong muốn hoặc bỏ chọn gom C liên tục ở một số nhân viên.</li>";return;}
 schedule=best;renderSchedule();runCheck();save();alert("Đã tạo lịch từ "+validCount+" phương án hợp lệ, chọn phương án cân bằng tốt nhất.");
