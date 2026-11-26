@@ -40,36 +40,57 @@ function normalizeName(s){return String(s||"").normalize("NFD").replace(/[\\u030
 function importPreviousSchedule(){
 const raw=$("prevImport").value.trim();
 if(!raw){$("importStatus").textContent="Chưa có dữ liệu để đọc.";return;}
-const lines=raw.split(/\r?\n/);
-let imported=0,unknown=[];
+const cleanCell=v=>String(v||"").replace(/<[^>]*>/g,"").replace(/\\*\\*/g,"").replace(/\\*/g,"").replace(/&#x20;|&#32;|&nbsp;/gi," ").replace(/&amp;/gi,"&").replace(/&#(\\d+);/g,(_,n)=>String.fromCharCode(Number(n))).trim();
+const rows=raw.split(/\\r?\\n/).map(line=>{
+ let cells=line.includes("|")?line.trim().replace(/^\\|/,"").replace(/\\|$/,"").split("|"):line.split("\\t");
+ return cells.map(cleanCell);
+}).filter(row=>row.length>1&&!row.every(v=>!v||/^:?-{2,}:?$/.test(v)));
+const norm=s=>normalizeName(s);
+const matches=[];
+for(let ri=0;ri<rows.length;ri++){
+ const row=rows[ri];
+ for(let ci=0;ci<row.length;ci++){
+  const key=norm(row[ci]);
+  if(!key)continue;
+  let best=-1,bestLen=0;
+  employees.forEach((e,i)=>{
+   const n=norm(e.name);
+   if(n&&(key===n||key.includes(n)||n.includes(key))&&n.length>bestLen){best=i;bestLen=n.length;}
+  });
+  if(best>=0){matches.push({ri,ci,employeeIndex:best});break;}
+ }
+}
+let dayCols=[];
+for(const row of rows){
+ const cols=[];
+ row.forEach((v,i)=>{if(/^\\d{1,2}$/.test(v)){const d=Number(v);if(d>=1&&d<=31)cols.push(i);}});
+ const unique=[...new Set(cols.map(i=>Number(row[i])))];
+ if(unique.length>=5&&unique.length>dayCols.length)dayCols=cols;
+}
+let imported=0,details=[],unknown=[];
 const valid=new Set(SHIFTS);
-const cleanCell=v=>String(v||"").replace(/<[^>]*>/g,"").replace(/\*\*/g,"").replace(/\*/g,"").replace(/&#x20;|&#32;|&nbsp;/gi," ").replace(/&amp;/gi,"&").trim();
-for(const line of lines){
- let cells;
- if(line.includes("|")){
-   cells=line.trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(cleanCell);
-   if(cells.every(v=>!v||/^:?-{2,}:?$/.test(v)))continue;
+const seen=new Set();
+for(const m of matches){
+ if(seen.has(m.employeeIndex))continue;
+ const row=rows[m.ri];
+ let values=[];
+ if(dayCols.length){
+  values=dayCols.map(i=>row[i]||"");
  }else{
-   cells=line.split("\t").map(cleanCell);
+  values=row.slice(m.ci+1).filter(v=>valid.has(String(v).toUpperCase())).slice(0,31);
  }
- if(cells.length<2)continue;
- let nameIndex=-1,employeeIndex=-1;
- for(let k=0;k<cells.length;k++){
-   const key=normalizeName(cells[k]);
-   const found=employees.findIndex(e=>normalizeName(e.name)===key);
-   if(found>=0){nameIndex=k;employeeIndex=found;break;}
- }
- if(employeeIndex<0)continue;
- const shifts=cells.slice(nameIndex+1).map(v=>cleanCell(v).toUpperCase()).filter(v=>valid.has(v));
- if(!shifts.length)continue;
- employees[employeeIndex].prev=shifts[shifts.length-1];
- employees[employeeIndex].prevC=shifts.filter(v=>v==="C").length;
- imported++;
+ const shifts=values.map(v=>String(v||"").trim().toUpperCase());
+ const validShifts=shifts.filter(v=>valid.has(v));
+ if(!validShifts.length)continue;
+ employees[m.employeeIndex].prev=validShifts[validShifts.length-1];
+ employees[m.employeeIndex].prevC=validShifts.filter(v=>v==="C").length;
+ imported++;seen.add(m.employeeIndex);
+ details.push(employees[m.employeeIndex].name+" ("+validShifts.length+" ngày)");
 }
 renderStaff();save();
-$("importStatus").textContent=imported+" nhân viên đã được cập nhật"+(imported<employees.length?"; tìm thấy "+imported+"/"+employees.length+" nhân viên":"")+". Đã bỏ qua tiêu đề và dòng định dạng Markdown. Kiểm tra lại dữ liệu bên dưới.";
+const missing=employees.filter((e,i)=>!seen.has(i)).map(e=>e.name);
+$("importStatus").textContent="Đã đọc "+imported+"/"+employees.length+" nhân viên. "+(dayCols.length?"Đã lấy đúng các cột ngày 1–"+dayCols.length+". ":"Không tìm thấy hàng tiêu đề ngày; đã dùng chế độ dự phòng. ")+(missing.length?"Chưa nhận diện: "+missing.join(", ")+". ":"")+"Kiểm tra ca cuối tháng và số ca C trước khi lưu.";
 }
-
 function quotaC(){const n=days(),ids=employees.map((e,i)=>e.role==="Nhân viên"?i:-1).filter(i=>i>=0),q={};ids.forEach(i=>q[i]=Math.max(1,Math.min(5,Number(employees[i].prevC)||3)));let sum=Object.values(q).reduce((a,b)=>a+b,0);while(sum>n){const i=ids.slice().sort((a,b)=>q[b]-q[a])[0];if(q[i]<=1)break;q[i]--;sum--;}while(sum<n){const i=ids.slice().sort((a,b)=>q[a]-q[b])[0];q[i]++;sum++;}return q}
 function patterns(q,n,group){const out=[];const add=ds=>{const sorted=[...ds].sort((a,b)=>a-b);if(sorted.some(d=>d<1||d>n))return;const runs=[];let run=0,last=0;sorted.forEach(d=>{if(d===last+1)run++;else{if(run)runs.push(run);run=1;}last=d;});if(run)runs.push(run);if(!group&&runs.some(x=>x>2))return;out.push(sorted);};
 if(group){for(let s=1;s+q-1<=n;s++)add(Array.from({length:q},(_,k)=>s+k));}
