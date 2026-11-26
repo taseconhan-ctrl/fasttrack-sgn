@@ -231,13 +231,45 @@ a:focus-visible,button:focus-visible{outline:3px solid #d6b45f!important;outline
 @media(max-width:600px){#santa-reindeer-run{top:82px;left:100%;right:auto;animation-duration:8s}#santa-reindeer-run .santa-team{font-size:52px;letter-spacing:-11px}#santa-reindeer-run .santa-sparkles{font-size:18px}}
 @media(prefers-reduced-motion:reduce){#santa-reindeer-run{animation-duration:8s;animation-delay:.5s}}
 </style>
-</head>
+<style id="winter-village-theme">
+:root{--wv-bg:#101918;--wv-panel:#192321;--wv-panel2:#202b28;--wv-ink:#f5f0e5;--wv-muted:#b8c2b9;--wv-gold:#d8b878;--wv-green:#315b4d;--wv-red:#a94b4d;--wv-line:#4a554b}
+html{scroll-behavior:smooth}body{background:radial-gradient(ellipse at 50% -12%,#29443c 0,transparent 45%),linear-gradient(180deg,#101918,#151d1b 58%,#101615)!important;color:var(--wv-ink)!important;font-family:Georgia,"Times New Roman",serif!important;position:relative}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.13;background-image:radial-gradient(#d8b878 1px,transparent 1.8px),radial-gradient(#fff 1px,transparent 1.8px);background-size:130px 150px,190px 210px;background-position:0 0,55px 80px}
+header{position:relative;z-index:2!important;background:linear-gradient(110deg,#0c211e,#1b3830 60%,#202c29)!important;border:0!important;border-bottom:1px solid #8f7547!important;box-shadow:0 12px 36px #0007!important;color:#f8f0df!important}
+header h1,.brand{color:#f7efdf!important;text-shadow:0 3px 20px #0008;letter-spacing:1px}
+header p,.sub{color:#c8c9b8!important}
+.winter-nav{position:relative;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:16px;max-width:1440px;margin:0 auto;padding:13px 22px;background:#111a18;border-bottom:1px solid #514a37}
+.nav-brand{color:#e8d09b!important;text-decoration:none;font-weight:800;letter-spacing:2px;white-space:nowrap}
+.nav-links{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.nav-links a{color:#d6d6c9;text-decoration:none;padding:9px 13px;border:1px solid transparent;border-radius:3px;text-transform:uppercase;font:600 10px/1.2 system-ui;letter-spacing:1px;transition:.2s}
+.nav-links a:hover,.nav-links a:focus{color:#fff;background:#ffffff12;border-color:#a78a55}
+main,.wrap{position:relative;z-index:1}
+.panel,.booking,.review,.item,.staff{background:linear-gradient(145deg,#202c28,#17211f)!important;border:1px solid #59604f!important;border-radius:5px!important;color:var(--wv-ink)!important;box-shadow:0 14px 36px #0005!important}
+h2,h3,.panel h2{color:#f4e8cd!important;text-decoration:none!important;letter-spacing:.35px}
+p,label,.hint,.muted,small{color:var(--wv-muted)!important}
+input,select,textarea{background:#101a18!important;color:#f6f0e4!important;border:1px solid #68705d!important;border-radius:4px!important}
+input::placeholder,textarea::placeholder{color:#89968c!important}
+button,.btn,.back,.linkbtn{background:linear-gradient(135deg,#315c4d,#47725e)!important;color:#fff8e9!important;border:1px solid #8e9b77!important;border-radius:4px!important;box-shadow:0 4px 12px #0003}
+button.secondary,.linkbtn.secondary,button.ghost{background:#2b3530!important;color:#e8dfca!important;border:1px solid #68705d!important}
+button.danger{background:#793c3d!important}
+table{color:#eee8d9!important}th{background:#2b3933!important;color:#f3dfb5!important}td{border-color:#414e45!important}th:first-child,td:first-child{background:#202c28!important;color:#f5ecd9!important}
+tbody tr:hover{background:#ffffff0a!important}
+.status,.metric,.kv,.tag{background:#26352e!important;color:#e9dfc9!important;border-color:#59634f!important}
+.good{color:#91d3a8!important}.bad,.danger{color:#ffaaa0!important}.warn{color:#e9c47c!important}
+.sectiontag,.pill{background:#344a3e!important;color:#f2d89e!important}
+.count,.go{color:#e3c17d!important}
+footer,.foot{color:#9da99e!important}
+.back,.home-link{display:inline-flex;align-items:center;gap:7px}
+.winter-nav+main{margin-top:24px}
+@media(max-width:680px){.winter-nav{align-items:flex-start;flex-direction:column;padding:12px 15px}.nav-links{justify-content:flex-start;width:100%;gap:3px}.nav-links a{padding:8px 9px;font-size:9px}header{padding-left:16px!important;padding-right:16px!important}main{padding-left:12px!important;padding-right:12px!important}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style></head>
 <body>
 <header>
   <h1>Fast Track SGN – làm nhanh rồi đi nhậu</h1>
   <p>Xử lý booking trực tiếp trên trình duyệt · Tạo nội dung và link liên hệ để nhân viên kiểm tra, sao chép hoặc mở bản nháp</p>
   <p style="margin-top:12px"><a href="index.html" style="display:inline-block;background:#fff;color:#14233f;padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:700">← Trở về</a></p>
-</header>
+</header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav>
 <main>
 <section class="panel">
   <h2>1. Dán dữ liệu booking</h2>
@@ -1016,5 +1048,5 @@ window.copyText=copyText;
   window.addEventListener('popstate',function(){navigate(location.href,false);});
 })();
 </script>
-</body>
+<script id="winter-snow-script">(function(){if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;if(document.getElementById('winter-snow'))return;const c=document.createElement('canvas');c.id='winter-snow';c.setAttribute('aria-hidden','true');Object.assign(c.style,{position:'fixed',inset:'0',width:'100%',height:'100%',pointerEvents:'none',zIndex:'20'});document.body.appendChild(c);const x=c.getContext('2d');let w=0,h=0,flakes=[];function size(){const d=Math.min(devicePixelRatio||1,1.5);w=c.width=Math.floor(innerWidth*d);h=c.height=Math.floor(innerHeight*d);c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';x.setTransform(d,0,0,d,0,0);flakes=Array.from({length:Math.min(90,Math.floor(innerWidth/12))},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*2+0.6,v:Math.random()*0.65+0.25,s:Math.random()*0.7-0.35,a:Math.random()*0.55+0.2}));}function draw(){x.clearRect(0,0,innerWidth,innerHeight);for(const f of flakes){x.beginPath();x.fillStyle='rgba(255,248,226,'+f.a+')';x.arc(f.x,f.y,f.r,0,Math.PI*2);x.fill();f.y+=f.v;f.x+=f.s+Math.sin(f.y/55)*.18;if(f.y>innerHeight+5){f.y=-5;f.x=Math.random()*innerWidth;}if(f.x>innerWidth+5)f.x=-5;if(f.x< -5)f.x=innerWidth+5;}requestAnimationFrame(draw);}addEventListener('resize',size,{passive:true});size();draw();})();</script></body>
 </html>
