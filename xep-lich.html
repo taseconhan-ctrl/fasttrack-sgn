@@ -86,19 +86,25 @@ offSets[i]=off;pSets[i]=new Set(pdays);cSets[i]=new Set(cdays);
 for(const d of off)restCounts[d]++;
 for(const d of pdays)restCounts[d]++;
 }
+const maxStreak=(i,extra)=>{const rests=offSets[i],pdays=pSets[i];let streak=WORK.includes(employees[i].prev)?1:0,max=streak;for(let d=1;d<=n;d++){if(rests.has(d)||pdays.has(d)||d===extra)streak=0;else{streak++;max=Math.max(max,streak);}}return max;};
+let remaining=true,guard=0;
+while(remaining&&guard++<employees.length*offTarget+5){
+remaining=false;let chosenEmployee=-1,chosenDay=-1,chosenCurrent=-1,chosenAfter=Infinity,chosenLoad=Infinity;
 for(let i=0;i<employees.length;i++){
-const off=offSets[i],pdays=pSets[i],cdays=cSets[i];
-while(off.size<offTarget){
-const candidates=Array.from({length:n},(_,k)=>k+1).filter(d=>!off.has(d)&&!pdays.has(d)&&!cdays.has(d)&&restCounts[d]<3);
-if(!candidates.length)return null;
-const rests=new Set([...off,...pdays]);
-const maxStreakWith=chosen=>{let streak=WORK.includes(employees[i].prev)?1:0,max=streak;for(let day=1;day<=n;day++){if(rests.has(day)||day===chosen)streak=0;else{streak++;max=Math.max(max,streak);}}return max;};
-candidates.sort((a,b)=>{const streakDiff=maxStreakWith(a)-maxStreakWith(b);if(streakDiff)return streakDiff;const load=restCounts[a]-restCounts[b];if(load)return load;const gap=d=>rests.size?Math.min(...[...rests].map(r=>Math.abs(d-r))):n;return gap(b)-gap(a);});
-const chosen=candidates[0];off.add(chosen);restCounts[chosen]++;
+const off=offSets[i],pdays=pSets[i],cdays=cSets[i];if(off.size>=offTarget)continue;remaining=true;
+const current=maxStreak(i,-1),candidates=Array.from({length:n},(_,k)=>k+1).filter(d=>!off.has(d)&&!pdays.has(d)&&!cdays.has(d)&&restCounts[d]<3);
+let bestDay=-1,bestAfter=Infinity,bestLoad=Infinity;
+for(const d of candidates){const after=maxStreak(i,d),load=restCounts[d];if(after<bestAfter||(after===bestAfter&&load<bestLoad)){bestDay=d;bestAfter=after;bestLoad=load;}}
+if(bestDay<0)return null;
+if(current>chosenCurrent||(current===chosenCurrent&&(bestAfter<chosenAfter||(bestAfter===chosenAfter&&bestLoad<chosenLoad)))){chosenEmployee=i;chosenDay=bestDay;chosenCurrent=current;chosenAfter=bestAfter;chosenLoad=bestLoad;}
 }
-for(const d of pdays)out[d][i]="P";
-for(const d of off)out[d][i]="OFF";
-for(const d of cdays)out[d][i]="C";
+if(remaining){if(chosenEmployee<0)return null;offSets[chosenEmployee].add(chosenDay);restCounts[chosenDay]++;}
+}
+for(let i=0;i<employees.length;i++){
+if(offSets[i].size!==offTarget||maxStreak(i,-1)>7)return null;
+for(const d of pSets[i])out[d][i]="P";
+for(const d of offSets[i])out[d][i]="OFF";
+for(const d of cSets[i])out[d][i]="C";
 }
 for(let d=1;d<=n;d++){
 const count=sh=>employees.filter((e,i)=>out[d][i]===sh).length;
