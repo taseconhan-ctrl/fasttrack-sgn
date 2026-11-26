@@ -305,6 +305,13 @@ input,select,textarea,button{font-family:Arial,"Segoe UI",Tahoma,sans-serif!impo
 @keyframes frameBulbGlow{0%{opacity:.48;filter:brightness(.8) drop-shadow(0 0 2px #f6c85e)}100%{opacity:1;filter:brightness(1.35) drop-shadow(0 0 8px #ffe6a0)}}
 @media(prefers-reduced-motion:reduce){.winter-hero:before,.item:before{animation:none;opacity:.85}}
 </style>
+<style id="homepage-card-heading-contrast">
+/* Khắc phục tiêu đề thẻ chức năng bị tối màu trên nền xanh đậm */
+body:has(.winter-hero) .menu>.item{color:#f4ead4!important}
+body:has(.winter-hero) .menu>.item h3{color:#fff2d9!important;text-shadow:0 1px 5px #0008}
+body:has(.winter-hero) .menu>.item p{color:#c7d3c9!important}
+body:has(.winter-hero) .menu>.item .go{color:#e8c982!important}
+</style>
 </head>
 <body>
 <header></header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav><main>
