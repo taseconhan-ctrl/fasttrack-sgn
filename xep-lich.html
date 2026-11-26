@@ -150,10 +150,10 @@ async function auto(){
 const n=days();if(!n){alert("Vui lòng chọn tháng.");return;}
 for(let i=0;i<employees.length;i++){const pd=parseDays(employees[i].pText),od=parseDays(employees[i].offText).slice(0,sundayCount());if(pd.some(d=>od.includes(d))){alert(employees[i].name+": một ngày không thể vừa OFF vừa P.");return;}if(pd.length+od.length>7){alert(employees[i].name+": OFF + P đăng ký vượt 7 ngày.");return;}}
 $("auto").disabled=true;$("auto").textContent="Đang tìm phương án…";$("status").textContent="Đang tạo lịch, vui lòng chờ…";
-let best=null,bestScore=Infinity,tries=30,validCount=0;
-try{for(let k=0;k<tries;k++){const candidate=createCandidate(reqData());if(candidate){const issues=checkSchedule(candidate);if(!issues.some(x=>!x.startsWith("Khuyến nghị:"))){validCount++;const score=scoreSchedule(candidate);if(score<bestScore){best=candidate;bestScore=score;}}}if(k%1===0){$("status").textContent="Đã thử "+(k+1)+"/"+tries+" phương án…";await new Promise(resolve=>setTimeout(resolve,0));}}
-if(!best){$("status").innerHTML='<b class="bad">Chưa tìm được lịch đạt toàn bộ điều kiện.</b>';$("issues").innerHTML="<li>Kiểm tra ca cuối tháng trước (đặc biệt nếu là C), OFF/P đã đăng ký và số ca C. Hệ thống không tự ý thêm ngày P hoặc vượt định mức OFF.</li><li>Nếu vẫn không tạo được, thử điều chỉnh ngày OFF mong muốn hoặc bỏ chọn gom C liên tục ở một số nhân viên.</li>";return;}
-schedule=best;renderSchedule();runCheck();save();alert("Đã tạo lịch từ "+validCount+" phương án hợp lệ, chọn phương án cân bằng tốt nhất.");
+let best=null,bestScore=Infinity,tries=30,validCount=0,bestIssues=[];
+try{for(let k=0;k<tries;k++){const candidate=createCandidate(reqData());if(candidate){validCount++;const issues=checkSchedule(candidate),hard=issues.filter(x=>!x.startsWith("Khuyến nghị:")),score=hard.length*10000+scoreSchedule(candidate);if(score<bestScore){best=candidate;bestScore=score;bestIssues=issues;}}if(k%1===0){$("status").textContent="Đã thử "+(k+1)+"/"+tries+" phương án…";await new Promise(resolve=>setTimeout(resolve,0));}}
+if(!best){$("status").innerHTML='<b class="bad">Chưa tạo được lịch.</b>';$("issues").innerHTML="<li>Kiểm tra ca cuối tháng trước, OFF/P đăng ký và quota C. Hệ thống không tự ý thêm ngày P hoặc vượt định mức OFF.</li>";return;}
+schedule=best;renderSchedule();runCheck();save();if(bestIssues.length)alert("Đã tạo lịch dự thảo. Còn "+bestIssues.length+" điều kiện cần rà soát ở mục Kiểm tra và cảnh báo.");else alert("Đã tạo lịch, không phát hiện lỗi.");
 }catch(err){console.error(err);$("status").innerHTML='<b class="bad">Lỗi khi xếp lịch: '+esc(err.message||err)+'</b>';$("issues").innerHTML="<li>Vui lòng tải lại trang và thử lại.</li>";}
 finally{$("auto").disabled=false;$("auto").textContent="⚙ Tự động xếp lịch";}
 }
