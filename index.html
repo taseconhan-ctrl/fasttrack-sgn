@@ -312,6 +312,34 @@ body:has(.winter-hero) .menu>.item h3{color:#fff2d9!important;text-shadow:0 1px 
 body:has(.winter-hero) .menu>.item p{color:#c7d3c9!important}
 body:has(.winter-hero) .menu>.item .go{color:#e8c982!important}
 </style>
+
+<style id="fasttrack-performance-optimization">
+/* Performance: preserve the festive look while reducing expensive paint/compositing work. */
+html{scroll-behavior:auto}
+header,.panel,.booking,.review,.item,.staff,.tablewrap,#christmas-audio-player{
+  box-shadow:0 3px 12px rgba(0,0,0,.12)!important;
+}
+#christmas-audio-player{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+button:hover,.btn:hover,.back:hover,.item:hover{filter:none!important}
+@media (prefers-reduced-motion:no-preference){
+  #santa-reindeer-run .santa-sparkles{animation-duration:1.8s!important}
+}
+@media (max-width:700px){
+  #christmas-audio-player{right:8px!important;bottom:8px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+<style id="homepage-lightweight-effects">
+/* Keep Noel lights visible without continuously animating costly filters. */
+.winter-village .tree-bulbs circle{filter:none!important;animation:treeGlow 3.8s ease-in-out infinite alternate!important}
+.winter-hero:after{animation:none!important;opacity:.55}
+.winter-village,.winter-village .tree{filter:none!important}
+.winter-hero{box-shadow:0 8px 22px rgba(0,0,0,.22)!important}
+.item:hover{transform:translateY(-2px)!important;box-shadow:0 6px 14px rgba(0,0,0,.14)!important}
+.winter-hero:before,.item:before{filter:none!important;animation-duration:3.8s!important}
+</style>
 </head>
 <body>
 <header></header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav><main>
