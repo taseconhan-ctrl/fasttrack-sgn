@@ -98,14 +98,14 @@ offSets[i]=off;pSets[i]=new Set(pdays);cSets[i]=new Set(cdays);
 for(const d of off)restCounts[d]++;
 for(const d of pdays)restCounts[d]++;
 }
-const maxStreak=(i,extra)=>{const rests=offSets[i],pdays=pSets[i];let streak=WORK.includes(employees[i].prev)?1:0,max=streak;for(let d=1;d<=n;d++){if(rests.has(d)||pdays.has(d)||d===extra)streak=0;else{streak++;max=Math.max(max,streak);}}return max;};
+const streakCost=(i,extra)=>{const rests=offSets[i],pdays=pSets[i];let streak=WORK.includes(employees[i].prev)?1:0,cost=0;for(let d=1;d<=n;d++){if(rests.has(d)||pdays.has(d)||d===extra){cost+=streak*streak;streak=0;}else streak++;}return cost+streak*streak;};
 const totalSlots=employees.length*offTarget;
 for(let i=0;i<employees.length;i++){
 const off=offSets[i],pdays=pSets[i],cdays=cSets[i];
 while(off.size<offTarget){
 const candidates=Array.from({length:n},(_,k)=>k+1).filter(d=>!off.has(d)&&!pdays.has(d)&&!cdays.has(d)&&restCounts[d]<3);
 if(!candidates.length)return null;
-candidates.sort((a,b)=>maxStreak(i,a)-maxStreak(i,b)||restCounts[a]-restCounts[b]);
+candidates.sort((a,b)=>streakCost(i,a)-streakCost(i,b)||restCounts[a]-restCounts[b]);
 const chosen=candidates[0];off.add(chosen);restCounts[chosen]++;
 }
 
