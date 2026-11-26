@@ -104,7 +104,7 @@ const uniqueParts=[...new Set(parts.map(p=>p.slice().sort((a,b)=>b-a).join(","))
 function permute(a,l=0){if(l===a.length){place(a,0,[],0);return;}const used=new Set();for(let j=l;j<a.length;j++){if(used.has(a[j]))continue;used.add(a[j]);[a[l],a[j]]=[a[j],a[l]];permute(a,l+1);[a[l],a[j]]=[a[j],a[l]];}}
 function place(parts,idx,chosen,nextStart){
  if(idx===parts.length){add(chosen);return;}
- const len=parts[idx],remaining=parts.slice(idx+1).reduce((s,v)=>s+v+minGap,0);
+ const len=parts[idx],future=parts.slice(idx+1),remaining=future.reduce((s,v)=>s+v,0)+minGap*Math.max(0,future.length-1);
  for(let s=nextStart;s+len-1+remaining<=n;s++){
   const segment=Array.from({length:len},(_,k)=>s+k);
   place(parts,idx+1,[...chosen,...segment],s+len+minGap);
