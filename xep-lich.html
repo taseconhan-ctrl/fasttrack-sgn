@@ -40,56 +40,42 @@ function normalizeName(s){return String(s||"").normalize("NFD").replace(/[\\u030
 function importPreviousSchedule(){
 const raw=$("prevImport").value.trim();
 if(!raw){$("importStatus").textContent="Chưa có dữ liệu để đọc.";return;}
-const cleanCell=v=>String(v||"").replace(/<[^>]*>/g,"").replace(/\\*\\*/g,"").replace(/\\*/g,"").replace(/&#x20;|&#32;|&nbsp;/gi," ").replace(/&amp;/gi,"&").replace(/&#(\\d+);/g,(_,n)=>String.fromCharCode(Number(n))).trim();
-const rows=raw.split(/\\r?\\n/).map(line=>{
- let cells=line.includes("|")?line.trim().replace(/^\\|/,"").replace(/\\|$/,"").split("|"):line.split("\\t");
+const cleanCell=v=>String(v??"").replace(/<[^>]*>/g,"").split("**").join("").split("*").join("").replace(/&nbsp;/gi," ").replace(/&#x20;|&#32;/gi," ").replace(/&amp;/gi,"&").replace(/&#(\d+);/g,(_,n)=>String.fromCharCode(Number(n))).trim();
+const rows=raw.split(/\r?\n/).map(line=>{
+ const cells=line.includes("|")?line.trim().replace(/^\|/,"").replace(/\|$/,"").split("|"):line.split("\t");
  return cells.map(cleanCell);
 }).filter(row=>row.length>1&&!row.every(v=>!v||/^:?-{2,}:?$/.test(v)));
-const norm=s=>normalizeName(s);
+const norm=s=>Array.from(String(s||"").normalize("NFD").toLowerCase().replace(/đ/g,"d")).filter(ch=>{const n=ch.codePointAt(0);return !(n>=768&&n<=879);}).join("").replace(/[^a-z0-9]/g,"");
 const matches=[];
 for(let ri=0;ri<rows.length;ri++){
  const row=rows[ri];
  for(let ci=0;ci<row.length;ci++){
-  const key=norm(row[ci]);
-  if(!key)continue;
+  const key=norm(row[ci]);if(!key)continue;
   let best=-1,bestLen=0;
-  employees.forEach((e,i)=>{
-   const n=norm(e.name);
-   if(n&&(key===n||key.includes(n)||n.includes(key))&&n.length>bestLen){best=i;bestLen=n.length;}
-  });
+  employees.forEach((e,i)=>{const name=norm(e.name);if(name&&(key===name||key.endsWith(name)||key.includes(name)||name.endsWith(key))&&name.length>bestLen){best=i;bestLen=name.length;}});
   if(best>=0){matches.push({ri,ci,employeeIndex:best});break;}
  }
 }
 let dayCols=[];
 for(const row of rows){
  const cols=[];
- row.forEach((v,i)=>{if(/^\\d{1,2}$/.test(v)){const d=Number(v);if(d>=1&&d<=31)cols.push(i);}});
- const unique=[...new Set(cols.map(i=>Number(row[i])))];
- if(unique.length>=5&&unique.length>dayCols.length)dayCols=cols;
+ row.forEach((v,i)=>{if(/^\d{1,2}$/.test(v)){const d=Number(v);if(d>=1&&d<=31)cols.push(i);}});
+ if(cols.length>=5&&cols.length>dayCols.length)dayCols=cols;
 }
-let imported=0,details=[],unknown=[];
-const valid=new Set(SHIFTS);
-const seen=new Set();
+const valid=new Set(SHIFTS),seen=new Set();let imported=0;
 for(const m of matches){
  if(seen.has(m.employeeIndex))continue;
  const row=rows[m.ri];
- let values=[];
- if(dayCols.length){
-  values=dayCols.map(i=>row[i]||"");
- }else{
-  values=row.slice(m.ci+1).filter(v=>valid.has(String(v).toUpperCase())).slice(0,31);
- }
- const shifts=values.map(v=>String(v||"").trim().toUpperCase());
- const validShifts=shifts.filter(v=>valid.has(v));
- if(!validShifts.length)continue;
- employees[m.employeeIndex].prev=validShifts[validShifts.length-1];
- employees[m.employeeIndex].prevC=validShifts.filter(v=>v==="C").length;
- imported++;seen.add(m.employeeIndex);
- details.push(employees[m.employeeIndex].name+" ("+validShifts.length+" ngày)");
+ const values=dayCols.length?dayCols.map(i=>row[i]||""):row.slice(m.ci+1);
+ const shifts=values.map(v=>cleanCell(v).toUpperCase()).filter(v=>valid.has(v));
+ if(!shifts.length)continue;
+ employees[m.employeeIndex].prev=shifts[shifts.length-1];
+ employees[m.employeeIndex].prevC=shifts.filter(v=>v==="C").length;
+ seen.add(m.employeeIndex);imported++;
 }
 renderStaff();save();
 const missing=employees.filter((e,i)=>!seen.has(i)).map(e=>e.name);
-$("importStatus").textContent="Đã đọc "+imported+"/"+employees.length+" nhân viên. "+(dayCols.length?"Đã lấy đúng các cột ngày 1–"+dayCols.length+". ":"Không tìm thấy hàng tiêu đề ngày; đã dùng chế độ dự phòng. ")+(missing.length?"Chưa nhận diện: "+missing.join(", ")+". ":"")+"Kiểm tra ca cuối tháng và số ca C trước khi lưu.";
+$("importStatus").textContent="Đã đọc "+imported+"/"+employees.length+" nhân viên. "+(dayCols.length?"Đã nhận diện "+dayCols.length+" cột ngày. ":"Không tìm thấy hàng tiêu đề ngày; đã đọc các mã ca sau tên nhân viên. ")+(missing.length?"Chưa nhận diện: "+missing.join(", ")+". ":"")+"Vui lòng kiểm tra ca cuối tháng và số ca C.";
 }
 function quotaC(){const n=days(),ids=employees.map((e,i)=>e.role==="Nhân viên"?i:-1).filter(i=>i>=0),q={};ids.forEach(i=>q[i]=Math.max(1,Math.min(5,Number(employees[i].prevC)||3)));let sum=Object.values(q).reduce((a,b)=>a+b,0);while(sum>n){const i=ids.slice().sort((a,b)=>q[b]-q[a])[0];if(q[i]<=1)break;q[i]--;sum--;}while(sum<n){const i=ids.slice().sort((a,b)=>q[a]-q[b])[0];q[i]++;sum++;}return q}
 function patterns(q,n,group){
