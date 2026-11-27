@@ -153,3 +153,21 @@ html body #bookingMain .actions a.linkbtn[href*="wa.me"]:hover{
   color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;
   transform:translateY(-1px)!important;
 }
+
+
+/* Gmail contact action — burgundy button with high-contrast white label. */
+html body #bookingMain .contact-links a.linkbtn[href*="mail.google.com"],
+html body #bookingMain .actions a.linkbtn[href*="mail.google.com"]{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  min-height:38px!important;padding:8px 15px!important;
+  background:#7b1e2b!important;border:1px solid #b65b68!important;
+  color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;
+  font-weight:800!important;text-shadow:none!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.28)!important;
+}
+html body #bookingMain .contact-links a.linkbtn[href*="mail.google.com"]:hover,
+html body #bookingMain .actions a.linkbtn[href*="mail.google.com"]:hover{
+  background:#641622!important;border-color:#d18a91!important;
+  color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;
+  transform:translateY(-1px)!important;
+}
