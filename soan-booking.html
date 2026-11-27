@@ -406,17 +406,17 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
   <label for="raw">Dán nguyên văn danh sách booking hoặc nội dung trang chi tiết booking</label>
   <textarea id="raw" placeholder="Dán dữ liệu booking Fast Track vào đây..."></textarea>
   <div class="controls">
-    <div class="field"><input id="allBookings" type="checkbox"><label for="allBookings">Xử lý cả booking đã có nhân viên nhận việc</label></div>
+    <div class="field"><input id="allBookings" type="checkbox"><label for="allBookings">Xử lý cả booking chưa xác nhận và TIỄN đã có nhân viên nhận việc</label></div>
     <button id="run">Phân tích & tạo kết quả</button>
     <button class="secondary" id="clear">Xóa dữ liệu</button>
   </div>
-  <p class="hint">Mặc định chỉ lấy booking Đã xác nhận và chưa có nhân viên nhận việc. Hệ thống nhận diện trường “NV Nhận việc” và nhiều dạng phân công SGN như “SGN - Tên”, “Tên SGN”, có hoặc không có số điện thoại; booking đã có nhân viên luôn bị bỏ qua, kể cả khi bật xử lý tất cả.</p>
+  <p class="hint">Chỉ xử lý booking có loại dịch vụ ĐÓN/TIỄN. Mục ĐÓN lấy tất cả booking ĐÓN đã xác nhận, không phân biệt đã có nhân viên nhận việc hay chưa. Mục TIỄN mặc định chỉ lấy booking đã xác nhận và chưa có nhân viên nhận việc; bật tùy chọn trên để xử lý cả TIỄN đã phân công hoặc chưa xác nhận. “SGN - Dịch vụ” là ghi chú dịch vụ, không phải nhân viên nhận việc.</p>
   <div id="status" class="status">Chưa có dữ liệu được xử lý.</div>
 </section>
 <div id="summary" class="panel hidden"></div>
-<div id="results"></div>
-<div id="skippedBookings"></div>
-<div id="reviews"></div><section id="savedReviewArchive" class="panel" hidden><div class="topline archive-nav"><h2>ĐỐI SOÁT</h2><a class="linkbtn secondary" href="soan-booking.html">← Quay lại Soạn Booking</a></div><p class="hint">Lịch sử được đồng bộ riêng tư theo tài khoản; dùng cùng tên đăng nhập trên điện thoại và máy tính. Xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
+  <div id="reviews"></div>
+  <div id="results"></div>
+  <div id="skippedBookings"></div><section id="savedReviewArchive" class="panel" hidden><div class="topline archive-nav"><h2>ĐỐI SOÁT</h2><a class="linkbtn secondary" href="soan-booking.html">← Quay lại Soạn Booking</a></div><p class="hint">Lịch sử được đồng bộ riêng tư theo tài khoản; dùng cùng tên đăng nhập trên điện thoại và máy tính. Xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
 </main>
 </div></div></div>
 
@@ -429,27 +429,27 @@ if(archiveSection){if(archiveView)archiveSection.removeAttribute("hidden");else 
 
 const $ = id => document.getElementById(id);
 const STAFF_PROFILES = {
-  "Nhân": { name: "Nhan", phone: "+84 867802129" },
-  "khanh": { name: "Khanh", phone: "+84 869392539" },
-  "Khoa": { name: "Khoa", phone: "+84 964845177" },
-  "Diệp": { name: "Diep", phone: "+84 346122841" },
-  "Quang": { name: "Quang", phone: "+84 989902101" },
-  "Hưng": { name: "Hung", phone: "+84 816226474" },
-  "Dương": { name: "Duong", phone: "" },
-  "Hùng": { name: "Hung", phone: "" },
-  "Hung": { name: "Hung", phone: "+84 816226474" },
-  "An": { name: "An", phone: "+84 366404159" },
-  "Bình": { name: "Binh", phone: "+84 915341007" },
-  "Nhật Quang": { name: "Nhat Quang", phone: "+84 366884210" },
-  "David": { name: "David", phone: "+84 901113978" }
+  "Nhân": { name: "Nhan", vnName: "Nhân", phone: "+84 867802129" },
+  "khanh": { name: "Khanh", vnName: "Khanh", phone: "+84 869392539" },
+  "Khoa": { name: "Khoa", vnName: "Khoa", phone: "+84 964845177" },
+  "Diệp": { name: "Diep", vnName: "Diệp", phone: "+84 346122841" },
+  "Quang": { name: "Quang", vnName: "Quang", phone: "+84 989902101" },
+  "Hưng": { name: "Hung", vnName: "Hưng", phone: "+84 816226474" },
+  "Dương": { name: "Duong", vnName: "Dương", phone: "" },
+  "Hùng": { name: "Hung", vnName: "Hùng", phone: "" },
+  "Hung": { name: "Hung", vnName: "Hưng", phone: "+84 816226474" },
+  "An": { name: "An", vnName: "An", phone: "+84 366404159" },
+  "Bình": { name: "Binh", vnName: "Bình", phone: "+84 915341007" },
+  "Nhật Quang": { name: "Nhat Quang", vnName: "Nhật Quang", phone: "+84 366884210" },
+  "David": { name: "David", vnName: "David", phone: "+84 901113978" }
 };
 const STAFF_ALIASES = {
-  "Nhan": { name: "Nhan", phone: "+84 867802129" },
-  "Hưng": { name: "Hung", phone: "+84 816226474" },
-  "Hung": { name: "Hung", phone: "+84 816226474" },
-  "An": { name: "An", phone: "+84 366404159" },
-  "khanh": { name: "Khanh", phone: "+84 869392539" },
-  "nhatquang": { name: "Quang", phone: "+84 366884210" }
+  "Nhan": { name: "Nhan", vnName: "Nhân", phone: "+84 867802129" },
+  "Hưng": { name: "Hung", vnName: "Hưng", phone: "+84 816226474" },
+  "Hung": { name: "Hung", vnName: "Hưng", phone: "+84 816226474" },
+  "An": { name: "An", vnName: "An", phone: "+84 366404159" },
+  "khanh": { name: "Khanh", vnName: "Khanh", phone: "+84 869392539" },
+  "nhatquang": { name: "Nhat Quang", vnName: "Nhật Quang", phone: "+84 366884210" }
 };
 function allStaffProfiles(){ return {...STAFF_PROFILES,...STAFF_ALIASES}; }
 function renderStaffProfileOptions(){
@@ -464,7 +464,6 @@ function applyStaffProfile(){
   const key=Object.keys(profiles).find(n=>n.toLocaleLowerCase("vi").normalize("NFC")===normalized);
   const profile=key?profiles[key]:null;
   if(!profile){$("staff").value="";$("phone").value="";return;}
-  $("staffProfile").value=profile.name;
   $("staff").value=profile.name;
   $("phone").value=profile.phone;
 }
@@ -495,12 +494,12 @@ function splitGuestNames(s){
 function normalizeAgency(s){
   const x=(s||"").toLowerCase();
   if(/linkcare|vietinbank|\buob\b/.test(x)) return "LINKCARE";
-  if(/tô hòa|tô quà|urbox/.test(x)) return "URBOX";
+  if(/tô hòa|to hoa|tô quà|to qua|urbox/.test(x)) return "URBOX";
   if(/viettel/.test(x)) return "VIETTEL";
   if(/ctrip/.test(x)) return "Ctrip";
   if(/dragon\s*pass/.test(x)) return "Dragon Pass";
   if(/klook/.test(x)) return "KLOOK";
-  if(/trip\.com/.test(x)) return "Trip";
+  if(/trip\.com/.test(x)) return "Trip.com";
   if(/kkday/.test(x)) return "KKday";
   return clean(s);
 }
@@ -524,29 +523,23 @@ function getValueAfter(lines, label){
   return "";
 }
 function getAssignedStaff(lines){
+  const isServiceNote=value=>/^SGN\s*[-–—]?\s*dịch vụ(?:\s+fast track)?$/i.test(clean(value));
   const target="nv nhận việc";
-  const i=lines.findIndex(x=>{
-    const t=x.trim().replace(/^\*+|\*+$/g,"").toLocaleLowerCase("vi");
-    return t===target || t.startsWith(target+":") || t.startsWith(target+"：");
-  });
+  const i=lines.findIndex(x=>{const t=x.trim().replace(/^\*+|\*+$/g,"").toLocaleLowerCase("vi");return t===target||t.startsWith(target+":")||t.startsWith(target+"：");});
   if(i>=0){
-    const line=lines[i].trim().replace(/^\*+|\*+$/g,"");
-    const inline=line.replace(/^nv nhận việc\s*[:：]?/i,"").trim();
-    if(inline && !/^[-_]+$/.test(inline)) return inline;
+    const line=lines[i].trim().replace(/^\*+|\*+$/g,""),inline=line.replace(/^nv nhận việc\s*[:：]?/i,"").trim();
+    if(inline&&!/^[-_]+$/.test(inline)&&!isServiceNote(inline))return inline;
     const next=clean(lines[i+1]||"");
-    if(next && !/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next) && !/^[-_]+$/.test(next)) return next;
+    if(next&&!/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next)&&!/^[-_]+$/.test(next)&&!isServiceNote(next))return next;
   }
-  // Nhận diện phân công SGN ở cả hai dạng: "SGN - Tên [SĐT]" và "Tên SGN [SĐT]".
-  // Số điện thoại là tùy chọn; loại trừ dòng "SGN - Dịch vụ" vì đây không phải nhân viên.
   for(const raw of lines){
     const value=raw.trim().replace(/^[-*•\s]+|[-*\s]+$/g,"");
-    if(!value) continue;
-    if(/^nhatquang$/i.test(value)) return "nhatquang";
-    if(/^SGN\s*[-–—]?\s*(?:dịch vụ|dịch vụ fast track)$/i.test(value)) continue;
+    if(!value||isServiceNote(value))continue;
+    if(/^nhatquang$/i.test(value))return "nhatquang";
     let match=value.match(/^SGN\s*[-–—]?\s*(.+?)(?:\s+\+?\d[\d\s().-]{5,}\d)?$/i);
-    if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim())) return match[1].trim();
+    if(match&&match[1].trim()&&!/^[-_]+$/.test(match[1].trim()))return match[1].trim();
     match=value.match(/^(.+?)\s+SGN(?:\s+\+?\d[\d\s().-]{5,}\d)?$/i);
-    if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim())) return match[1].trim();
+    if(match&&match[1].trim()&&!/^[-_]+$/.test(match[1].trim()))return match[1].trim();
   }
   return "";
 }
@@ -771,37 +764,38 @@ function gmailLink(email,sub,body){
  u.searchParams.set("view","cm");u.searchParams.set("fs","1");u.searchParams.set("to",email);u.searchParams.set("su",sub);u.searchParams.set("body",body);
  return u.toString();
 }
-function buildOne(b,staff,phone,hotline){
- const dir=direction(b),agency=normalizeAgency(b.agency);
- const sub=subject(b), en=bodyEnglish(b,staff,phone,hotline), vi=bodyVietnamese(b,"Nhân");
- const intl=internationalPhone(b.phone,b.country),vn=localVNPhone(b.phone);
- const wa=intl&&en?`https://wa.me/${intl}?text=${encodeURIComponent(en)}`:"";
- const gm=b.email&&b.order&&b.flight&&b.date&&en?gmailLink(b.email,sub,en):"";
- const zalo=isPartner(b)&&vn?`https://zalo.me/${vn}`:"";
- const assigned=clean(b.staffAssign);
- const confirmed=/đã xác nhận/i.test(b.status);
- const unassigned=!assigned||assigned==="_"||/^[-_]+$/.test(assigned)||/chưa phân công/i.test(assigned);
- const warnings=[];
- if(!b.order)warnings.push("Thiếu mã order");
- if(!b.flight)warnings.push("Thiếu chuyến bay");
- if(!b.date||!b.time)warnings.push("Thiếu ngày/giờ bay");
- if(!b.names.length)warnings.push("Thiếu tên khách");
- if(b.phone&&!intl)warnings.push("Không chuẩn hóa được số WhatsApp; kiểm tra số và quốc gia hộ chiếu");
- if(isPartner(b)&&!vn)warnings.push("Không tạo Zalo: thiếu hoặc số điện thoại không phải số Việt Nam hợp lệ");
- if(!b.email)warnings.push("Không có email khách");
- if(!sub)warnings.push("Chưa đủ dữ liệu tạo Subject");
- if(!confirmed)warnings.push("Trạng thái không phải Đã xác nhận");
- if(dir!=="ARRIVAL"&&!unassigned)warnings.push("Đã có nhân viên nhận việc: "+assigned);
- let copySubject=sub;
- // Review table rule: order ID appears in its own column, so remove it from review subject only.
- if(b.order&&copySubject) copySubject=copySubject.replace(b.order,"").replace(/\s+–\s+–\s+/g," – ").replace(/^ – | – $/g,"").replace(/🛫 – /,"🛫 ");
- return {...b,dir,agency,sub,en,vi,wa,gm,zalo,intl,vn,confirmed,unassigned,warnings,reviewSubject:copySubject,reviewPhone:intl?("+"+intl):(b.phone||"Không có số điện thoại")};
+function buildOne(b,staff,phone,hotline,staffVN){
+  const dir=direction(b),agency=normalizeAgency(b.agency);
+  const sub=subject(b),en=(dir&&b.flight&&b.date)?bodyEnglish(b,staff,phone,hotline):"",vi=(dir&&isPartner(b)&&b.flight&&b.date&&b.time)?bodyVietnamese(b,staffVN):"";
+  const intl=internationalPhone(b.phone,b.country),vn=localVNPhone(b.phone);
+  const wa=intl&&en?\`https://wa.me/\${intl}?text=\${encodeURIComponent(en)}\`:"";
+  const validEmail=/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(b.email||"");
+  const gmailSubject=b.order?\`Fast Track Airport Pick-up Service – Tan Son Nhat Airport - \${b.order}\`:sub;
+  const gm=validEmail&&b.order&&b.flight&&b.date&&en?gmailLink(b.email,gmailSubject,en):"";
+  const zalo=isPartner(b)&&vn?\`https://zalo.me/\${vn}\`:"";
+  const assigned=clean(b.staffAssign),confirmed=/đã xác nhận/i.test(b.status);
+  const unassigned=!assigned||assigned==="_"||/^[-_]+$/.test(assigned)||/chưa phân công/i.test(assigned);
+  const warnings=[];
+  if(!b.order)warnings.push("Thiếu mã order");
+  if(!b.flight)warnings.push("Thiếu chuyến bay");
+  if(!b.date||!b.time)warnings.push("Thiếu ngày/giờ bay");
+  if(!b.names.length)warnings.push("Thiếu tên khách");
+  if(b.phone&&!intl)warnings.push("Không chuẩn hóa được số WhatsApp; kiểm tra số và quốc gia hộ chiếu");
+  if(isPartner(b)&&!vn)warnings.push("Không tạo Zalo: thiếu hoặc số điện thoại không phải số Việt Nam hợp lệ");
+  if(!validEmail)warnings.push("Không có email khách hợp lệ");
+  if(!sub)warnings.push("Chưa đủ dữ liệu tạo Subject");
+  if(!confirmed)warnings.push("Trạng thái không phải Đã xác nhận");
+  if(dir==="DEPARTURE"&&!unassigned)warnings.push("Đã có nhân viên nhận việc: "+assigned);
+  if(!dir)warnings.push("Chưa xác định được loại dịch vụ ĐÓN/TIỄN");
+  let copySubject=sub;
+  if(b.order&&copySubject)copySubject=copySubject.replace(b.order,"").replace(/\\s+–\\s+–\\s+/g," – ").replace(/^ – | – $/g,"").replace(/🛫 – /,"🛫 ");
+  return {...b,dir,agency,sub,en,vi,wa,gm,zalo,intl,vn,confirmed,unassigned,warnings,reviewSubject:copySubject,reviewPhone:intl?("+"+intl):(b.phone||"Không có số điện thoại")};
 }
 function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:`<span class="muted">Không tạo được – thiếu dữ liệu phù hợp</span>`}
 function block(title,content){return `<h3>${title}</h3><pre class="body-content">${esc(content)}</pre>`}
 function cardHtml(b,i,cacheIndex){
  const links=`<div class="actions">${linkHtml(b.wa,"WhatsApp")}${linkHtml(b.gm,"Gmail")}${linkHtml(b.zalo,"Zalo")}</div>`;
- const internal=isDomestic(b)?internalHtml(b):"";
+ const internal=(isDomestic(b)&&b.order&&b.flight&&b.date&&b.time&&b.names.length)?internalHtml(b):"";
  const noteLines=[...(b.warnings||[])];
  if(b.skipReason)noteLines.push("Lý do ban đầu bị bỏ qua: "+b.skipReason);
  const notes=noteLines.length?`<div class="status warn"><b>Ghi chú:</b><br>${noteLines.map(esc).join("<br>")}</div>`:"";
@@ -844,7 +838,7 @@ function internalHtml(b){
  if(dt){dt.setMinutes(dt.getMinutes()-90);eta=fmtDateTime(dt)}
  let terminal="";
  const f=b.flight.toUpperCase();
- if(/^VJ/.test(f))terminal="T1";else if(/^(VN|QH|BL|VU|0V)/.test(f))terminal="T3";
+ if(/^VJ/.test(f))terminal="T1";else if(f)terminal="T3";
  const f1=`Tên khách:\n\n${b.names.map((n,i)=>`${i+1}. ${n}`).join("\n")}\n\nChuyến bay: ${b.flight}\nGiờ bay: ${b.time}\nGiờ đến sân bay: ${eta}\nTerminal: ${terminal||"(chưa xác định)"}\n\nGhi chú: Em xin hỗ trợ ${b.pax} khách ngày mai ${b.date} ạ`;
  let f2="";
  if(/^VN/i.test(b.flight)){
