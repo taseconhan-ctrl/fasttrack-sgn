@@ -1,0 +1,18 @@
+{
+  "name": "Fast Track SGN – Điều hành đón khách",
+  "short_name": "FT SGN",
+  "start_url": "./ung-don-khach.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0d100e",
+  "theme_color": "#14251f",
+  "lang": "vi",
+  "icons": [
+    {
+      "src": "assets/ft-app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
