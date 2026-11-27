@@ -6,9 +6,9 @@ let checked = 0;
 
 for (const file of files) {
   const html = readFileSync(file, "utf8");
-  const scripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)];
+  const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
   for (const match of scripts) {
-    if (/\\bsrc\\s*=/.test(match[1])) continue;
+    if (/\bsrc\s*=/.test(match[1])) continue;
     const source = match[2].trim();
     if (!source) continue;
     new vm.Script(source, { filename: file });
