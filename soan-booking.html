@@ -535,7 +535,8 @@ function getAssignedStaff(lines){
     const isServiceNote=value=>/^SGN\s*[-–—]?\s*dịch vụ(?:\s+fast track)?$/i.test(clean(value));
     if(inline && !/^[-_]+$/.test(inline) && !isServiceNote(inline)) return inline;
     const next=clean(lines[i+1]||"");
-    if(next && !/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next) && !/^[-_]+$/.test(next) && !isServiceNote(next)) return next;
+    const isStatusValue=value=>/^(?:đã xác nhận|chờ xác nhận|chưa xác nhận|confirmed|pending|cancelled|canceled|đã hủy|đã huỷ|hủy|huỷ)$/i.test(clean(value));
+    if(next && !/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next) && !/^[-_]+$/.test(next) && !isServiceNote(next) && !isStatusValue(next)) return next;
   }
   // Nhận diện phân công SGN ở cả hai dạng: "SGN - Tên [SĐT]" và "Tên SGN [SĐT]".
   // Số điện thoại là tùy chọn; loại trừ dòng "SGN - Dịch vụ" vì đây không phải nhân viên.
