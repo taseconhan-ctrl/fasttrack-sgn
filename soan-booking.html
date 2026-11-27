@@ -224,6 +224,8 @@ a:focus-visible,button:focus-visible{outline:3px solid #d6b45f!important;outline
 /* Saved booking archive standalone view */
 .archive-entry{margin:0 0 16px}
 .archive-nav{gap:12px;margin-bottom:10px}
+/* Ở giao diện soạn booking, không hiển thị khối lịch sử; chỉ mở qua nút riêng */
+body:not(.archive-only) #savedReviewArchive{display:none!important}
 body.archive-only #bookingMain>*:not(#savedReviewArchive){display:none!important}
 body.archive-only #savedReviewArchive{display:block!important;margin-top:0}
 body.archive-only #bookingMain{max-width:1400px}
