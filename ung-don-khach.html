@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14251f"><meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest"><title>Điều hành đón khách | Fast Track SGN</title>
+<style>
+:root{color-scheme:dark;--bg:#0d100e;--panel:#171c18;--panel2:#202820;--gold:#c6a968;--gold2:#e4ce98;--text:#f4f0e7;--muted:#a9b0a6;--line:#343c34;--green:#28533d;--red:#6b3030}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Arial,Segoe UI,sans-serif}
+header{position:sticky;top:0;z-index:10;background:#101612ed;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.top{max-width:1200px;margin:auto;padding:13px 18px;display:flex;align-items:center;gap:12px}.brand{font-weight:800;letter-spacing:.5px}.brand small{display:block;color:var(--gold);font-size:10px;letter-spacing:1.5px}.spacer{flex:1}.who{color:var(--muted);font-size:12px}
+main{max-width:1200px;margin:auto;padding:22px 18px 50px}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}.hero h1{font-size:25px;margin:0 0 4px}.hero p{margin:0;color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:15px}
+.toolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.field label{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;min-height:42px;border:1px solid #465047;border-radius:8px;background:#0e130f;color:var(--text);padding:9px 10px;font:inherit}
+button,.btn{border:1px solid var(--gold);background:linear-gradient(135deg,#c6a968,#a88b50);color:#17150f;font-weight:800;border-radius:9px;padding:10px 13px;min-height:40px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+button.secondary,.btn.secondary{background:#252c26;color:#e9dfc8;border-color:#4b554b}button.danger{background:#432323;color:#ffdede;border-color:#7d4949}button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:14px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px}.stat b{font-size:22px;display:block}.stat span{color:var(--muted);font-size:11px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.booking{border:1px solid var(--line);background:var(--panel);border-radius:13px;padding:14px;min-width:0}.booking-top{display:flex;justify-content:space-between;gap:10px}.guest{font-size:16px;font-weight:800;overflow-wrap:anywhere}.sub{color:var(--muted);font-size:12px}.tag{border:1px solid #645538;color:var(--gold2);background:#2a251b;border-radius:30px;padding:3px 8px;font-size:10px;white-space:nowrap;height:max-content}.tag.good{border-color:#37664a;background:#183425;color:#a9e0ba}.tag.warn{border-color:#75603b;background:#332a19;color:#f1d69b}.tag.bad{border-color:#784343;background:#3b2020;color:#f0b8b8}
+.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.detail{padding:8px;border-radius:8px;background:#101511}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{font-size:13px;overflow-wrap:anywhere}
+.card-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.card-actions button{flex:1 1 auto}.empty{padding:35px;text-align:center;color:var(--muted);border:1px dashed #465047;border-radius:12px}
+dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1px solid var(--gold);border-radius:15px;background:#171c18;color:var(--text);padding:18px}dialog::backdrop{background:#000b}.dialog-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}.history-row{padding:10px 0;border-bottom:1px solid var(--line);font-size:12px}.history-row:last-child{border:0}
+#message{min-height:20px;color:var(--gold2);font-size:12px;margin:9px 0}#loginRequired{max-width:600px;margin:60px auto;text-align:center}
+@media(max-width:760px){.toolbar{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}.summary{grid-template-columns:1fr 1fr}.top{padding:11px 13px}main{padding:17px 12px 35px}.who{display:none}}
+@media(max-width:420px){.toolbar,.dialog-grid{grid-template-columns:1fr}.details{grid-template-columns:1fr 1fr}.card-actions button{flex:1 1 100%}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+<header><div class="top"><div class="brand">FAST TRACK SGN<small>GUEST OPERATIONS</small></div><div class="spacer"></div><span class="who" id="who"></span><a class="btn secondary" href="index.html">Trang chủ</a><button class="secondary" id="logout">Đăng xuất</button></div></header>
+<main>
+<section id="loginRequired" class="panel" hidden><h2>Vui lòng đăng nhập</h2><p class="sub">Bạn cần tài khoản nhân viên để xem danh sách khách.</p><a class="btn" href="index.html?next=ung-don-khach.html">Đăng nhập</a></section>
+<div id="app" hidden>
+<div class="hero"><div><h1>Danh sách đón khách</h1><p>Đồng bộ booking theo thời gian thực · Tan Son Nhat (SGN)</p></div><div class="actions" style="margin:0"><button class="secondary" id="refresh">↻ Làm mới</button></div></div>
+<section class="panel">
+<div class="toolbar">
+<div class="field"><label>Ngày phục vụ</label><input id="dateFilter" type="date"></div>
+<div class="field"><label>Tìm khách / chuyến bay / order</label><input id="search" placeholder="Nhập từ khóa…"></div>
+<div class="field"><label>Trạng thái</label><select id="statusFilter"><option value="">Tất cả trạng thái</option><option>Chưa phân công</option><option>Đã phân công</option><option>Đang đón</option><option>Đã đón</option><option>Không gặp khách</option></select></div>
+<div class="field"><label>Nhân viên phụ trách</label><select id="staffFilter"><option value="">Tất cả nhân viên</option></select></div>
+</div><div id="message" role="status"></div>
+<div class="summary"><div class="stat"><b id="total">0</b><span>Tổng booking</span></div><div class="stat"><b id="pending">0</b><span>Chưa nhận</span></div><div class="stat"><b id="working">0</b><span>Đang đón</span></div><div class="stat"><b id="done">0</b><span>Đã hoàn tất</span></div></div>
+</section>
+<section class="panel" id="adminImport" hidden>
+<h3 style="margin:0 0 5px">Nhập danh sách Excel</h3><p class="sub">Hỗ trợ cột: Agency, Ống/Bãi, Giờ dự kiến đáp, Flight, Name, Type, Time, Order, NV thực hiện. Dữ liệu Ống/Bãi và Giờ dự kiến đáp được giữ nguyên.</p>
+<div class="toolbar"><div class="field" style="grid-column:span 2"><label>Chọn file Excel</label><input id="excelFile" type="file" accept=".xlsx,.xls,.csv"></div><div class="field"><label>Ngày phục vụ áp dụng</label><input id="importDate" type="date"></div><div class="field"><label>&nbsp;</label><button id="importBtn">Nhập booking</button></div></div>
+</section>
+<div id="cards" class="cards"></div>
+</div>
+</main>
+<dialog id="editDialog"><form method="dialog" id="editForm"><h3 style="margin-top:0">Cập nhật thông tin booking</h3><div class="dialog-grid">
+<div class="field"><label>Giờ dự kiến đáp (HH:MM)</label><input id="editArrival" placeholder="Ví dụ 14:35"></div>
+<div class="field"><label>Ống/Bãi</label><input id="editGate" placeholder="Ví dụ 12 / 96 / Gọi"></div>
+<div class="field"><label>Chuyến bay</label><input id="editFlight"></div>
+<div class="field"><label>Họ tên khách</label><input id="editGuest"></div>
+<div class="field"><label>Agency</label><input id="editAgency"></div>
+<div class="field"><label>Giờ dịch vụ</label><input id="editTime"></div>
+<div class="field"><label>Loại dịch vụ</label><input id="editType"></div>
+<div class="field"><label>Mã Order</label><input id="editOrder"></div>
+</div><div class="dialog-actions"><button type="button" class="secondary" id="editCancel">Hủy</button><button type="submit">Lưu thay đổi</button></div></form></dialog>
+<dialog id="historyDialog"><h3 style="margin-top:0">Lịch sử chỉnh sửa</h3><div id="historyContent"></div><div class="dialog-actions"><button class="secondary" id="historyClose">Đóng</button></div></dialog>
+<script type="module">
+const URL="https://xyhvgttywjleirsiabve.supabase.co";
+const KEY="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
+const TOKEN_KEY="fasttrack_staff_pin_session_v1";
+const API=URL+"/functions/v1/staff-bookings";
+const $=id=>document.getElementById(id);
+let token=null,profile=null,bookings=[],editing=null;
+function getSession(){try{return JSON.parse(localStorage.getItem(TOKEN_KEY)||"null")}catch{return null}}
+function say(s){$("message").textContent=s||""}
+async function call(action,payload={}){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY,"Authorization":"Bearer "+token},body:JSON.stringify({action,...payload})});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||"Không thể xử lý yêu cầu");return d}
+function dateToday(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function timeText(v){if(typeof v==="number"&&v>=0&&v<1){const m=Math.round(v*1440);return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0")}return String(v??"").trim()}
+function norm(v){return String(v??"").trim()}
+function roleCanManage(){return profile&&["manager","admin"].includes(profile.role)}
+function filtered(){const date=$("dateFilter").value,q=$("search").value.trim().toLowerCase(),status=$("statusFilter").value,staff=$("staffFilter").value;return bookings.filter(b=>(!date||b.service_date===date)&&(!status||b.status===status)&&(!staff||b.assigned_staff===staff)&&(!q||[b.guest_name,b.flight,b.order_id,b.agency,b.assigned_staff].some(v=>String(v||"").toLowerCase().includes(q))))}
+function render(){const list=filtered();$("total").textContent=list.length;$("pending").textContent=list.filter(b=>["Chưa phân công","Đã phân công"].includes(b.status)).length;$("working").textContent=list.filter(b=>b.status==="Đang đón").length;$("done").textContent=list.filter(b=>["Đã đón","Không gặp khách"].includes(b.status)).length;
+const staffVals=[...new Set(bookings.map(b=>b.assigned_staff).filter(Boolean))].sort();const sf=$("staffFilter"),old=sf.value;sf.innerHTML='<option value="">Tất cả nhân viên</option>'+staffVals.map(s=>'<option value="'+esc(s)+'">'+esc(s)+'</option>').join("");sf.value=staffVals.includes(old)?old:"";
+$("cards").innerHTML=list.length?list.map(b=>{const status=b.status||"Chưa phân công",mine=b.assigned_staff===profile.full_name,unassigned=!b.assigned_staff||b.assigned_staff==="_"||b.assigned_staff==="Chưa phân công";const badge=status==="Đã đón"?"good":status==="Đang đón"?"warn":status==="Không gặp khách"?"bad":"";let buttons="";
+if(!["Đã đón","Không gặp khách"].includes(status)){if(status==="Đang đón"&&mine){buttons+='<button data-finish="'+b.id+'" data-status="Đã đón">Đã gặp khách</button><button class="danger" data-finish="'+b.id+'" data-status="Không gặp khách">Không gặp khách</button>'}else if(status!=="Đang đón"&&(unassigned||mine)){buttons+='<button data-claim="'+b.id+'">Nhận đón khách</button>'}}
+buttons+='<button class="secondary" data-edit="'+b.id+'">Sửa thông tin</button>';if(roleCanManage())buttons+='<button class="secondary" data-history="'+b.id+'">Lịch sử</button>';
+return '<article class="booking"><div class="booking-top"><div><div class="guest">'+esc(b.guest_name||"Chưa có tên")+'</div><div class="sub">'+esc(b.agency||"")+' · '+esc(b.flight||"Chưa có chuyến bay")+'</div></div><span class="tag '+badge+'">'+esc(status)+'</span></div><div class="details"><div class="detail"><small>GIỜ DỊCH VỤ</small><b>'+esc(b.service_time||"—")+'</b></div><div class="detail"><small>GIỜ DỰ KIẾN ĐÁP</small><b>'+esc(b.estimated_arrival_time||"Chưa nhập")+'</b></div><div class="detail"><small>ỐNG / BÃI</small><b>'+esc(b.parking_gate||"Chưa nhập")+'</b></div><div class="detail"><small>ORDER</small><b>'+esc(b.order_id||"—")+'</b></div><div class="detail"><small>LOẠI DỊCH VỤ</small><b>'+esc(b.service_type||"—")+'</b></div><div class="detail"><small>NHÂN VIÊN</small><b>'+esc(b.assigned_staff||"Chưa nhận")+'</b></div></div><div class="card-actions">'+buttons+'</div></article>'}).join(""):'<div class="empty">Không có booking phù hợp với bộ lọc.</div>'}
+async function load(){say("Đang tải dữ liệu…");const d=await call("list");bookings=d.bookings||[];render();say("Đã đồng bộ "+bookings.length+" booking.");}
+function openEdit(b){editing=b;$("editArrival").value=b.estimated_arrival_time||"";$("editGate").value=b.parking_gate||"";$("editFlight").value=b.flight||"";$("editGuest").value=b.guest_name||"";$("editAgency").value=b.agency||"";$("editTime").value=b.service_time||"";$("editType").value=b.service_type||"";$("editOrder").value=b.order_id||"";$("editDialog").showModal()}
+$("cards").addEventListener("click",async e=>{const btn=e.target.closest("button");if(!btn)return;try{
+if(btn.dataset.claim){btn.disabled=true;await call("claim",{id:btn.dataset.claim});say("Đã nhận booking. Danh sách đang cập nhật…");await load()}
+if(btn.dataset.finish){btn.disabled=true;await call("finish",{id:btn.dataset.finish,status:btn.dataset.status});await load()}
+if(btn.dataset.edit){const b=bookings.find(x=>x.id===btn.dataset.edit);if(b)openEdit(b)}
+if(btn.dataset.history){const d=await call("history",{id:btn.dataset.history});$("historyContent").innerHTML=(d.history||[]).map(h=>'<div class="history-row"><b>'+esc(h.actor_username||"system")+'</b> · '+esc(new Date(h.changed_at).toLocaleString("vi-VN"))+' · '+esc(h.action)+'<pre style="white-space:pre-wrap;color:#c5cbbf">'+esc(JSON.stringify(h.after_data||h.before_data||{},null,2))+'</pre></div>').join("")||"Chưa có lịch sử";$("historyDialog").showModal()}
+}catch(err){say(err.message);await load().catch(()=>{})}});
+$("editCancel").addEventListener("click",()=>$("editDialog").close());
+$("editForm").addEventListener("submit",async e=>{e.preventDefault();if(!editing)return;const changes={estimated_arrival_time:$("editArrival").value.trim(),parking_gate:$("editGate").value.trim(),flight:$("editFlight").value.trim(),guest_name:$("editGuest").value.trim(),agency:$("editAgency").value.trim(),service_time:$("editTime").value.trim(),service_type:$("editType").value.trim(),order_id:$("editOrder").value.trim()};try{await call("update",{id:editing.id,changes});$("editDialog").close();say("Đã lưu thay đổi.");await load()}catch(err){say(err.message)}});
+$("historyClose").addEventListener("click",()=>$("historyDialog").close());
+["dateFilter","search","statusFilter","staffFilter"].forEach(id=>$(id).addEventListener("input",render));
+$("refresh").addEventListener("click",()=>load().catch(e=>say(e.message)));
+$("logout").addEventListener("click",async()=>{try{await fetch(URL+"/functions/v1/staff-pin-auth",{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY,"Authorization":"Bearer "+token},body:JSON.stringify({action:"logout"})})}catch{}localStorage.removeItem(TOKEN_KEY);location.href="index.html"});
+$("importBtn").addEventListener("click",async()=>{const file=$("excelFile").files[0],date=$("importDate").value;if(!file||!date){say("Chọn file Excel và ngày phục vụ trước khi nhập.");return}if(!window.XLSX){say("Không tải được thư viện đọc Excel.");return}try{$("importBtn").disabled=true;const data=await file.arrayBuffer(),wb=XLSX.read(data,{type:"array",cellDates:false}),sheet=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(sheet,{defval:""});const mapped=rows.map(r=>({agency:norm(r["Agency"]),parking_gate:norm(r["Ống/Bãi"]),estimated_arrival_time:timeText(r["Giờ dự kiến đáp"]),flight:norm(r["Flight"]),guest_name:norm(r["Name"]),service_type:norm(r["Type"]),service_time:timeText(r["Time"]),order_id:norm(r["Order"]),assigned_staff:norm(r["NV thực hiện"]),service_date:date})).filter(r=>Object.values(r).some(v=>v!==""&&v!==date));if(!mapped.length){say("Không tìm thấy dữ liệu booking trong file.");return}if(mapped.length>1000){say("Mỗi lần chỉ nhập tối đa 1.000 dòng.");return}const res=await call("import",{bookings:mapped});say("Đã nhập "+res.imported+" booking.");await load()}catch(err){say(err.message||"Không thể đọc file.")}finally{$("importBtn").disabled=false}});
+(async()=>{const s=getSession();if(!s?.token||!s.expiresAt||new Date(s.expiresAt).getTime()<=Date.now()){localStorage.removeItem(TOKEN_KEY);$("loginRequired").hidden=false;return}token=s.token;try{const d=await call("me");profile=d.profile;$("who").textContent=profile.full_name+" · "+({admin:"Quản trị viên",manager:"Quản lý",staff:"Nhân viên"}[profile.role]||profile.role);$("app").hidden=false;$("loginRequired").hidden=true;$("dateFilter").value=dateToday();$("importDate").value=dateToday();$("adminImport").hidden=!roleCanManage();await load()}catch(e){$("loginRequired").hidden=false;say(e.message)}})();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body></html>
