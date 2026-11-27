@@ -28,7 +28,7 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 <body>
 <header><div class="top"><div class="brand">FAST TRACK SGN<small>GUEST OPERATIONS</small></div><div class="spacer"></div><span class="who" id="who"></span><a class="btn secondary" href="index.html">Trang chủ</a><button class="secondary" id="logout">Đăng xuất</button></div></header>
 <main>
-<section id="loginRequired" class="panel" hidden><h2>Vui lòng đăng nhập</h2><p class="sub">Bạn cần tài khoản nhân viên để xem danh sách khách.</p><a class="btn" href="index.html?next=ung-don-khach.html">Đăng nhập</a></section>
+<section id="loginRequired" class="panel" hidden><h2>Đăng nhập nhân viên</h2><p class="sub">Dùng tên đăng nhập và PIN được Quản lý/Quản trị viên cấp.</p><form id="loginForm"><div class="dialog-grid"><div class="field"><label>Tên đăng nhập</label><input id="loginUsername" autocomplete="username" required></div><div class="field"><label>PIN 4 chữ số</label><input id="loginPin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="current-password" required></div></div><div class="actions"><button id="loginBtn" type="submit">Đăng nhập</button></div><div id="loginMessage" role="status"></div></form></section>
 <div id="app" hidden>
 <div class="hero"><div><h1>Danh sách đón khách</h1><p>Đồng bộ booking theo thời gian thực · Tan Son Nhat (SGN)</p></div><div class="actions" style="margin:0"><button class="secondary" id="refresh">↻ Làm mới</button></div></div>
 <section class="panel">
@@ -62,11 +62,12 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 const URL="https://xyhvgttywjleirsiabve.supabase.co";
 const KEY="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
 const TOKEN_KEY="fasttrack_staff_pin_session_v1";
-const API=URL+"/functions/v1/staff-bookings";
+const API=URL+"/functions/v1/staff-bookings";\nconst AUTH_API=URL+"/functions/v1/staff-pin-auth";
 const $=id=>document.getElementById(id);
 let token=null,profile=null,bookings=[],editing=null;
 function getSession(){try{return JSON.parse(localStorage.getItem(TOKEN_KEY)||"null")}catch{return null}}
 function say(s){$("message").textContent=s||""}
+async function login(username,pin){const r=await fetch(AUTH_API,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY},body:JSON.stringify({action:"login",username,pin})});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||"Đăng nhập không thành công");localStorage.setItem(TOKEN_KEY,JSON.stringify({token:d.token,expiresAt:d.expiresAt,username:d.username}));return d}
 async function call(action,payload={}){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY,"Authorization":"Bearer "+token},body:JSON.stringify({action,...payload})});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||"Không thể xử lý yêu cầu");return d}
 function dateToday(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,"0"),String(d.getDate()).padStart(2,"0")].join("-")}
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -95,7 +96,9 @@ $("historyClose").addEventListener("click",()=>$("historyDialog").close());
 $("refresh").addEventListener("click",()=>load().catch(e=>say(e.message)));
 $("logout").addEventListener("click",async()=>{try{await fetch(URL+"/functions/v1/staff-pin-auth",{method:"POST",headers:{"Content-Type":"application/json","apikey":KEY,"Authorization":"Bearer "+token},body:JSON.stringify({action:"logout"})})}catch{}localStorage.removeItem(TOKEN_KEY);location.href="index.html"});
 $("importBtn").addEventListener("click",async()=>{const file=$("excelFile").files[0],date=$("importDate").value;if(!file||!date){say("Chọn file Excel và ngày phục vụ trước khi nhập.");return}if(!window.XLSX){say("Không tải được thư viện đọc Excel.");return}try{$("importBtn").disabled=true;const data=await file.arrayBuffer(),wb=XLSX.read(data,{type:"array",cellDates:false}),sheet=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(sheet,{defval:""});const mapped=rows.map(r=>({agency:norm(r["Agency"]),parking_gate:norm(r["Ống/Bãi"]),estimated_arrival_time:timeText(r["Giờ dự kiến đáp"]),flight:norm(r["Flight"]),guest_name:norm(r["Name"]),service_type:norm(r["Type"]),service_time:timeText(r["Time"]),order_id:norm(r["Order"]),assigned_staff:norm(r["NV thực hiện"]),service_date:date})).filter(r=>Object.values(r).some(v=>v!==""&&v!==date));if(!mapped.length){say("Không tìm thấy dữ liệu booking trong file.");return}if(mapped.length>1000){say("Mỗi lần chỉ nhập tối đa 1.000 dòng.");return}const res=await call("import",{bookings:mapped});say("Đã nhập "+res.imported+" booking.");await load()}catch(err){say(err.message||"Không thể đọc file.")}finally{$("importBtn").disabled=false}});
-(async()=>{const s=getSession();if(!s?.token||!s.expiresAt||new Date(s.expiresAt).getTime()<=Date.now()){localStorage.removeItem(TOKEN_KEY);$("loginRequired").hidden=false;return}token=s.token;try{const d=await call("me");profile=d.profile;$("who").textContent=profile.full_name+" · "+({admin:"Quản trị viên",manager:"Quản lý",staff:"Nhân viên"}[profile.role]||profile.role);$("app").hidden=false;$("loginRequired").hidden=true;$("dateFilter").value=dateToday();$("importDate").value=dateToday();$("adminImport").hidden=!roleCanManage();await load()}catch(e){$("loginRequired").hidden=false;say(e.message)}})();
+async function startApp(){const s=getSession();if(!s?.token||!s.expiresAt||new Date(s.expiresAt).getTime()<=Date.now()){localStorage.removeItem(TOKEN_KEY);$("loginRequired").hidden=false;return}token=s.token;try{const d=await call("me");profile=d.profile;$("who").textContent=profile.full_name+" · "+({admin:"Quản trị viên",manager:"Quản lý",staff:"Nhân viên"}[profile.role]||profile.role);$("app").hidden=false;$("loginRequired").hidden=true;$("dateFilter").value=dateToday();$("importDate").value=dateToday();$("adminImport").hidden=!roleCanManage();await load()}catch(e){localStorage.removeItem(TOKEN_KEY);token=null;$("loginRequired").hidden=false;$("loginMessage").textContent=e.message}}
+$("loginForm").addEventListener("submit",async e=>{e.preventDefault();const b=$("loginBtn");b.disabled=true;$("loginMessage").textContent="Đang đăng nhập…";try{await login($("loginUsername").value.trim().toLowerCase(),$("loginPin").value);await startApp()}catch(err){$("loginMessage").textContent=err.message}finally{b.disabled=false}});
+startApp();
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
 </body></html>
