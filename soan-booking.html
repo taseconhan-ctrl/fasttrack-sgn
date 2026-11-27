@@ -341,6 +341,23 @@ footer{background:#10243b!important}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
+<style id="booking-workspace-switcher">
+.workspace-switcher{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important;margin:0 0 20px!important}
+.workspace-choice{display:flex!important;align-items:center!important;gap:13px!important;min-height:94px!important;padding:17px 19px!important;border:1px solid var(--ft-line,#d8e0e8)!important;border-radius:15px!important;background:#fff!important;color:var(--ft-navy,#14233f)!important;text-decoration:none!important;box-shadow:0 5px 16px #14233f0c!important;transition:transform .18s ease,box-shadow .18s ease!important}
+.workspace-choice:hover{transform:translateY(-2px)!important;box-shadow:0 9px 22px #14233f18!important}
+.workspace-choice.composer-choice{border-left:5px solid var(--ft-blue,#2563a6)!important}
+.workspace-choice.archive-choice{border-left:5px solid var(--ft-green,#16835d)!important}
+.workspace-icon{display:grid;place-items:center;flex:0 0 46px;width:46px;height:46px;border-radius:12px;background:#edf3fa;font-size:23px}
+.archive-choice .workspace-icon{background:#eaf5ef}
+.workspace-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}
+.workspace-copy strong{font-size:15px;line-height:1.35;font-weight:800}
+.workspace-copy small{font-size:12px;line-height:1.45;color:#64748b}
+.workspace-arrow{font-size:12px;font-weight:800;white-space:nowrap;color:#315f91}
+.archive-choice .workspace-arrow{color:#18734f}
+body.archive-only #bookingMain>*:not(#savedReviewArchive){display:none!important}
+body.archive-only #savedReviewArchive{display:block!important}
+@media(max-width:700px){.workspace-switcher{grid-template-columns:1fr!important;gap:10px!important}.workspace-choice{min-height:82px!important;padding:14px!important}.workspace-copy strong{font-size:14px}.workspace-arrow{font-size:11px}}
+</style>
 </head>
 <body>
 <header>
@@ -356,7 +373,10 @@ footer{background:#10243b!important}
 </style>
 <div id="cloudAccountBar" hidden><span>☁️ <span id="cloudAccountEmail"></span></span><button type="button" id="cloudSignOut" class="secondary">Đăng xuất</button></div>
 <main id="bookingMain">
-<div class="archive-entry"><a class="linkbtn" href="soan-booking.html?view=archive">📚 Mở PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</a></div>
+<section class="workspace-switcher" aria-label="Chọn khu vực làm việc">
+  <a class="workspace-choice composer-choice" href="soan-booking.html" aria-current="page"><span class="workspace-icon">✍️</span><span class="workspace-copy"><strong>SOẠN BOOKING</strong><small>Dán dữ liệu, phân tích và tạo nội dung booking</small></span><span class="workspace-arrow">Mở khu vực →</span></a>
+  <a class="workspace-choice archive-choice" href="soan-booking.html?view=archive"><span class="workspace-icon">📚</span><span class="workspace-copy"><strong>PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</strong><small>Xem, lọc và quản lý các booking đã lưu</small></span><span class="workspace-arrow">Mở lịch sử →</span></a>
+</section>
 <section class="panel">
   <h2>1. Nhân viên đang sử dụng</h2>
   <div class="controls">
