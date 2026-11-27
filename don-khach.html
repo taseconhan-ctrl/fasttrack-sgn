@@ -681,6 +681,64 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
  .ft-account-link{font-size:10px!important;padding:7px 8px!important}
 }
 @media(prefers-reduced-motion:reduce){.ft-sidebar,.ft-main{transition:none!important}}
+
+/* Legacy component compatibility: keep operational UI on the approved black-gold system. */
+.ft-app,.ft-app *{font-family:Manrope,Arial,sans-serif!important}
+.ft-content .panel,.ft-content .booking,.ft-content .review{
+  border:1px solid var(--ft-line)!important;border-radius:13px!important;
+  background:var(--ft-panel)!important;color:var(--ft-text)!important;
+  box-shadow:0 8px 24px #0004!important
+}
+.ft-content .panel h2,.ft-content .booking h2,.ft-content .review h2{
+  color:var(--ft-gold-hi)!important;border-color:var(--ft-line)!important
+}
+.ft-content .panel p,.ft-content .booking p,.ft-content .review p,
+.ft-content .panel .hint,.ft-content .booking .hint,.ft-content .review .hint{
+  color:var(--ft-muted)!important
+}
+.ft-content label{color:#ded6c6!important}
+.ft-content input:not([type="checkbox"]):not([type="radio"]),
+.ft-content select,.ft-content textarea{
+  border:1px solid #494337!important;border-radius:8px!important;
+  background:#10100f!important;color:var(--ft-text)!important;
+  color-scheme:dark
+}
+.ft-content input::placeholder,.ft-content textarea::placeholder{color:#827d73!important}
+.ft-content input:focus,.ft-content select:focus,.ft-content textarea:focus{
+  border-color:var(--ft-gold)!important;outline:0!important;
+  box-shadow:0 0 0 3px #b89b5e22!important
+}
+.ft-content button:not(:disabled):not(.secondary):not(.ghost):not(.danger),
+.ft-content .linkbtn:not(.secondary),.ft-content .back,.ft-content .hero-cta{
+  border:1px solid var(--ft-gold)!important;border-radius:9px!important;
+  background:linear-gradient(135deg,#c5a96b,#a88a4e)!important;
+  color:#17140e!important;font-weight:800!important
+}
+.ft-content button.secondary,.ft-content button.ghost,.ft-content .ghost,
+.ft-content .linkbtn.secondary{
+  border:1px solid #514a3b!important;border-radius:9px!important;
+  background:#24221d!important;color:#e4d8c0!important
+}
+.ft-content button.danger{
+  border:1px solid #8c4545!important;border-radius:9px!important;
+  background:#3a2020!important;color:#f0caca!important
+}
+.ft-content .tablewrap{
+  border:1px solid var(--ft-line)!important;border-radius:11px!important;
+  background:#121211!important;box-shadow:none!important
+}
+.ft-content table{background:#121211!important;color:var(--ft-text)!important}
+.ft-content table th{
+  background:#252219!important;color:var(--ft-gold-hi)!important;
+  border-color:var(--ft-line)!important
+}
+.ft-content table td,.ft-content table tbody td{
+  background:#171716!important;color:#e8e1d5!important;
+  border-color:var(--ft-line)!important
+}
+.ft-content table tbody tr:nth-child(even) td{background:#1d1c19!important}
+.ft-content table tbody tr:hover td{background:#29251c!important}
+
 </style>
 <style id="ft-operations-theme-overrides">
 /* Legacy operation components adapted to the shared black-and-champagne shell. */
