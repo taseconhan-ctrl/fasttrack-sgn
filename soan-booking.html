@@ -247,20 +247,6 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 
 <link rel="stylesheet" href="assets/css/shared-mobile-contrast.css">
 
-</head>
-<body>
-<div class="ft-app" id="ftApp">
-<aside class="ft-sidebar" id="ftSidebar" aria-label="Điều hướng chính" aria-label="Điều hướng chính">
- <a class="ft-brand" href="index.html"><span class="ft-brand-mark">FT</span><span class="ft-brand-copy"><b>FAST TRACK SGN</b><small>EXECUTIVE OPERATIONS</small></span></a>
- <nav class="ft-nav">
-  <span class="ft-nav-label">WORKSPACE</span><a class="ft-nav-link" href="index.html"><span class="ft-nav-icon">⌂</span><span>Tổng quan</span></a>
-  <span class="ft-nav-label">BOOKING MANAGEMENT</span><a class="ft-nav-link active" href="soan-booking.html" aria-current="page"><span class="ft-nav-icon">▤</span><span>Soạn Booking</span></a>
-  <span class="ft-nav-label">OPERATIONS</span><a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">↙</span><span>Đón khách</span></a>
-  <span class="ft-nav-label">PEOPLE & PLANNING</span><a class="ft-nav-link" href="xep-lich.html"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a>
- </nav><div class="ft-sidebar-foot"><span class="ft-status-dot"></span><span>Fast Track SGN</span></div>
-</aside>
-<div class="ft-main" id="ftMain"><header class="ft-topbar"><button class="ft-menu-toggle" id="ftMenuToggle" type="button" aria-label="Mở hoặc thu gọn menu" aria-controls="ftSidebar" aria-expanded="true"><span></span><span></span><span></span></button><div class="ft-top-context"><small>FAST TRACK SGN / BOOKING MANAGEMENT</small><b>Soạn Booking & Đối soát</b></div><div class="ft-top-spacer"></div><a class="ft-account-link" href="#staffProfile">Nhân viên đang sử dụng <span>↗</span></a></header>
-
 <style id="cloud-account-style">
 #cloudAccountBar{position:fixed;right:14px;top:12px;z-index:99990;display:flex;align-items:center;gap:9px;padding:7px 10px;border:1px solid #8f7547;border-radius:999px;background:#142b25ed;color:#f7efdf;font-size:12px;box-shadow:0 5px 18px #0004}
 #cloudAccountBar[hidden]{display:none!important}
@@ -303,6 +289,22 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 }
 
 </style>
+<link rel="stylesheet" href="assets/css/shared-ui.css">
+</head>
+<body>
+<div class="ft-app" id="ftApp">
+<aside class="ft-sidebar" id="ftSidebar" aria-label="Điều hướng chính" aria-label="Điều hướng chính">
+ <a class="ft-brand" href="index.html"><span class="ft-brand-mark">FT</span><span class="ft-brand-copy"><b>FAST TRACK SGN</b><small>EXECUTIVE OPERATIONS</small></span></a>
+ <nav class="ft-nav">
+  <span class="ft-nav-label">WORKSPACE</span><a class="ft-nav-link" href="index.html"><span class="ft-nav-icon">⌂</span><span>Tổng quan</span></a>
+  <span class="ft-nav-label">BOOKING MANAGEMENT</span><a class="ft-nav-link active" href="soan-booking.html" aria-current="page"><span class="ft-nav-icon">▤</span><span>Soạn Booking</span></a>
+  <span class="ft-nav-label">OPERATIONS</span><a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">↙</span><span>Đón khách</span></a>
+  <span class="ft-nav-label">PEOPLE & PLANNING</span><a class="ft-nav-link" href="xep-lich.html"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a>
+ </nav><div class="ft-sidebar-foot"><span class="ft-status-dot"></span><span>Fast Track SGN</span></div>
+</aside>
+<div class="ft-main" id="ftMain"><header class="ft-topbar"><button class="ft-menu-toggle" id="ftMenuToggle" type="button" aria-label="Mở hoặc thu gọn menu" aria-controls="ftSidebar" aria-expanded="true"><span></span><span></span><span></span></button><div class="ft-top-context"><small>FAST TRACK SGN / BOOKING MANAGEMENT</small><b>Soạn Booking & Đối soát</b></div><div class="ft-top-spacer"></div><a class="ft-account-link" href="#staffProfile">Nhân viên đang sử dụng <span>↗</span></a></header>
+
+
 <div id="cloudAccountBar" hidden><span>☁️ <span id="cloudAccountEmail"></span></span><button type="button" id="cloudSignOut" class="secondary">Đăng xuất</button></div>
 
 <div class="ft-content">
@@ -1118,7 +1120,7 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&app.classList.conta
 mobile.addEventListener("change",()=>{app.classList.remove("ft-mobile-open");sync();});
 })();</script>
 
-<link rel="stylesheet" href="assets/css/shared-ui.css">
+
 
 </body>
 </html>
