@@ -795,6 +795,8 @@ $("staffHomeSignOut").addEventListener("click",async()=>{
     if(!link||link.target&&link.target!=='_self'||link.hasAttribute('download'))return;
     const url=new URL(link.href,location.href);
     if(url.origin!==location.origin||!allowed.has(url.pathname))return;
+    // Soạn Booking cần tải trang đầy đủ để các bộ nhớ phiên và bộ máy đồng bộ được khởi tạo cùng nhau.
+    if(url.pathname.endsWith('/soan-booking.html')){location.href=url.href;return;}
     event.preventDefault();
     navigate(url.href,true);
   });
