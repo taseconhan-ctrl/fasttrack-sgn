@@ -220,6 +220,14 @@ a:focus-visible,button:focus-visible{outline:3px solid #d6b45f!important;outline
  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important}
 }
 
+
+/* Saved booking archive standalone view */
+.archive-entry{margin:0 0 16px}
+.archive-nav{gap:12px;margin-bottom:10px}
+body.archive-only #bookingMain>*:not(#savedReviewArchive){display:none!important}
+body.archive-only #savedReviewArchive{display:block!important;margin-top:0}
+body.archive-only #bookingMain{max-width:1400px}
+@media(max-width:640px){.archive-nav{align-items:flex-start;flex-direction:column}}
 </style>
 
 <style id="santa-reindeer-animation">
@@ -335,7 +343,8 @@ button.danger{background:#9c3942!important;color:#fff!important}
   <p>Xử lý booking trực tiếp trên trình duyệt · Tạo nội dung và link liên hệ để nhân viên kiểm tra, sao chép hoặc mở bản nháp</p>
   <p style="margin-top:12px"><a href="index.html" style="display:inline-block;background:#fff;color:#14233f;padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:700">← Trở về</a></p>
 </header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav>
-<main>
+<main id="bookingMain">
+<div class="archive-entry"><a class="linkbtn" href="soan-booking.html?view=archive">📚 Mở PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</a></div>
 <section class="panel">
   <h2>1. Nhân viên đang sử dụng</h2>
   <div class="controls">
@@ -362,10 +371,11 @@ button.danger{background:#9c3942!important;color:#fff!important}
 <div id="summary" class="panel hidden"></div>
 <div id="results"></div>
 <div id="skippedBookings"></div>
-<div id="reviews"></div><section id="savedReviewArchive" class="panel"><h2>PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</h2><p class="hint">Lịch sử lưu trên thiết bị này; xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
+<div id="reviews"></div><section id="savedReviewArchive" class="panel"><div class="topline archive-nav"><h2>PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</h2><a class="linkbtn secondary" href="soan-booking.html">← Quay lại Soạn Booking</a></div><p class="hint">Lịch sử lưu trên thiết bị này; xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
 </main>
 <script>
 "use strict";
+if(new URLSearchParams(location.search).get("view")==="archive") document.body.classList.add("archive-only");
 
 const $ = id => document.getElementById(id);
 const STAFF_PROFILES = {
@@ -880,7 +890,7 @@ async function copyText(s){
    toast("Không sao chép được. Hãy cấp quyền Clipboard cho trang hoặc sao chép thủ công.",false);
  }
 }
-function toast(msg,good=true){const el=$("status");el.textContent=msg;el.className="status "+(good?"good":"warn")}
+function toast(msg,good=true){const el=$("status");if(!el)return;el.textContent=msg;el.className="status "+(good?"good":"warn")}
 function skippedReasons(b,all){
  const reasons=[];
  if(!b.unassigned)reasons.push("Đã có nhân viên nhận việc: "+(b.staffAssign||"không rõ"));
