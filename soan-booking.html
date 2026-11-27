@@ -495,12 +495,12 @@ function splitGuestNames(s){
 function normalizeAgency(s){
   const x=(s||"").toLowerCase();
   if(/linkcare|vietinbank|\buob\b/.test(x)) return "LINKCARE";
-  if(/tô hòa|tô quà|urbox/.test(x)) return "URBOX";
+  if(/tô hòa|to hoa|tô quà|to quà|to qua|urbox/.test(x)) return "URBOX";
   if(/viettel/.test(x)) return "VIETTEL";
   if(/ctrip/.test(x)) return "Ctrip";
   if(/dragon\s*pass/.test(x)) return "Dragon Pass";
   if(/klook/.test(x)) return "KLOOK";
-  if(/trip\.com/.test(x)) return "Trip";
+  if(/trip\.com/.test(x)) return "Trip.com";
   if(/kkday/.test(x)) return "KKday";
   return clean(s);
 }
@@ -532,9 +532,11 @@ function getAssignedStaff(lines){
   if(i>=0){
     const line=lines[i].trim().replace(/^\*+|\*+$/g,"");
     const inline=line.replace(/^nv nhận việc\s*[:：]?/i,"").trim();
-    if(inline && !/^[-_]+$/.test(inline)) return inline;
+    const isServiceNote=value=>/^SGN\s*[-–—]?\s*dịch vụ(?:\s+fast track)?$/i.test(clean(value));
+    if(inline && !/^[-_]+$/.test(inline) && !isServiceNote(inline)) return inline;
     const next=clean(lines[i+1]||"");
-    if(next && !/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next) && !/^[-_]+$/.test(next)) return next;
+    const isStatusValue=value=>/^(?:đã xác nhận|chờ xác nhận|chưa xác nhận|confirmed|pending|cancelled|canceled|đã hủy|đã huỷ|hủy|huỷ)$/i.test(clean(value));
+    if(next && !/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next) && !/^[-_]+$/.test(next) && !isServiceNote(next) && !isStatusValue(next)) return next;
   }
   // Nhận diện phân công SGN ở cả hai dạng: "SGN - Tên [SĐT]" và "Tên SGN [SĐT]".
   // Số điện thoại là tùy chọn; loại trừ dòng "SGN - Dịch vụ" vì đây không phải nhân viên.
@@ -734,7 +736,8 @@ function bodyEnglish(b,staff,phone,hotline){
  if(direction(b)==="ARRIVAL"){
   let intro=`${g}\n\nMy name is ${staff}, and I will be assisting you with the Fast Track arrival service for flight ${b.flight} at Tan Son Nhat International Airport on ${d}.\n\nI will be waiting for you before the immigration area, holding a welcome sign.\n\nFor your reference, please see the welcome sign I will be holding at the airport via the Google Drive link below.\n\nWelcome sign: ${WELCOME}`;
   const special=/vip|full|business class|thương gia/i.test(b.service);
-  if(!isPartner(b)&&b.pax<5&&!special) intro+=`\n\nAfter landing, please send me a message so I can assist you. If you cannot find me, please go to the clock area in the center of the immigration hall.`;
+  const pax=Number(b.pax)||b.names.length;
+  if(!isPartner(b)&&pax>0&&pax<5&&!special) intro+=`\n\nAfter landing, please send me a message so I can assist you. If you cannot find me, please go to the clock area in the center of the immigration hall.`;
   return intro+ref+"\n\n"+sig;
  }
  if(direction(b)==="DEPARTURE"&&isDomestic(b)&&!isPartner(b)){
@@ -771,15 +774,29 @@ function gmailLink(email,sub,body){
  u.searchParams.set("view","cm");u.searchParams.set("fs","1");u.searchParams.set("to",email);u.searchParams.set("su",sub);u.searchParams.set("body",body);
  return u.toString();
 }
+function calendarLink(b){
+ if(!isPartner(b)||direction(b)!=="DEPARTURE"||!b.date||!b.time)return "";
+ const start=parseDateTime(b.date,b.time);
+ if(!start||Number.isNaN(start.getTime()))return "";
+ const end=new Date(start.getTime()+30*60000);
+ const stamp=d=>d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0")+"T"+String(d.getHours()).padStart(2,"0")+String(d.getMinutes()).padStart(2,"0")+"00";
+ const title="Fast Track Departure – "+(b.order||b.flight)+" – "+(b.names[0]||"Guest");
+ const details=["Reminder: 3 hours before the flight/service.","Order: "+(b.order||""),"Guest(s): "+(b.names||[]).join(", "),"Flight: "+(b.flight||""),"Service date/time: "+b.date+" "+b.time,"Agency: "+normalizeAgency(b.agency),"Contact: "+(b.phone||""),"Email: "+(b.email||"")].join("\n");
+ const u=new URL("https://calendar.google.com/calendar/render");
+ u.searchParams.set("action","TEMPLATE");u.searchParams.set("text",title);u.searchParams.set("dates",stamp(start)+"/"+stamp(end));u.searchParams.set("details",details);u.searchParams.set("location","Tan Son Nhat International Airport");u.searchParams.set("ctz","Asia/Ho_Chi_Minh");u.searchParams.set("rem","180");
+ return u.toString();
+}
 function buildOne(b,staff,phone,hotline,staffVN){
  const dir=direction(b),agency=normalizeAgency(b.agency);
- const sub=subject(b), en=(b.flight&&b.date)?bodyEnglish(b,staff,phone,hotline):"", vi=(isPartner(b)&&b.flight&&b.date&&b.time)?bodyVietnamese(b,staffVN):"";
+ const sub=subject(b),en=(dir&&b.flight&&b.date)?bodyEnglish(b,staff,phone,hotline):"",vi=(dir&&isPartner(b)&&b.flight&&b.date&&b.time)?bodyVietnamese(b,staffVN):"";
  const intl=internationalPhone(b.phone,b.country),vn=localVNPhone(b.phone);
- const wa=intl&&en?`https://wa.me/${intl}?text=${encodeURIComponent(en)}`:"";
- const gm=b.email&&b.order&&b.flight&&b.date&&en?gmailLink(b.email,sub,en):"";
- const zalo=isPartner(b)&&vn?`https://zalo.me/${vn}`:"";
- const assigned=clean(b.staffAssign);
- const confirmed=/đã xác nhận/i.test(b.status);
+ const wa=intl&&en?"https://wa.me/"+intl+"?text="+encodeURIComponent(en):"";
+ const validEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email||"");
+ const gmailSubject=b.order?"Fast Track Airport Pick-up Service – Tan Son Nhat Airport - "+b.order:sub;
+ const gm=validEmail&&b.order&&b.flight&&b.date&&en?gmailLink(b.email,gmailSubject,en):"";
+ const zalo=isPartner(b)&&vn?"https://zalo.me/"+vn:"";
+ const calendar=calendarLink(b);
+ const assigned=clean(b.staffAssign),confirmed=/đã xác nhận/i.test(b.status);
  const unassigned=!assigned||assigned==="_"||/^[-_]+$/.test(assigned)||/chưa phân công/i.test(assigned);
  const warnings=[];
  if(!b.order)warnings.push("Thiếu mã order");
@@ -788,20 +805,21 @@ function buildOne(b,staff,phone,hotline,staffVN){
  if(!b.names.length)warnings.push("Thiếu tên khách");
  if(b.phone&&!intl)warnings.push("Không chuẩn hóa được số WhatsApp; kiểm tra số và quốc gia hộ chiếu");
  if(isPartner(b)&&!vn)warnings.push("Không tạo Zalo: thiếu hoặc số điện thoại không phải số Việt Nam hợp lệ");
- if(!b.email)warnings.push("Không có email khách");
+ if(!validEmail)warnings.push(b.email?"Email khách không hợp lệ":"Không có email khách");
  if(!sub)warnings.push("Chưa đủ dữ liệu tạo Subject");
  if(!confirmed)warnings.push("Trạng thái không phải Đã xác nhận");
- if(dir!=="ARRIVAL"&&!unassigned)warnings.push("Đã có nhân viên nhận việc: "+assigned);
+ if(dir==="DEPARTURE"&&!unassigned)warnings.push("Đã có nhân viên nhận việc: "+assigned);
+ if(!dir)warnings.push("Chưa xác định được loại dịch vụ ĐÓN/TIỄN");
  let copySubject=sub;
- // Review table rule: order ID appears in its own column, so remove it from review subject only.
- if(b.order&&copySubject) copySubject=copySubject.replace(b.order,"").replace(/\s+–\s+–\s+/g," – ").replace(/^ – | – $/g,"").replace(/🛫 – /,"🛫 ");
- return {...b,dir,agency,sub,en,vi,wa,gm,zalo,intl,vn,confirmed,unassigned,warnings,reviewSubject:copySubject,reviewPhone:intl?("+"+intl):(b.phone||"Không có số điện thoại")};
+ if(b.order&&copySubject)copySubject=copySubject.replace(b.order,"").replace(/\s+–\s+–\s+/g," – ").replace(/^ – | – $/g,"").replace(/🛫 – /,"🛫 ");
+ return {...b,dir,agency,sub,en,vi,wa,gm,zalo,calendar,intl,vn,confirmed,unassigned,warnings,reviewSubject:copySubject,reviewPhone:intl?("+"+intl):(b.phone||"Không có số điện thoại")};
 }
 function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:`<span class="muted">Không tạo được – thiếu dữ liệu phù hợp</span>`}
 function block(title,content){return `<h3>${title}</h3><pre class="body-content">${esc(content)}</pre>`}
 function cardHtml(b,i,cacheIndex){
- const links=`<div class="actions">${linkHtml(b.wa,"WhatsApp")}${linkHtml(b.gm,"Gmail")}${linkHtml(b.zalo,"Zalo")}</div>`;
- const internal=isDomestic(b)?internalHtml(b):"";
+ const links=`<div class="actions">${linkHtml(b.wa,"WhatsApp")}${linkHtml(b.gm,"Gmail")}${linkHtml(b.zalo,"Zalo")}${b.calendar?linkHtml(b.calendar,"Google Calendar"):""}</div>`;
+ const enoughInternalData=!!(b.order&&b.flight&&b.date&&b.time&&b.names.length);
+ const internal=isDomestic(b)&&enoughInternalData?internalHtml(b):"";
  const noteLines=[...(b.warnings||[])];
  if(b.skipReason)noteLines.push("Lý do ban đầu bị bỏ qua: "+b.skipReason);
  const notes=noteLines.length?`<div class="status warn"><b>Ghi chú:</b><br>${noteLines.map(esc).join("<br>")}</div>`:"";
@@ -813,7 +831,7 @@ function cardHtml(b,i,cacheIndex){
  <h3>LIÊN HỆ</h3>
  <div class="kv contact-edit-panel" style="margin:10px 0">
  <b>Bổ sung / chỉnh sửa thông tin liên hệ</b>
- <p class="hint">Nhập số điện thoại có mã quốc gia (ví dụ +84...) và/hoặc Gmail. Sau khi cập nhật, link WhatsApp và Gmail sẽ được tạo lại ngay cho booking này.</p>
+ <p class="hint">Nhập số điện thoại có mã quốc gia (ví dụ +84...) và/hoặc email hợp lệ. Link WhatsApp, Gmail và lịch nhắc (nếu thuộc booking TIỄN đối tác) sẽ được cập nhật theo dữ liệu mới.</p>
  <div class="controls">
  <div><label for="contactPhone-${cacheIndex}">Số điện thoại</label><input id="contactPhone-${cacheIndex}" type="tel" value="${esc(b.phone||"")}" placeholder="+84..." autocomplete="tel"></div>
  <div><label for="contactEmail-${cacheIndex}">Gmail / Email</label><input id="contactEmail-${cacheIndex}" type="email" value="${esc(b.email||"")}" placeholder="customer@gmail.com" autocomplete="email"></div>
@@ -831,9 +849,11 @@ function updateBookingContact(index){
  if(phone&&!/^[+\d][\d\s().-]{6,24}$/.test(phone)){toast("Số điện thoại chưa đúng định dạng. Hãy nhập cả mã quốc gia, ví dụ +84...",false);return;}
  b.phone=phone;b.email=email;b.intl=internationalPhone(phone,b.country);b.vn=localVNPhone(phone);b.reviewPhone=b.intl?("+"+b.intl):(phone||"Không có số điện thoại");
  b.wa=b.intl&&b.en?"https://wa.me/"+b.intl+"?text="+encodeURIComponent(b.en):"";
- b.gm=email&&b.order&&b.flight&&b.date&&b.en?gmailLink(email,b.sub,b.en):"";
+ const gmailSubject=b.order?"Fast Track Airport Pick-up Service – Tan Son Nhat Airport - "+b.order:b.sub;
+ b.gm=email&&b.order&&b.flight&&b.date&&b.en?gmailLink(email,gmailSubject,b.en):"";
  b.zalo=isPartner(b)&&b.vn?"https://zalo.me/"+b.vn:"";
- b.warnings=(b.warnings||[]).filter(x=>!x.startsWith("Không chuẩn hóa được số WhatsApp")&&!x.startsWith("Không có email khách"));
+ b.calendar=calendarLink(b);
+ b.warnings=(b.warnings||[]).filter(x=>!x.startsWith("Không chuẩn hóa được số WhatsApp")&&!x.startsWith("Không có email khách")&&!x.startsWith("Email khách không hợp lệ"));
  if(phone&&!b.intl)b.warnings.push("Không chuẩn hóa được số WhatsApp; kiểm tra số và quốc gia hộ chiếu");
  if(!email)b.warnings.push("Không có email khách");
  renderFilteredBookings();saveReviewItems([b]);toast("Đã cập nhật liên hệ và lưu lại lịch sử booking.");
