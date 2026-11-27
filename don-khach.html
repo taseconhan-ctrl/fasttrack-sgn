@@ -309,10 +309,10 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 <main>
 <div style="margin-bottom:12px"><a class="back" href="index.html">← Trang chủ</a></div>
 <section class="panel">
-<h2>1. Dán dữ liệu booking</h2>
+<h2>1. Đồng bộ booking vào danh sách chung</h2>
 <label for="raw">Dán dữ liệu booking (Excel / Google Sheets hoặc nội dung chi tiết copy từ booking)</label>
 <textarea id="raw" placeholder="Dán trực tiếp dữ liệu booking đã copy (mỗi trường trên một dòng) hoặc bảng Excel/Google Sheets..."></textarea>
-<div class="controls"><button id="import">Chuẩn hóa & nạp danh sách</button><button class="secondary" id="append">Thêm vào danh sách hiện tại</button><button class="secondary" id="clearInput">Xóa ô nhập</button></div>
+<div class="controls"><button id="import">Đồng bộ vào danh sách chung</button><button class="secondary" id="append">Thêm / cập nhật booking</button><button class="secondary" id="clearInput">Xóa ô nhập</button></div>
 <p class="hint">Tự chuẩn hóa Agency, Flight, Name, Time, Type và nhân viên; tách ARRIVAL / DEPARTURE; sắp xếp theo giờ bay. Hỗ trợ bảng 9 cột, bảng 7 cột chuẩn và nội dung chi tiết booking dạng dọc (mỗi trường một dòng: Order, sân bay, chuyến bay, dịch vụ, ngày giờ, tên khách, nhân viên...).</p>
 <div id="status" class="status">Chưa nạp dữ liệu.</div>
 </section>
@@ -325,12 +325,12 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 <div><label for="statusFilter">Trạng thái đón</label><select id="statusFilter"><option value="">Tất cả trạng thái</option><option>Chưa phân công</option><option>Đã phân công</option><option>Đang đón</option><option>Đã đón</option><option>Không gặp khách</option></select></div>
 <div style="flex:0 0 auto;min-width:auto"><button class="secondary" id="clearDate">Xóa lọc ngày</button></div>
 </div>
-<p class="hint">Chọn một ngày để chỉ xem booking đúng ngày đó. Điều phối viên phân công nhân viên và cập nhật trạng thái; Booking Arrival FULL được tô màu theo Agency.</p>
+<p class="hint">Chọn một ngày để chỉ xem booking đúng ngày đó. NV phụ trách được cập nhật tại đây và đồng bộ sang danh sách chung. NV trực tiếp đón được ghi nhận riêng trong Ứng dụng đón khách.</p>
 </section>
 <section class="panel">
 <div class="top"><h2><span class="sectiontag">ARRIVAL</span> Danh sách khách đón</h2><span class="count" id="arrivalCount">0 booking</span></div>
 <div class="controls"><button id="copyArrival">Copy ARRIVAL</button><button class="secondary" id="exportArrival">Xuất ARRIVAL TSV</button></div><div id="arrivalFullLegend" class="hint" style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0"></div>
-<div class="tablewrap"><table><thead><tr><th>Agency</th><th>Flight</th><th>Name</th><th>Ngày</th><th>Giờ</th><th>Type</th><th>Order</th><th>NV phụ trách</th><th>Trạng thái</th><th>Cập nhật lúc</th></tr></thead><tbody id="arrivalRows"></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th>Agency</th><th>Flight</th><th>Name</th><th>Ngày</th><th>Giờ</th><th>Type</th><th>Order</th><th>NV phụ trách</th><th>Trạng thái vận hành</th><th>Cập nhật lúc</th></tr></thead><tbody id="arrivalRows"></tbody></table></div>
 </section>
 <section class="panel">
 <div class="top"><h2><span class="sectiontag">DEPARTURE</span> Danh sách khách tiễn</h2><span class="count" id="departureCount">0 booking</span></div>
@@ -344,7 +344,17 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 <script>
 "use strict";
 const $=id=>document.getElementById(id), KEY="ta_se_co_arrival_list_v2";
-let data=[];try{const v=JSON.parse(localStorage.getItem(KEY)||"[]");if(Array.isArray(v))data=v;}catch(e){}
+let data=[];
+
+const API="https://xyhvgttywjleirsiabve.supabase.co/functions/v1/staff-bookings";
+const PUBLISHABLE="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
+const SESSION_KEY="fasttrack_staff_pin_session_v1";
+function sessionToken(){try{return JSON.parse(localStorage.getItem(SESSION_KEY)||"null")?.token||""}catch{return ""}}
+async function cloudCall(action,payload={}){const token=sessionToken();if(!token)throw new Error("Phiên đăng nhập không tồn tại. Vui lòng đăng nhập lại.");const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":PUBLISHABLE,"Authorization":"Bearer "+token},body:JSON.stringify({action,...payload})});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||"Không thể đồng bộ booking.");return d}
+function fromCloud(b){return [b.agency||"",b.flight||"",b.guest_name||"",b.service_time||"",b.service_type||"",b.order_id||"",b.responsible_staff||"",b.service_date||"",b.status||"Chưa phân công",b.updated_at?new Date(b.updated_at).toLocaleString("vi-VN"):"",b.id];}
+async function loadCloud(){ $("status").textContent="Đang tải danh sách booking chung…";const d=await cloudCall("list");data=(d.bookings||[]).map(fromCloud).filter(r=>/^Arrival|^Departure/i.test(r[4]));render();$("status").textContent="Đã đồng bộ "+data.length+" booking từ danh sách chung.";}
+async function syncParsed(rows){const bookings=rows.map(r=>({agency:r[0],flight:r[1],guest_name:r[2],service_time:r[3],service_type:r[4],order_id:r[5],responsible_staff:r[6]||null,service_date:r[7]}));const d=await cloudCall("source_sync",{bookings});await loadCloud();return d;}
+
 const HEAD=["Agency","Flight","Name","Date","Time","Type","Order","NV phụ trách","Trạng thái","Cập nhật lúc"];
 const STAFF=["Tuấn Khánh","Minh Khoa","Văn Diệp","Việt Quang","Đồng Hưng","Lý Ngọc Dũng","Ngọc Nhân","Thanh Hằng","Nhật Quang","Vũ Văn Bình","Trung An"];
 const STATUSES=["Chưa phân công","Đã phân công","Đang đón","Đã đón","Không gặp khách"];
@@ -411,21 +421,21 @@ function renderTable(id,rows){
  const staffOptions=current=>'<option value="">Chưa phân công</option>'+[...new Set([...STAFF,...(current?[current]:[])])].map(s=>'<option value="'+esc(s)+'" '+(s===current?'selected':'')+'>'+esc(s)+'</option>').join("");
  const statusOptions=current=>STATUSES.map(s=>'<option '+(s===(current||"Chưa phân công")?'selected':'')+'>'+s+'</option>').join("");
  $(id).innerHTML=rows.length?rows.map(r=>{const full=id==="arrivalRows"&&r[4]==="Arrival FULL",bg=full?agencyColor(r[0]):"",idx=data.indexOf(r);return '<tr class="'+(full?"arrival-full-row":"")+'" style="'+(full?"background:"+bg:"")+'"><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[7]||"Chưa có ngày")+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td><td>'+esc(r[5])+'</td><td><select aria-label="Nhân viên phụ trách" data-staff="'+idx+'">'+staffOptions(r[6])+'</select></td><td><select aria-label="Trạng thái đón" data-status="'+idx+'">'+statusOptions(r[8])+'</select></td><td>'+esc(r[9]||"—")+'</td></tr>';}).join(""):'<tr><td colspan="10" style="text-align:center;color:#68776d">Không có booking phù hợp với ngày / bộ lọc đã chọn.</td></tr>';
- document.querySelectorAll("[data-staff]").forEach(el=>el.addEventListener("change",e=>{const row=data[Number(e.target.dataset.staff)];row[6]=e.target.value;row[8]=e.target.value?(row[8]&&row[8]!=="Chưa phân công"?row[8]:"Đã phân công"):"Chưa phân công";row[9]=new Date().toLocaleString("vi-VN");save();}));
- document.querySelectorAll("[data-status]").forEach(el=>el.addEventListener("change",e=>{const row=data[Number(e.target.dataset.status)];row[8]=e.target.value;row[9]=new Date().toLocaleString("vi-VN");save();}));
+ document.querySelectorAll("[data-staff]").forEach(el=>el.addEventListener("change",async e=>{const row=data[Number(e.target.dataset.staff)];if(!row||!row[10])return;const old=row[6];row[6]=e.target.value;try{await cloudCall("update_responsible",{id:row[10],responsible_staff:row[6]});row[9]=new Date().toLocaleString("vi-VN");save();$("status").textContent="Đã cập nhật NV phụ trách trên booking gốc.";}catch(err){row[6]=old;e.target.value=old;$("status").textContent=err.message;}}));
+
 }
 function render(){const arr=rowsFor("Arrival"),dep=rowsFor("Departure");$("count").textContent=filtered().length+" / "+data.length+" booking";$("arrivalCount").textContent=arr.length+" booking";$("departureCount").textContent=dep.length+" booking";const staffs=[...new Set([...STAFF,...data.map(r=>r[6]).filter(Boolean)])].sort();const old=$("staffFilter").value;$("staffFilter").innerHTML='<option value="">Tất cả nhân viên</option>'+staffs.map(s=>'<option value="'+esc(s)+'">'+esc(s)+'</option>').join("");$("staffFilter").value=staffs.includes(old)?old:"";renderTable("arrivalRows",arr);renderTable("departureRows",dep);const fullAgencies=[...new Set(arr.filter(r=>r[4]==="Arrival FULL").map(r=>r[0]||"Chưa rõ"))].sort();$("arrivalFullLegend").innerHTML=fullAgencies.map(a=>'<span style="display:inline-flex;align-items:center;gap:5px;background:'+agencyColor(a)+';padding:3px 8px;border-radius:6px;color:#263348">'+esc(a)+'</span>').join("");document.querySelectorAll("[data-index]").forEach(el=>el.addEventListener("change",e=>{data[Number(e.target.dataset.index)][6]=e.target.value.trim();save();}));}
-function save(){localStorage.setItem(KEY,JSON.stringify(data));render();}
+function save(){render();}
 function download(rows,name){try{if(!rows.length){$("status").textContent="Không có booking để xuất theo bộ lọc hiện tại.";return;}const content="\uFEFF"+tsv(rows).replace(/\n/g,"\r\n");const blob=new Blob([content],{type:"text/tab-separated-values;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name+".tsv";a.style.display="none";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);$("status").textContent="Đang tải file "+name+".tsv ("+rows.length+" booking). Nếu chưa thấy file, kiểm tra mục Downloads hoặc quyền tải xuống của trình duyệt.";}catch(e){$("status").textContent="Xuất file thất bại: "+e.message;}}
 async function copy(rows,label){try{await navigator.clipboard.writeText(tsv(rows));$("status").textContent="Đã sao chép "+label+" ("+rows.length+" booking).";}catch(e){$("status").textContent="Trình duyệt không cho phép sao chép tự động. Hãy thử mở trang bằng HTTPS.";}}
-$("import").onclick=()=>{const rows=parseRows($("raw").value);if(!rows.length){$("status").textContent="Không tìm thấy booking có Type hợp lệ. Kiểm tra các cột và Type Arrival / Arrival FULL / Departure Kci / Departure FULL.";return;}data=rows;save();const missingDate=rows.filter(r=>!r[7]).length;$("status").textContent="Đã nạp "+rows.length+" booking: "+rows.filter(r=>r[4].startsWith("Arrival")).length+" ARRIVAL, "+rows.filter(r=>r[4].startsWith("Departure")).length+" DEPARTURE. "+(missingDate?"Cảnh báo: "+missingDate+" booking không có ngày trong dữ liệu nguồn, hãy nhập dữ liệu có cả ngày và giờ.":"Tất cả booking đều có ngày.");};
-$("append").onclick=()=>{const rows=parseRows($("raw").value);if(!rows.length){$("status").textContent="Không tìm thấy booking hợp lệ để thêm.";return;}data.push(...rows);save();$("status").textContent="Đã thêm "+rows.length+" booking. Tổng cộng "+data.length+" booking.";};
+$("import").onclick=async()=>{const rows=parseRows($("raw").value);if(!rows.length){$("status").textContent="Không tìm thấy booking có Type hợp lệ.";return;}const missing=rows.filter(r=>!r[7]).length;if(missing){$("status").textContent="Có "+missing+" booking thiếu ngày phục vụ. Hãy bổ sung ngày trước khi đồng bộ.";return;}$("import").disabled=true;try{const d=await syncParsed(rows);$("status").textContent="Đã đồng bộ "+rows.length+" dòng. Booking mới: "+d.created+" · Đã cập nhật: "+d.updated+"."; }catch(e){$("status").textContent=e.message;}finally{$("import").disabled=false;}};
+$("append").onclick=async()=>{const rows=parseRows($("raw").value);if(!rows.length){$("status").textContent="Không tìm thấy booking hợp lệ để thêm.";return;}if(rows.some(r=>!r[7])){$("status").textContent="Có booking thiếu ngày phục vụ, chưa thể đồng bộ.";return;}$("append").disabled=true;try{const d=await syncParsed(rows);$("status").textContent="Đã thêm/cập nhật vào danh sách chung. Mới: "+d.created+" · Cập nhật: "+d.updated+".";}catch(e){$("status").textContent=e.message;}finally{$("append").disabled=false;}};
 $("clearInput").onclick=()=>{$("raw").value="";};
-$("clearAll").onclick=()=>{if(confirm("Xóa toàn bộ danh sách đã lưu trên trình duyệt này?")){data=[];save();$("status").textContent="Đã xóa toàn bộ danh sách trên thiết bị này.";}}
+$("clearAll").hidden=true;
 $("search").oninput=render;$("staffFilter").onchange=render;$("filterDate").onchange=render;$("statusFilter").onchange=render;$("clearDate").onclick=()=>{$("filterDate").value="";render();};
 $("copyArrival").onclick=()=>copy(rowsFor("Arrival"),"ARRIVAL");$("copyDeparture").onclick=()=>copy(rowsFor("Departure"),"DEPARTURE");$("copyAll").onclick=()=>copy([...rowsFor("Arrival"),...rowsFor("Departure")],"toàn bộ danh sách");
 $("exportArrival").onclick=()=>download(rowsFor("Arrival"),"arrival-fasttrack-sgn");$("exportDeparture").onclick=()=>download(rowsFor("Departure"),"departure-fasttrack-sgn");$("exportAll").onclick=()=>download([...rowsFor("Arrival"),...rowsFor("Departure")],"fasttrack-sgn");
-render();
+loadCloud().catch(e=>{$("status").textContent=e.message;});
 </script>
 
 <script id="ft-shell-navigation">(()=>{const app=document.getElementById("ftApp"),toggle=document.getElementById("ftMenuToggle"),side=document.getElementById("ftSidebar");if(!app||!toggle||!side)return;
