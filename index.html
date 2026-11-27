@@ -740,6 +740,31 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 .ft-content table tbody tr:nth-child(even) td{background:#1d1c19!important}
 .ft-content table tbody tr:hover td{background:#29251c!important}
 
+
+/* Semantic status colors: dark surfaces with clear success/warning/error contrast. */
+.ft-content .status{
+  background:#211f1a!important;color:#e8dfcc!important;
+  border:1px solid #514a3b!important
+}
+.ft-content .status.good,.ft-content .pill.good{
+  background:#183126!important;color:#a8dfbd!important;border-color:#356c4d!important
+}
+.ft-content .status.warn,.ft-content .pill.warn{
+  background:#352b18!important;color:#f0d18b!important;border-color:#806637!important
+}
+.ft-content .status.bad,.ft-content .pill.bad{
+  background:#392020!important;color:#f0b9b9!important;border-color:#854848!important
+}
+.ft-content .count,.ft-content .pill,.ft-content .sectiontag,.ft-content .tag{
+  background:#28251e!important;color:#e5d4ae!important;border:1px solid #514a3b!important
+}
+.ft-content :focus-visible{
+  outline:2px solid var(--ft-gold-hi)!important;outline-offset:2px!important;
+  box-shadow:0 0 0 3px #b89b5e24!important
+}
+.ft-content input[type="checkbox"],.ft-content input[type="radio"]{
+  accent-color:var(--ft-gold)!important
+}
 </style>
 </head>
 <body>
