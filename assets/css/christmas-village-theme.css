@@ -221,3 +221,69 @@ html body #bookingMain .booking .contact-edit-panel .save-contact{
   color:#fff!important;
   -webkit-text-fill-color:#fff!important;
 }
+
+
+/* SITE-WIDE BLUE ELIMINATION — evergreen / burgundy replacement palette.
+   Loaded last on all application pages to neutralize legacy inline/theme accents. */
+:root{
+  --ft-blue:#1b7047!important;
+  --ft-primary:#1b7047!important;
+  --ft-link:#1b7047!important;
+  --ft-accent:#1b7047!important;
+  --ft-focus:#4d9a68!important;
+}
+html body a:not(.linkbtn):not(.workspace-choice),
+html body a:not(.linkbtn):not(.workspace-choice):visited{
+  color:#2b8052!important;
+}
+html body a:hover:not(.linkbtn):not(.workspace-choice){color:#a33a3a!important}
+html body .workspace-choice.composer-choice{
+  border-left-color:#1b7047!important;
+}
+html body .workspace-choice.archive-choice{
+  border-left-color:#1b7047!important;
+}
+html body .workspace-icon,
+html body .archive-choice .workspace-icon{
+  background:#e5f0e6!important;color:#174b35!important;
+}
+html body .workspace-arrow,
+html body .archive-choice .workspace-arrow{
+  color:#1b7047!important;
+}
+html body button:not(.danger):not(.delete):not(.back),
+html body .btn:not(.danger),
+html body .linkbtn:not(.secondary),
+html body .hero-cta{
+  --button-accent:#1b7047;
+}
+html body button:not(.danger):not(.delete):not(.back):not(.secondary):not(.ghost),
+html body .btn:not(.danger):not(.secondary):not(.ghost),
+html body .linkbtn:not(.secondary){
+  background-color:#1b7047!important;
+  border-color:#4d9a68!important;
+}
+html body button.danger,
+html body button.delete,
+html body .btn.danger{
+  background-color:#8e3435!important;border-color:#c36b67!important;
+}
+html body input,html body select,html body textarea{
+  accent-color:#1b7047!important;
+}
+html body :focus-visible{
+  outline-color:#4d9a68!important;
+}
+html body .active,
+html body .selected,
+html body [aria-selected="true"],
+html body [aria-pressed="true"]{
+  border-color:#4d9a68!important;
+}
+html body .workspace-choice:hover{
+  border-color:#4d9a68!important;
+}
+html body .ft-nav-link.active,
+html body .ft-nav-link:hover{
+  background:#24483e!important;color:#e7f1e7!important;border-color:#4d765d!important;
+}
