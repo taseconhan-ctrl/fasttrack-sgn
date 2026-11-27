@@ -450,7 +450,17 @@ const STAFF_ALIASES = {
   "Hung": { name: "Hung", vnName: "Hưng", phone: "+84 816226474" },
   "An": { name: "An", vnName: "An", phone: "+84 366404159" },
   "khanh": { name: "Khanh", vnName: "Khanh", phone: "+84 869392539" },
-  "nhatquang": { name: "Quang", vnName: "Nhật Quang", phone: "+84 366884210" }
+  "nhatquang": { name: "Quang", vnName: "Nhật Quang", phone: "+84 366884210" },
+  "Tuấn Khanh": { name: "Khanh", vnName: "Tuấn Khanh", phone: "+84 869392539" },
+  "Minh Khoa": { name: "Khoa", vnName: "Minh Khoa", phone: "+84 964845177" },
+  "Văn Diệp": { name: "Diep", vnName: "Văn Diệp", phone: "+84 346122841" },
+  "Việt Quang": { name: "Quang", vnName: "Việt Quang", phone: "+84 989902101" },
+  "Đông Hưng": { name: "Hung", vnName: "Đông Hưng", phone: "+84 816226474" },
+  "Ngọc Dương": { name: "Duong", vnName: "Ngọc Dương", phone: "" },
+  "Ngọc Nhân": { name: "Nhan", vnName: "Ngọc Nhân", phone: "+84 867802129" },
+  "Thanh Hùng": { name: "Hung", vnName: "Thanh Hùng", phone: "" },
+  "Vũ Văn Bình": { name: "Binh", vnName: "Vũ Văn Bình", phone: "+84 915341007" },
+  "Trung An": { name: "An", vnName: "Trung An", phone: "+84 366404159" }
 };
 function allStaffProfiles(){ return {...STAFF_PROFILES,...STAFF_ALIASES}; }
 function renderStaffProfileOptions(){
@@ -524,6 +534,10 @@ function getValueAfter(lines, label){
   return "";
 }
 function getAssignedStaff(lines){
+  const isServiceNote=value=>{
+    const normalized=clean(value).replace(/\s+\+?\d[\d\s().-]{5,}\d$/,"").trim();
+    return /^SGN\s*[-–—]?\s*dịch vụ(?:\s+fast track)?$/i.test(normalized);
+  };
   const target="nv nhận việc";
   const i=lines.findIndex(x=>{
     const t=x.trim().replace(/^\*+|\*+$/g,"").toLocaleLowerCase("vi");
@@ -532,21 +546,17 @@ function getAssignedStaff(lines){
   if(i>=0){
     const line=lines[i].trim().replace(/^\*+|\*+$/g,"");
     const inline=line.replace(/^nv nhận việc\s*[:：]?/i,"").trim();
-    const isServiceNote=value=>/^SGN\s*[-–—]?\s*dịch vụ(?:\s+fast track)?$/i.test(clean(value));
     if(inline && !/^[-_]+$/.test(inline) && !isServiceNote(inline)) return inline;
     const next=clean(lines[i+1]||"");
     const isStatusValue=value=>/^(?:đã xác nhận|chờ xác nhận|chưa xác nhận|confirmed|pending|cancelled|canceled|đã hủy|đã huỷ|hủy|huỷ)$/i.test(clean(value));
     if(next && !/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next) && !/^[-_]+$/.test(next) && !isServiceNote(next) && !isStatusValue(next)) return next;
   }
-  // Nhận diện phân công SGN ở cả hai dạng: "SGN - Tên [SĐT]" và "Tên SGN [SĐT]".
-  // Số điện thoại là tùy chọn; loại trừ dòng "SGN - Dịch vụ" vì đây không phải nhân viên.
   for(const raw of lines){
     const value=raw.trim().replace(/^[-*•\s]+|[-*\s]+$/g,"");
-    if(!value) continue;
+    if(!value || isServiceNote(value)) continue;
     if(/^nhatquang$/i.test(value)) return "nhatquang";
-    if(/^SGN\s*[-–—]?\s*(?:dịch vụ|dịch vụ fast track)$/i.test(value)) continue;
     let match=value.match(/^SGN\s*[-–—]?\s*(.+?)(?:\s+\+?\d[\d\s().-]{5,}\d)?$/i);
-    if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim())) return match[1].trim();
+    if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim()) && !/^dịch vụ(?:\s+fast track)?$/i.test(match[1].trim())) return match[1].trim();
     match=value.match(/^(.+?)\s+SGN(?:\s+\+?\d[\d\s().-]{5,}\d)?$/i);
     if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim())) return match[1].trim();
   }
