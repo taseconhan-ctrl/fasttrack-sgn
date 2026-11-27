@@ -286,7 +286,93 @@ footer{margin-top:28px!important}
  .home-hero h2{font-size:24px!important}
 }
 
-</style></head><body>
+</style><style id="fasttrack-ux-v3">
+/* UX V3 — operations console visual system */
+:root{
+ --ft-navy:#10243b;--ft-navy-2:#183653;--ft-green:#087e68;--ft-green-dark:#06614f;
+ --ft-bg:#edf2f7;--ft-card:#fff;--ft-ink:#17283b;--ft-muted:#66788b;
+ --ft-line:#d8e1ea;--ft-shadow:0 12px 32px rgba(16,36,59,.075);--ft-radius:18px;
+}
+html{background:#edf2f7!important}
+body{background:radial-gradient(ellipse at 12% 0%,rgba(8,126,104,.08),transparent 34%),linear-gradient(180deg,#eaf0f5 0,#f4f7fa 360px)!important;color:var(--ft-ink)!important}
+.site-nav{position:sticky!important;top:0!important;min-height:68px!important;padding:10px max(22px,calc((100% - 1360px)/2))!important;background:rgba(255,255,255,.94)!important;backdrop-filter:blur(16px)!important;border-bottom:1px solid #dce5ed!important;box-shadow:0 5px 20px rgba(16,36,59,.055)!important}
+.nav-brand{font-size:12px!important;letter-spacing:1.1px!important;color:#10243b!important}
+.nav-brand:before{width:36px!important;height:36px!important;border-radius:12px!important;background:linear-gradient(145deg,#0b8068,#075a4b)!important;color:white!important;box-shadow:0 5px 12px #087e6833!important}
+.nav-links{gap:7px!important}
+.nav-links a{padding:10px 14px!important;border-radius:11px!important;font-size:12px!important;font-weight:750!important;color:#53677b!important}
+.nav-links a[href="index.html"]{ }
+body:has(#bookingMain) .nav-links a[href="soan-booking.html"],
+body:has(#schedule) .nav-links a[href="xep-lich.html"],
+body:has(#arrivalRows) .nav-links a[href="don-khach.html"],
+body:has(#staffAuthPanel) .nav-links a[href="index.html"]{background:#e6f3ef!important;color:#08745f!important;border:1px solid #cce6dc!important}
+header{position:relative!important;overflow:hidden!important;background:linear-gradient(112deg,#10243b 0%,#173c56 64%,#0c5e53 100%)!important;border:0!important;border-bottom:4px solid #11a184!important;padding:36px max(22px,calc((100% - 1360px)/2)) 34px!important}
+header:after{content:"";position:absolute;width:380px;height:380px;right:8%;top:-250px;border:1px solid #ffffff18;border-radius:50%;box-shadow:0 0 0 38px #ffffff08,0 0 0 78px #ffffff06;pointer-events:none}
+header h1{position:relative;z-index:1;color:#fff!important;font-size:clamp(25px,3vw,35px)!important;letter-spacing:-.6px!important}
+header p{position:relative;z-index:1;color:#d2e0e9!important;max-width:800px!important;font-size:13px!important}
+header .home-link,header a[style]{position:relative;z-index:1;background:#ffffff15!important;color:#fff!important;border:1px solid #ffffff32!important;border-radius:11px!important}
+main,.wrap,#bookingMain{width:min(1360px,calc(100% - 44px))!important;max-width:1360px!important;margin:28px auto 64px!important}
+.panel,.booking,.review{position:relative!important;padding:25px!important;margin:0 0 19px!important;border:1px solid #dce5ed!important;border-radius:17px!important;background:rgba(255,255,255,.97)!important;box-shadow:0 8px 26px rgba(16,36,59,.055)!important}
+.panel h2,.booking h2,.review h2{display:flex!important;align-items:center!important;gap:11px!important;margin:0 0 19px!important;padding:0 0 14px!important;border-bottom:1px solid #e8edf2!important;color:#142d46!important;font-size:18px!important;font-weight:850!important;letter-spacing:-.2px!important}
+.panel h2:before,.booking h2:before,.review h2:before{content:"";width:5px;height:23px;flex:0 0 5px;border-radius:8px;background:linear-gradient(180deg,#12a184,#08745f)}
+.intro,.home-hero{position:relative!important;overflow:hidden!important;padding:30px 34px!important;border:1px solid #234c62!important;border-radius:20px!important;border-left:0!important;background:linear-gradient(112deg,#10243b,#17445a 65%,#0c6a5a)!important;box-shadow:0 18px 38px rgba(16,36,59,.17)!important;color:#fff!important}
+.home-hero:after{content:"";position:absolute;right:-50px;bottom:-180px;width:390px;height:390px;border:1px solid #ffffff22;border-radius:50%;box-shadow:0 0 0 35px #ffffff0a,0 0 0 75px #ffffff08}
+.home-hero .hero-kicker{position:relative;z-index:1;color:#7fe0c7!important;letter-spacing:1.8px!important}
+.home-hero h2{position:relative;z-index:1;color:#fff!important;font-size:clamp(28px,4vw,40px)!important;letter-spacing:-1px!important}
+.home-hero p{position:relative;z-index:1;color:#d5e4eb!important;font-size:14px!important}
+#staffAuthPanel{border:1px solid #d6e3e9!important;border-top:0!important;border-radius:19px!important;box-shadow:0 16px 38px rgba(16,36,59,.1)!important}
+#staffAuthPanel h2{font-size:23px!important}
+#staffAuthPanel .auth-mode{padding:5px!important;border:1px solid #e1e9ef!important;border-radius:12px!important;background:#f3f6f8!important}
+#staffAuthPanel .auth-mode button{min-height:42px!important;border-radius:9px!important}
+#staffAuthPanel #staffPinSubmit{min-height:49px!important;border-radius:12px!important;background:linear-gradient(110deg,#087e68,#0a987b)!important;box-shadow:0 8px 18px #087e682b!important}
+.menu .item{position:relative!important;overflow:hidden!important;min-height:238px!important;padding:24px!important;border:1px solid #dce5ed!important;border-top:0!important;border-radius:18px!important;background:#fff!important;box-shadow:0 10px 26px rgba(16,36,59,.06)!important;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease!important}
+.menu .item:before{content:"";position:absolute;inset:0 0 auto;height:5px;background:linear-gradient(90deg,#0b8068,#4bc3a1)}
+.menu .item:nth-child(2):before{background:linear-gradient(90deg,#367db1,#74b8e5)}
+.menu .item:nth-child(3):before{background:linear-gradient(90deg,#bb812d,#e9bd69)}
+.menu .item:hover{transform:translateY(-5px)!important;box-shadow:0 18px 34px rgba(16,36,59,.12)!important;border-color:#b9d4cc!important}
+.menu .item .icon{width:54px!important;height:54px!important;border-radius:15px!important;background:#e8f4ef!important;color:#08745f!important}
+.menu .item:nth-child(2) .icon{background:#eaf2fa!important;color:#3476a8!important}
+.menu .item:nth-child(3) .icon{background:#fbf2e4!important;color:#a66b19!important}
+.menu .item h3{font-size:18px!important;letter-spacing:-.25px!important}
+.menu .item p{font-size:13px!important;line-height:1.65!important}
+.menu .item .go{display:flex!important;align-items:center!important;justify-content:space-between!important;margin-top:auto!important;padding-top:14px!important;border-top:1px solid #edf1f4!important;font-size:12px!important}
+button,.linkbtn,.back,.hero-cta{min-height:43px!important;padding:10px 17px!important;border-radius:11px!important;font-size:13px!important;font-weight:800!important}
+button:not(.secondary):not(.ghost):not(.danger),.linkbtn:not(.secondary),.back,.hero-cta{background:linear-gradient(110deg,#087e68,#0a987b)!important;border-color:#087e68!important;box-shadow:0 5px 13px rgba(8,126,104,.15)!important}
+button.secondary,.linkbtn.secondary,button.ghost,.ghost{background:#f4f7f9!important;border-color:#d8e2e9!important;color:#3e5368!important}
+button.danger{background:#fff4f3!important;color:#a53e42!important;border-color:#eccdcd!important}
+input:not([type=checkbox]):not([type=radio]),select,textarea{min-height:45px!important;border-radius:11px!important;border-color:#d3dee7!important;background:#fbfcfd!important;padding:11px 13px!important}
+textarea{min-height:180px!important;background:linear-gradient(#fbfcfd,#fff)!important}
+input:focus,select:focus,textarea:focus{background:#fff!important;border-color:#0c9b7d!important;box-shadow:0 0 0 4px rgba(8,126,104,.11)!important}
+label{font-size:12px!important;letter-spacing:.1px!important;color:#42576c!important}
+.status{border-radius:12px!important;padding:13px 15px!important;font-size:13px!important}
+.count,.pill,.sectiontag,.tag{padding:6px 11px!important;border-radius:8px!important;background:#edf3f7!important;font-size:11px!important;letter-spacing:.2px!important}
+.tablewrap{border-radius:14px!important;border-color:#dce5ed!important;box-shadow:0 5px 16px rgba(16,36,59,.035)!important}
+table{font-size:12px!important}
+th{padding:12px 11px!important;background:#eaf0f5!important;color:#31485e!important;text-transform:uppercase!important;font-size:10px!important;letter-spacing:.55px!important}
+td{padding:11px!important}
+tbody tr:nth-child(even) td{background:#f7f9fb!important}
+tbody tr:hover td{background:#eaf5f1!important}
+#globalStaffAuthBar,#cloudAccountBar{border-radius:13px!important;border-color:#d8e3e9!important;box-shadow:0 7px 20px rgba(16,36,59,.08)!important}
+.staffgrid{gap:15px!important}
+.staff{border-radius:14px!important;padding:17px!important;box-shadow:0 5px 16px rgba(16,36,59,.04)!important}
+.summary{gap:12px!important}
+.metric{border-radius:14px!important;padding:15px!important;background:linear-gradient(145deg,#fff,#f5f8fa)!important}
+.metric b{font-size:25px!important;letter-spacing:-.7px!important}
+.archive-entry .linkbtn{display:flex!important;justify-content:center!important;min-height:48px!important}
+footer{background:#10243b!important}
+@media(max-width:760px){
+ .site-nav{padding:8px 12px!important;min-height:auto!important}
+ .nav-brand{margin-bottom:7px!important}
+ .nav-links{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .nav-links a{justify-content:center!important;background:#f4f7f9!important}
+ header{padding:25px 18px!important}
+ main,.wrap,#bookingMain{width:calc(100% - 22px)!important;margin:17px auto 36px!important}
+ .panel,.booking,.review{padding:17px!important;border-radius:14px!important}
+ .home-hero{padding:24px 21px!important}
+ .menu .item{min-height:0!important;padding:20px!important}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+</style>
+</head><body>
 <header><a class="home-link" href="index.html" aria-label="Quay về trang chính">← Trang chính</a><h1>📅 XẾP LỊCH NHÂN SỰ – FAST TRACK SGN</h1><p>Tạo lịch toàn tháng theo định mức, ca nối tháng, OFF/P và quota C.</p></header><nav class="site-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav>
 <main class="wrap">
 <section class="panel"><h2>1. Tháng và thao tác</h2><div class="toolbar"><label>Tháng lập lịch <input type="month" id="month"></label><button id="check" class="secondary">✓ Kiểm tra điều kiện</button><button id="save" class="secondary">Lưu lịch</button><button id="export" class="secondary">Xuất CSV</button><button id="clear" class="danger">Xóa lịch tháng</button></div><p class="muted">Tự động xếp sẽ thử nhiều cấu hình ca C và ngày nghỉ, sau đó chọn lịch đạt điều kiện có điểm cân bằng tốt nhất. Dữ liệu được lưu trên trình duyệt này.</p></section>
