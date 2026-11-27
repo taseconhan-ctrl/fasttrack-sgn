@@ -495,12 +495,12 @@ function splitGuestNames(s){
 function normalizeAgency(s){
   const x=(s||"").toLowerCase();
   if(/linkcare|vietinbank|\buob\b/.test(x)) return "LINKCARE";
-  if(/tô hòa|tô quà|urbox/.test(x)) return "URBOX";
+  if(/tô hòa|to hoa|tô quà|to quà|to qua|urbox/.test(x)) return "URBOX";
   if(/viettel/.test(x)) return "VIETTEL";
   if(/ctrip/.test(x)) return "Ctrip";
   if(/dragon\s*pass/.test(x)) return "Dragon Pass";
   if(/klook/.test(x)) return "KLOOK";
-  if(/trip\.com/.test(x)) return "Trip";
+  if(/trip\.com/.test(x)) return "Trip.com";
   if(/kkday/.test(x)) return "KKday";
   return clean(s);
 }
@@ -532,9 +532,10 @@ function getAssignedStaff(lines){
   if(i>=0){
     const line=lines[i].trim().replace(/^\*+|\*+$/g,"");
     const inline=line.replace(/^nv nhận việc\s*[:：]?/i,"").trim();
-    if(inline && !/^[-_]+$/.test(inline)) return inline;
+    const isServiceNote=value=>/^SGN\s*[-–—]?\s*dịch vụ(?:\s+fast track)?$/i.test(clean(value));
+    if(inline && !/^[-_]+$/.test(inline) && !isServiceNote(inline)) return inline;
     const next=clean(lines[i+1]||"");
-    if(next && !/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next) && !/^[-_]+$/.test(next)) return next;
+    if(next && !/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next) && !/^[-_]+$/.test(next) && !isServiceNote(next)) return next;
   }
   // Nhận diện phân công SGN ở cả hai dạng: "SGN - Tên [SĐT]" và "Tên SGN [SĐT]".
   // Số điện thoại là tùy chọn; loại trừ dòng "SGN - Dịch vụ" vì đây không phải nhân viên.
@@ -734,7 +735,8 @@ function bodyEnglish(b,staff,phone,hotline){
  if(direction(b)==="ARRIVAL"){
   let intro=`${g}\n\nMy name is ${staff}, and I will be assisting you with the Fast Track arrival service for flight ${b.flight} at Tan Son Nhat International Airport on ${d}.\n\nI will be waiting for you before the immigration area, holding a welcome sign.\n\nFor your reference, please see the welcome sign I will be holding at the airport via the Google Drive link below.\n\nWelcome sign: ${WELCOME}`;
   const special=/vip|full|business class|thương gia/i.test(b.service);
-  if(!isPartner(b)&&b.pax<5&&!special) intro+=`\n\nAfter landing, please send me a message so I can assist you. If you cannot find me, please go to the clock area in the center of the immigration hall.`;
+  const pax=Number(b.pax)||b.names.length;
+  if(!isPartner(b)&&pax>0&&pax<5&&!special) intro+=`\n\nAfter landing, please send me a message so I can assist you. If you cannot find me, please go to the clock area in the center of the immigration hall.`;
   return intro+ref+"\n\n"+sig;
  }
  if(direction(b)==="DEPARTURE"&&isDomestic(b)&&!isPartner(b)){
