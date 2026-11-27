@@ -769,7 +769,7 @@ function buildOne(b,staff,phone,hotline,staffVN){
   const sub=subject(b),en=(dir&&b.flight&&b.date)?bodyEnglish(b,staff,phone,hotline):"",vi=(dir&&isPartner(b)&&b.flight&&b.date&&b.time)?bodyVietnamese(b,staffVN):"";
   const intl=internationalPhone(b.phone,b.country),vn=localVNPhone(b.phone);
   const wa=intl&&en?`https://wa.me/${intl}?text=${encodeURIComponent(en)}`:"";
-  const validEmail=/^[^\s@]+@[^\s@]+\\.[^\s@]+$/.test(b.email||"");
+  const validEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email||"");
   const gmailSubject=b.order?`Fast Track Airport Pick-up Service – Tan Son Nhat Airport - ${b.order}`:sub;
   const gm=validEmail&&b.order&&b.flight&&b.date&&en?gmailLink(b.email,gmailSubject,en):"";
   const zalo=isPartner(b)&&vn?`https://zalo.me/${vn}`:"";
