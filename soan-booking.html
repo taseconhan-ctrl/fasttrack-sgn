@@ -534,6 +534,10 @@ function getValueAfter(lines, label){
   return "";
 }
 function getAssignedStaff(lines){
+  const isServiceNote=value=>{
+    const normalized=clean(value).replace(/\s+\+?\d[\d\s().-]{5,}\d$/,"").trim();
+    return /^SGN\s*[-–—]?\s*dịch vụ(?:\s+fast track)?$/i.test(normalized);
+  };
   const target="nv nhận việc";
   const i=lines.findIndex(x=>{
     const t=x.trim().replace(/^\*+|\*+$/g,"").toLocaleLowerCase("vi");
@@ -542,21 +546,17 @@ function getAssignedStaff(lines){
   if(i>=0){
     const line=lines[i].trim().replace(/^\*+|\*+$/g,"");
     const inline=line.replace(/^nv nhận việc\s*[:：]?/i,"").trim();
-    const isServiceNote=value=>/^SGN\s*[-–—]?\s*dịch vụ(?:\s+fast track)?$/i.test(clean(value));
     if(inline && !/^[-_]+$/.test(inline) && !isServiceNote(inline)) return inline;
     const next=clean(lines[i+1]||"");
     const isStatusValue=value=>/^(?:đã xác nhận|chờ xác nhận|chưa xác nhận|confirmed|pending|cancelled|canceled|đã hủy|đã huỷ|hủy|huỷ)$/i.test(clean(value));
     if(next && !/^(?:Ghi chú|Ghi chú nhân viên|Special requirements|Email|Country\/region|Trạng thái|Agency)\b/i.test(next) && !/^[-_]+$/.test(next) && !isServiceNote(next) && !isStatusValue(next)) return next;
   }
-  // Nhận diện phân công SGN ở cả hai dạng: "SGN - Tên [SĐT]" và "Tên SGN [SĐT]".
-  // Số điện thoại là tùy chọn; loại trừ dòng "SGN - Dịch vụ" vì đây không phải nhân viên.
   for(const raw of lines){
     const value=raw.trim().replace(/^[-*•\s]+|[-*\s]+$/g,"");
-    if(!value) continue;
+    if(!value || isServiceNote(value)) continue;
     if(/^nhatquang$/i.test(value)) return "nhatquang";
-    if(/^SGN\s*[-–—]?\s*(?:dịch vụ|dịch vụ fast track)$/i.test(value)) continue;
     let match=value.match(/^SGN\s*[-–—]?\s*(.+?)(?:\s+\+?\d[\d\s().-]{5,}\d)?$/i);
-    if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim())) return match[1].trim();
+    if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim()) && !/^dịch vụ(?:\s+fast track)?$/i.test(match[1].trim())) return match[1].trim();
     match=value.match(/^(.+?)\s+SGN(?:\s+\+?\d[\d\s().-]{5,}\d)?$/i);
     if(match && match[1].trim() && !/^[-_]+$/.test(match[1].trim())) return match[1].trim();
   }
