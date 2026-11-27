@@ -320,7 +320,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 <div class="top"><h2>2. Bộ lọc danh sách</h2><span class="count" id="count">0 booking</span></div>
 <div class="controls">
 <div><label for="search">Tìm kiếm</label><input id="search" placeholder="Tên khách, chuyến bay, agency, order, nhân viên..."></div>
-<div><label for="staffFilter">Nhân viên thực hiện</label><select id="staffFilter"><option value="">Tất cả nhân viên</option></select></div>
+<div><label for="staffFilter">Nhân viên phụ trách</label><select id="staffFilter"><option value="">Tất cả nhân viên</option></select></div>
 <div><label for="filterDate">Ngày phục vụ</label><input id="filterDate" type="date"></div>
 <div><label for="statusFilter">Trạng thái đón</label><select id="statusFilter"><option value="">Tất cả trạng thái</option><option>Chưa phân công</option><option>Đã phân công</option><option>Đang đón</option><option>Đã đón</option><option>Không gặp khách</option></select></div>
 <div style="flex:0 0 auto;min-width:auto"><button class="secondary" id="clearDate">Xóa lọc ngày</button></div>
@@ -356,7 +356,7 @@ async function loadCloud(){ $("status").textContent="Đang tải danh sách book
 async function syncParsed(rows){const bookings=rows.map(r=>({agency:r[0],parking_gate:r[10]||null,estimated_arrival_time:r[11]||null,flight:r[1],guest_name:r[2],service_time:r[3],service_type:r[4],order_id:r[5],responsible_staff:r[6]||null,service_date:r[7]||$("serviceDate").value}));const d=await cloudCall("source_sync",{bookings});await loadCloud();return d;}
 
 const HEAD=["Agency","Flight","Name","Date","Time","Type","Order","NV phụ trách","Trạng thái","Cập nhật lúc"];
-const STAFF=["Tuấn Khánh","Minh Khoa","Văn Diệp","Việt Quang","Đông Hưng","Ngọc Dương","Ngọc Nhân","Thanh Hùng","Nhật Quang","Vũ Văn Bình","Trung An"];
+const STAFF=["Tuấn Khanh","Minh Khoa","Văn Diệp","Việt Quang","Đông Hưng","Ngọc Dương","Ngọc Nhân","Thanh Hùng","Nhật Quang","Vũ Văn Bình","Trung An"];
 const STATUSES=["Chưa phân công","Đã phân công","Đang đón","Đã đón","Không gặp khách"];
 const clean=s=>String(s??"").replace(/^\uFEFF/,"").trim();
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -367,7 +367,7 @@ function dateISO(v){const t=clean(v);let m=t.match(/^(\d{1,2})[\/-](\d{1,2})[\/-
 function normalizeTime(v){let t=clean(v);if(!t)return "";let dated=t.match(/(?:^|\s)(\d{1,2}):(\d{2})(?:\s*$)/);if(dated)return String(Number(dated[1])).padStart(2,"0")+":"+dated[2];let m=t.match(/^(\d{1,2})[.:hH](\d{1,2})$/);if(m)return String(Number(m[1])).padStart(2,"0")+":"+String(Number(m[2])).padStart(2,"0");m=t.match(/^(\d{1,2}):(\d{1,2})$/);if(m)return String(Number(m[1])).padStart(2,"0")+":"+String(Number(m[2])).padStart(2,"0");return t;}
 function agencyColor(agency){const colors=["#ffe3dc","#fff0c2","#dff2df","#e5f0e6","#eadfff","#ffe0f0","#d9f2f0","#f0e8d8","#e5ebc9","#f7e5e5","#f8dfc4","#d7e9e2"];const agencies=[...new Set(data.map(r=>r[0]||"Chưa rõ"))].sort();const index=agencies.indexOf(agency||"Chưa rõ");return colors[(index<0?0:index)%colors.length];}
 function normalizeType(v){const t=clean(v).toLowerCase();if(!t)return "";const dep=/departure|tiễn/.test(t),domestic=/quốc nội|domestic/.test(t),full=/full|vip|thương gia|business/.test(t);if(dep)return full?"Departure FULL":domestic?"Departure Domestic":"Departure Kci";if(/arrival|đón/.test(t))return full?"Arrival FULL":"Arrival";return "";}
-function normalizeStaff(v){let s=clean(v);if(!s||s==="_"||/^SGN\s*[-–—]?\s*DỊCH VỤ(?: FAST TRACK)?$/i.test(s))return "";s=s.replace(/\+?\d[\d\s().-]{7,}/g,"").replace(/\bSGN\b/gi,"").replace(/^\s*[-–—]+\s*/,"").replace(/\s*[-–—]+\s*$/,"").trim();s=s.replace(/^(Mr\.?|Ms\.?|Mrs\.?|Miss\.?|Anh|Chị)\s+/i,"").trim();return s;}
+function normalizeStaff(v){let s=clean(v);if(!s||s==="_")return "";s=s.replace(/\+?\d[\d\s().-]{7,}/g,"").replace(/\bSGN\b/gi,"").replace(/^\s*[-–—]+\s*/,"").replace(/\s*[-–—]+\s*$/,"").trim();s=s.replace(/^(Mr\.?|Ms\.?|Mrs\.?|Miss\.?|Anh|Chị)\s+/i,"").trim();if(!s||/^dịch vụ(?:\s+fast track)?$/i.test(s))return "";const lower=s.toLocaleLowerCase("vi");if(lower.includes("hưng"))return "Đông Hưng";if(lower.includes("hùng"))return "Thanh Hùng";const key=lower.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/[^a-z]/g,"");const aliases=[["tuankhanh","Tuấn Khanh"],["minhkhoa","Minh Khoa"],["vandiep","Văn Diệp"],["vietquang","Việt Quang"],["donghung","Đông Hưng"],["ngocduong","Ngọc Dương"],["ngocnhan","Ngọc Nhân"],["thanhhung","Thanh Hùng"],["nhatquang","Nhật Quang"],["vuvanbinh","Vũ Văn Bình"],["trungan","Trung An"]];for(const [k,name] of aliases)if(key.includes(k))return name;if(key==="khanh")return "Tuấn Khanh";if(key==="khoa")return "Minh Khoa";if(key==="diep")return "Văn Diệp";if(key==="quang")return "Việt Quang";if(key==="hung")return "Đông Hưng";if(key==="duong")return "Ngọc Dương";if(key==="nhan")return "Ngọc Nhân";if(key==="binh")return "Vũ Văn Bình";if(key==="an")return "Trung An";return s;}
 function parseVerticalRows(text){
  const lines=String(text||"").replace(/\r/g,"").split("\n").map(clean).filter(Boolean);
  const starts=[];
