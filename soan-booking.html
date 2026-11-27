@@ -1146,6 +1146,9 @@ window.copyText=copyText;
     if(!link||link.target&&link.target!=='_self'||link.hasAttribute('download'))return;
     const url=new URL(link.href,location.href);
     if(url.origin!==location.origin||!allowed.has(url.pathname))return;
+    // Các chế độ xem bằng query string (ví dụ ?view=archive) phải tải trang đầy đủ
+    // để body class, thuộc tính hidden và script khởi tạo được đồng bộ từ đầu.
+    if(url.searchParams.has('view'))return;
     event.preventDefault();
     navigate(url.href,true);
   });
