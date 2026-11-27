@@ -135,8 +135,159 @@ footer{padding:16px!important;text-align:center!important;background:var(--ft-na
 #schedule{min-width:980px!important}#schedule select{min-width:58px!important;padding:5px!important}.foot{padding:10px 0!important}
 @media(max-width:850px){.menu{grid-template-columns:repeat(2,minmax(0,1fr))!important}.staffgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.summary{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
 @media(max-width:620px){body{font-size:14px!important}header{padding:15px 14px!important}.site-nav{position:relative!important;display:block!important;padding:8px 12px!important}.nav-brand{display:block!important;margin:0 0 6px!important}.nav-links{gap:3px!important}.nav-links a{padding:7px 8px!important;font-size:12px!important}main,.wrap,#bookingMain{width:calc(100% - 20px)!important;margin:13px auto 28px!important}.panel,.booking,.review{padding:14px!important;margin-bottom:11px!important}h2,.panel h2,.booking h2,.review h2{font-size:16px!important}.controls,.toolbar{align-items:stretch!important}.controls>div,.toolbar>div{flex:1 1 100%;min-width:0}.controls button,.toolbar button{flex:1 1 calc(50% - 6px);min-width:0}.menu{grid-template-columns:1fr!important;gap:10px!important}.item{min-height:0!important;padding:15px!important}.intro,.home-hero{padding:17px!important}#staffAuthPanel{padding:17px!important;margin:12px auto 18px!important}.staffgrid{grid-template-columns:1fr!important}.staff .fields{grid-template-columns:1fr 1fr!important}.summary{grid-template-columns:repeat(2,minmax(0,1fr))!important}.tablewrap{border-radius:9px!important}td,th{padding:7px 8px!important}}
+
+/* UX LAYOUT V2 — dashboard, task hierarchy and touch-friendly controls */
+:root{--ft-green:#176b55;--ft-green-dark:#125440;--ft-blue:#356d9b;--ft-amber:#a66b19}
+::selection{background:#d8eee5;color:#142b45}
+.site-nav{min-height:60px!important;padding-top:9px!important;padding-bottom:9px!important}
+.nav-brand{display:inline-flex!important;align-items:center!important;gap:8px!important;font-size:13px!important;letter-spacing:.7px!important}
+.nav-brand:before{content:"FT";display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#eaf3ef;color:var(--ft-green);font-size:11px;font-weight:900}
+.nav-links a{min-height:38px!important;padding:8px 13px!important;border:1px solid transparent!important}
+.nav-links a:hover{border-color:#d9e8e1!important}
+header{padding-top:22px!important;padding-bottom:22px!important}
+header h1{font-size:clamp(22px,2.8vw,30px)!important}
+header p{max-width:760px!important;font-size:13px!important;opacity:.9}
+main,.wrap,#bookingMain{margin-top:24px!important;margin-bottom:56px!important}
+.panel,.booking,.review{padding:22px!important;border-radius:15px!important}
+.panel h2,.booking h2,.review h2{display:flex!important;align-items:center!important;gap:9px!important}
+.panel h2 .sectiontag{flex:0 0 auto}
+.controls,.toolbar{gap:12px!important;align-items:end!important}
+.controls>div,.toolbar>div{min-width:180px!important}
+.controls .field{display:flex!important;align-items:center!important;gap:8px!important}
+.controls .field label{margin:0!important}
+button,.linkbtn,.back,.hero-cta{min-height:42px!important;padding:10px 16px!important;font-size:13px!important;border-radius:10px!important;white-space:normal!important}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(53,109,155,.3)!important;outline-offset:2px!important}
+button.secondary,.linkbtn.secondary,button.ghost,.ghost{background:#fff!important;border-color:#cbd7e1!important;color:#334b60!important}
+button.danger{background:#fff!important;color:#a63c46!important;border:1px solid #e4bfc2!important}
+button.danger:hover{background:#fff1f1!important}
+.status{display:flex!important;align-items:center!important;gap:8px!important;margin-top:12px!important}
+.tablewrap{max-height:70vh!important}
+table{font-variant-numeric:tabular-nums}
+th{z-index:2!important}
+tbody tr:hover td{transition:background .12s ease}
+#globalStaffAuthBar{position:sticky!important;top:68px!important;right:auto!important;z-index:900!important;width:max-content!important;max-width:calc(100% - 32px)!important;margin:10px max(16px,calc((100% - 1240px)/2)) 0 auto!important;padding:7px 9px 7px 13px!important;border:1px solid var(--ft-line)!important;border-radius:12px!important;background:#fff!important;color:var(--ft-navy)!important;box-shadow:0 3px 12px rgba(20,43,69,.08)!important;font-size:12px!important}
+#globalStaffAuthBar button{background:#f4f7f9!important;color:#334b60!important;border:1px solid #d7e0e8!important;border-radius:8px!important}
+#cloudAccountBar{position:relative!important;top:auto!important;right:auto!important;bottom:auto!important;z-index:20!important;width:max-content!important;max-width:100%!important;margin:12px max(18px,calc((100% - 1240px)/2)) 0 auto!important;padding:8px 10px!important;border:1px solid var(--ft-line)!important;border-radius:12px!important;background:#fff!important;color:var(--ft-navy)!important;box-shadow:0 3px 12px rgba(20,43,69,.07)!important}
+#cloudAccountBar button{background:#f4f7f9!important;color:#334b60!important;border:1px solid #d7e0e8!important}
+#staffAuthPanel{border-top:4px solid var(--ft-green)!important}
+#staffAuthPanel .auth-mode button{min-height:40px!important}
+#staffAuthPanel #staffPinSubmit{width:100%!important;min-height:46px!important;margin-top:8px!important;font-size:14px!important}
+#staffAuthPanel .auth-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#staffAuthPanel .auth-actions a,#staffAuthPanel .auth-actions button{justify-content:center!important;text-align:center!important}
+#staffAuthPanel #staffSignedInText{color:var(--ft-green)!important;background:#edf8f1!important;border:1px solid #c9e5d4!important;border-radius:9px!important;padding:10px 12px!important}
+#staffAuthPanel #staffAuthMessage{padding:9px 11px!important;background:#f6f8fa!important;border-radius:8px!important}
+.home-hero{min-height:138px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;padding:26px 30px!important;border-left-width:5px!important}
+.home-hero h2{font-size:clamp(25px,3.2vw,34px)!important;letter-spacing:-.5px!important}
+.home-hero p{max-width:720px!important;font-size:14px!important}
+#workspace{padding:0!important;margin:0 0 14px!important;background:transparent!important;border:0!important;box-shadow:none!important}
+#workspace h2{border:0!important;margin:0 0 3px!important;padding:0!important;font-size:19px!important}
+#workspace p{font-size:13px!important}
+.menu{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+.menu .item{position:relative!important;min-height:220px!important;padding:22px!important;border:1px solid var(--ft-line)!important;border-top:4px solid var(--ft-green)!important;border-radius:14px!important}
+.menu .item:nth-child(2){border-top-color:var(--ft-blue)!important}
+.menu .item:nth-child(3){border-top-color:var(--ft-amber)!important}
+.menu .item h3{font-size:16px!important;letter-spacing:.1px!important}
+.menu .item p{font-size:13px!important;line-height:1.6!important}
+.menu .icon{width:48px!important;height:48px!important;display:grid!important;place-items:center!important}
+.menu .go{display:flex!important;align-items:center!important;justify-content:space-between!important;padding-top:12px!important;border-top:1px solid #edf1f4!important;font-size:13px!important}
+body:has(.home-hero) main{display:grid!important;grid-template-columns:minmax(0,1fr) 360px!important;grid-template-areas:"hero hero" "workspace auth" "menu auth"!important;align-items:start!important;column-gap:22px!important;row-gap:18px!important}
+body:has(.home-hero) .home-hero{grid-area:hero!important;margin:0!important}
+body:has(.home-hero) #workspace{grid-area:workspace!important;align-self:end!important}
+body:has(.home-hero) #staffAuthPanel{grid-area:auth!important;position:sticky!important;top:82px!important;width:100%!important;margin:0!important}
+body:has(.home-hero) .menu{grid-area:menu!important;grid-template-columns:1fr!important}
+body:has(.home-hero) .menu .item{min-height:0!important;display:grid!important;grid-template-columns:52px minmax(0,1fr)!important;grid-template-rows:auto auto auto!important;column-gap:13px!important;padding:16px!important}
+body:has(.home-hero) .menu .icon{grid-row:1/4!important;margin:0!important}
+body:has(.home-hero) .menu .item h3{align-self:end!important;margin:0 0 3px!important}
+body:has(.home-hero) .menu .item p{margin:0 0 8px!important}
+body:has(.home-hero) .menu .go{grid-column:2!important;padding-top:6px!important}
+#bookingMain .archive-entry{display:flex!important;justify-content:flex-end!important;margin:0 0 12px!important}
+#bookingMain .archive-entry .linkbtn{background:#fff!important;color:var(--ft-navy)!important;border:1px solid var(--ft-line)!important}
+#bookingMain>section.panel:first-of-type{border-top:3px solid var(--ft-blue)!important}
+#bookingMain>section.panel:nth-of-type(2){border-top:3px solid var(--ft-green)!important}
+#bookingMain>section.panel:nth-of-type(2) textarea{min-height:190px!important;font-family:ui-monospace,SFMono-Regular,Consolas,monospace!important;font-size:13px!important}
+#bookingMain #run{min-width:220px!important;min-height:46px!important;font-size:14px!important}
+#bookingMain #clear{min-width:120px!important}
+#bookingMain #summary{border-left:4px solid var(--ft-green)!important}
+#bookingMain .booking{border-left:4px solid var(--ft-blue)!important}
+#bookingMain .review{border-left:4px solid var(--ft-amber)!important}
+#bookingMain .actions{display:flex!important;gap:8px!important;flex-wrap:wrap!important;align-items:center!important}
+#bookingMain .actions button{min-height:36px!important;padding:8px 12px!important}
+#bookingMain .contact-links{display:flex!important;gap:8px!important;flex-wrap:wrap!important}
+#bookingMain .contact-links a{display:inline-flex!important;align-items:center!important;min-height:36px!important;padding:8px 12px!important;border:1px solid var(--ft-line)!important;border-radius:9px!important;background:#f8fafb!important;text-decoration:none!important;font-weight:700!important}
+#bookingMain .saved-archive-filters{align-items:end!important;padding:14px!important;border:1px solid var(--ft-line)!important;border-radius:12px!important;background:#f8fafb!important}
+#bookingMain .saved-archive-filters button{align-self:end!important}
+#bookingMain .archive-nav{align-items:center!important}
+#bookingMain .grid{gap:10px!important}
+#bookingMain .kv{padding:10px 12px!important;border-radius:9px!important;background:#f7f9fb!important}
+body:has(#arrivalRows) main{display:flex!important;flex-direction:column!important;gap:2px!important}
+body:has(#arrivalRows) main>section:first-of-type{border-top:4px solid var(--ft-blue)!important}
+body:has(#arrivalRows) main>section:nth-of-type(2){background:#f9fbfc!important}
+body:has(#arrivalRows) main>section:nth-of-type(3){border-top:3px solid var(--ft-green)!important}
+body:has(#arrivalRows) main>section:nth-of-type(4){border-top:3px solid var(--ft-blue)!important}
+body:has(#arrivalRows) #raw{min-height:160px!important;font-family:ui-monospace,SFMono-Regular,Consolas,monospace!important;font-size:13px!important}
+body:has(#arrivalRows) #import{min-width:210px!important;min-height:46px!important}
+body:has(#arrivalRows) #clearAll{margin-left:auto!important}
+body:has(#arrivalRows) .tablewrap{max-height:64vh!important}
+body:has(#arrivalRows) .top{align-items:center!important}
+body:has(#arrivalRows) .top h2{margin:0!important}
+body:has(#arrivalRows) #arrivalFullLegend{padding:8px 0!important}
+body:has(#schedule) main>section:first-of-type{border-top:4px solid var(--ft-green)!important}
+body:has(#schedule) main>section:nth-of-type(2){border-top:3px solid var(--ft-blue)!important}
+body:has(#schedule) main>section:nth-of-type(3){border-top:3px solid var(--ft-green)!important}
+body:has(#schedule) main>section:nth-of-type(4){border-top:3px solid var(--ft-amber)!important}
+body:has(#schedule) #month{min-width:180px!important}
+body:has(#schedule) #auto{min-width:200px!important;min-height:46px!important;font-size:14px!important}
+body:has(#schedule) .sticky-actions{display:flex!important;gap:9px!important;flex-wrap:wrap!important;align-items:center!important;padding:0 0 12px!important;border-bottom:1px solid #e8edf2!important}
+body:has(#schedule) .staffgrid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+body:has(#schedule) .staff{padding:16px!important}
+body:has(#schedule) .staff strong{color:var(--ft-navy)!important}
+body:has(#schedule) .summary .metric{background:#f7faf9!important}
+body:has(#schedule) #schedule th:first-child,body:has(#schedule) #schedule td:first-child{position:sticky!important;left:0!important;z-index:3!important;background:#edf2f6!important}
+body:has(#schedule) #schedule td:first-child{background:#fff!important;font-weight:750!important}
+footer{margin-top:28px!important}
+@media(max-width:950px){
+ body:has(.home-hero) main{grid-template-columns:minmax(0,1fr) 310px!important}
+ .menu{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ body:has(#schedule) .staffgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:720px){
+ .site-nav{position:relative!important;display:block!important;padding:9px 12px!important}
+ .site-nav .nav-brand{margin:0 0 7px!important}
+ .site-nav .nav-links{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:4px!important}
+ .site-nav .nav-links a{justify-content:center!important;padding:8px 4px!important;font-size:11px!important;white-space:nowrap!important}
+ header{padding:17px 14px!important}
+ main,.wrap,#bookingMain{width:calc(100% - 22px)!important;margin:14px auto 32px!important}
+ .panel,.booking,.review{padding:15px!important;margin-bottom:12px!important}
+ .controls,.toolbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:end!important}
+ .controls>div,.toolbar>div{min-width:0!important;grid-column:span 2!important}
+ .controls button,.toolbar button{width:100%!important;min-width:0!important}
+ .controls .field{grid-column:span 2!important}
+ .menu{grid-template-columns:1fr!important}
+ body:has(.home-hero) main{display:flex!important;flex-direction:column!important;gap:13px!important}
+ body:has(.home-hero) #staffAuthPanel{position:static!important;order:2!important;width:100%!important}
+ body:has(.home-hero) #workspace{order:3!important}
+ body:has(.home-hero) .menu{order:4!important;width:100%!important}
+ body:has(.home-hero) .menu .item{grid-template-columns:46px minmax(0,1fr)!important;padding:14px!important}
+ body:has(.home-hero) .home-hero{width:100%!important;padding:20px!important}
+ #staffAuthPanel .auth-actions{grid-template-columns:1fr!important}
+ #globalStaffAuthBar{position:relative!important;top:auto!important;max-width:calc(100% - 22px)!important;margin:9px 11px 0 auto!important}
+ #cloudAccountBar{margin:9px 11px 0 auto!important;max-width:calc(100% - 22px)!important}
+ #bookingMain .archive-entry{justify-content:stretch!important}
+ #bookingMain .archive-entry .linkbtn{width:100%!important;justify-content:center!important}
+ #bookingMain #run,#import,#auto{width:100%!important;min-width:0!important}
+ body:has(#schedule) .staffgrid{grid-template-columns:1fr!important}
+ body:has(#schedule) .sticky-actions button{flex:1 1 calc(50% - 8px)!important}
+ body:has(#arrivalRows) #clearAll{margin-left:0!important}
+ body:has(#arrivalRows) .tablewrap{max-height:60vh!important}
+ .summary{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:390px){
+ .site-nav .nav-links a{font-size:10px!important;padding:7px 2px!important}
+ .home-hero h2{font-size:24px!important}
+}
+
 </style></head><body>
-<header><a class="home-link" href="index.html" aria-label="Quay về trang chính">← Trang chính</a><h1>📅 XẾP LỊCH NHÂN SỰ – FAST TRACK SGN</h1><p>Tạo lịch toàn tháng theo định mức, ca nối tháng, OFF/P và quota C.</p></header><nav class="site-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav>
+<header><a class="home-link" href="index.html" aria-label="Quay về trang chính">← Trang chính</a><h1>📅 XẾP LỊCH NHÂN SỰ – FAST TRACK SGN</h1><p>Tạo lịch toàn tháng theo định mức, ca nối tháng, OFF/P và quota C.</p></header><nav class="site-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav>
 <main class="wrap">
 <section class="panel"><h2>1. Tháng và thao tác</h2><div class="toolbar"><label>Tháng lập lịch <input type="month" id="month"></label><button id="check" class="secondary">✓ Kiểm tra điều kiện</button><button id="save" class="secondary">Lưu lịch</button><button id="export" class="secondary">Xuất CSV</button><button id="clear" class="danger">Xóa lịch tháng</button></div><p class="muted">Tự động xếp sẽ thử nhiều cấu hình ca C và ngày nghỉ, sau đó chọn lịch đạt điều kiện có điểm cân bằng tốt nhất. Dữ liệu được lưu trên trình duyệt này.</p></section>
 <section class="panel"><h2>2. Nhân viên và dữ liệu kế thừa</h2><p class="muted">Có thể dán trực tiếp bảng lịch tháng trước từ Excel/Google Sheets để tự điền ca cuối tháng trước và số ca C tháng trước. Sau đó vẫn có thể chỉnh sửa từng nhân viên bên dưới.</p><div class="staff" style="margin:12px 0 16px;padding:16px;border:2px solid #2458bd;background:#f0f6ff;border-radius:12px"><strong style="font-size:16px;color:#17449a">📋 ĐỌC DỮ LIỆU LỊCH THÁNG TRƯỚC</strong><label class="wide">Dán bảng lịch tháng trước (copy vùng dữ liệu có cột tên nhân viên và các ngày)<textarea id="prevImport" rows="5" style="width:100%;margin-top:5px" placeholder="Nhân viên\t1\t2\t3\t...\nTuấn Khanh\tA\tA0\tOFF\t...\nMinh Khoa\tB\tHC\tB\t..."></textarea></label><div class="toolbar" style="margin-top:8px"><button id="importPrev">Đọc và điền dữ liệu</button><button id="clearPrev" class="secondary">Xóa nội dung</button><span id="importStatus" class="muted"></span></div><p class="muted">Hệ thống nhận diện tên nhân viên và mã ca A0, A, A1, HC, B0, B, C, OFF, P; tự lấy ca cuối cùng trong dòng và đếm tổng số ca C. Không thay đổi dữ liệu OFF/P mong muốn.</p></div><p class="muted">Nhập ca cuối tháng trước, số ca C tháng trước, ngày OFF/P mong muốn. OFF vượt định mức sẽ không được chấp nhận; P chỉ được ghi nhận khi đăng ký.</p><div id="staff" class="staffgrid"></div></section>
