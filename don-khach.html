@@ -369,23 +369,27 @@ function agencyColor(agency){const colors=["#ffe3dc","#fff0c2","#dff2df","#e5f0e
 function normalizeType(v){const t=clean(v).toLowerCase();if(!t)return "";const dep=/departure|tiễn/.test(t),full=/full|vip|thương gia|business/.test(t);if(dep)return full?"Departure FULL":"Departure Kci";if(/arrival|đón/.test(t))return full?"Arrival FULL":"Arrival";return "";}
 function normalizeStaff(v){let s=clean(v);if(!s||s==="_")return "";s=s.replace(/\+?\d[\d\s().-]{7,}/g,"").replace(/\bSGN\b/gi,"").replace(/^\s*[-–—]+\s*/,"").replace(/\s*[-–—]+\s*$/,"").trim();s=s.replace(/^(Mr\.?|Ms\.?|Mrs\.?|Miss\.?|Anh|Chị)\s+/i,"").trim();return s;}
 function parseVerticalRows(text){
- const lines=text.replace(/\r/g,"").split("\n").map(clean).filter(Boolean);
+ const lines=String(text||"").replace(/\\r/g,"").split("\\n").map(clean).filter(Boolean);
  const starts=[];
  for(let i=0;i<lines.length-1;i++){
-   if(/^[0-9A-F]{6}$/i.test(lines[i]) && /^(Tân Sơn Nhất|Tan Son Nhat)$/i.test(lines[i+1])) starts.push(i);
+   if(/^[A-Z0-9]{6,12}$/i.test(lines[i]) && /^(Tân Sơn Nhất|Tan Son Nhat)$/i.test(lines[i+1])) starts.push(i);
  }
  if(!starts.length)return [];
  const out=[];
  for(let k=0;k<starts.length;k++){
    const rec=lines.slice(starts[k],starts[k+1]??lines.length);
+   // Cấu trúc booking chi tiết: Order, sân bay, chuyến bay, dịch vụ,
+   // ngày giờ, tên khách, NV phụ trách, trạng thái..., số khách, ghi chú, Agency, phân hạng.
    if(rec.length<13)continue;
    const order=rec[0], flight=rec[2], service=rec[3], dateTime=rec[4], name=rec[5], staff=rec[6];
+   if(!/^\\d{1,2}\\/\\d{1,2}\\/\\d{4}\\s+\\d{1,2}:\\d{2}$/.test(dateTime))continue;
+   const type=normalizeType(service);
+   if(!type)continue;
+   // Agency luôn là dòng ngay trước phân hạng cuối (Thường/Cao cấp...).
    const agencyRaw=rec[rec.length-2];
    const notes=rec.slice(11,rec.length-2);
    const agency=normalizeAgency(agencyRaw,notes);
-   const type=normalizeType(service);
-   if(!type)continue;
-   out.push([agency,normalizeFlight(flight),normalizeName(name),normalizeTime(dateTime),type,order,normalizeStaff(staff),dateISO(dateTime),"Chưa phân công","","","",""]);
+   out.push([agency,normalizeFlight(flight),normalizeName(name),normalizeTime(dateTime),type,order,normalizeStaff(staff),dateISO(dateTime),"Chưa phân công","","","", ""]);
  }
  return out;
 }
