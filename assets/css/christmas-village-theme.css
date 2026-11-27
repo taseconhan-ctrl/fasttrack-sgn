@@ -134,3 +134,22 @@ html body .ft-content .home-hero h2,
 html body .ft-content .intro h2 {
   font-family: Arial, "Segoe UI", Tahoma, sans-serif !important;
 }
+
+
+/* WhatsApp contact action — distinct brand cue and strong text contrast.
+   Match wa.me links only; Gmail/Zalo and other primary actions keep their own styles. */
+html body #bookingMain .contact-links a.linkbtn[href*="wa.me"],
+html body #bookingMain .actions a.linkbtn[href*="wa.me"]{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:7px!important;min-height:38px!important;padding:8px 15px!important;
+  background:#075e54!important;border:1px solid #36b77a!important;
+  color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;
+  font-weight:800!important;text-shadow:none!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.28)!important;
+}
+html body #bookingMain .contact-links a.linkbtn[href*="wa.me"]:hover,
+html body #bookingMain .actions a.linkbtn[href*="wa.me"]:hover{
+  background:#064c44!important;border-color:#72d6a1!important;
+  color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;
+  transform:translateY(-1px)!important;
+}
