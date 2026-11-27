@@ -243,6 +243,12 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 
 <link rel="stylesheet" href="assets/css/shared-ui.css?v=ui-refresh-20261127">
 <link rel="stylesheet" href="assets/css/complete-redesign.css?v=20261127c">
+<style id="authenticated-home-ui">
+body.staff-authenticated #staffAuthPanel{display:none!important}
+body.staff-authenticated .ft-account-link{display:none!important}
+#staffHomeSignOut.ft-logout-compact{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 13px;border:1px solid #d7e1ef;border-radius:9px;background:#fff;color:#33465f;font:600 13px Arial,Tahoma,sans-serif;cursor:pointer}
+#staffHomeSignOut.ft-logout-compact:hover{background:#f4f7fb}
+</style>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
@@ -354,6 +360,19 @@ function say(text,good=false){message.textContent=text;message.style.color=good?
 function getToken(){try{return JSON.parse(localStorage.getItem(TOKEN_KEY)||"null");}catch(e){return null;}}
 function saveToken(data){localStorage.setItem(TOKEN_KEY,JSON.stringify({token:data.token,expiresAt:data.expiresAt,username:data.username}));}
 function clearToken(){localStorage.removeItem(TOKEN_KEY);}
+function setAuthenticatedUI(active){
+ const panel=$("staffAuthPanel"),topbar=document.querySelector(".ft-topbar"),accountLink=document.querySelector(".ft-account-link"),logout=$("staffHomeSignOut");
+ document.body.classList.toggle("staff-authenticated",active);
+ if(active){
+  if(topbar&&logout&&logout.parentElement!==topbar){logout.classList.add("ft-logout-compact");topbar.appendChild(logout);}
+  if(accountLink)accountLink.hidden=true;
+ }else{
+  const actions=document.querySelector("#staffSignedIn .auth-actions");
+  if(actions&&logout&&logout.parentElement!==actions){logout.classList.remove("ft-logout-compact");actions.appendChild(logout);}
+  if(accountLink)accountLink.hidden=false;
+  if(panel)panel.hidden=false;
+ }
+}
 async function api(action,payload={},token=null){
  const headers={"Content-Type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY};
  if(token)headers.Authorization="Bearer "+token;
@@ -400,6 +419,7 @@ $("staffHomeSignOut").addEventListener("click",async()=>{
  const stored=getToken();
  try{if(stored?.token)await api("logout",{},stored.token);}catch(e){}
  clearToken();sessionStorage.removeItem(BOOKING_SESSION_KEY);localStorage.removeItem(SAVED_REVIEW_KEY);
+ setAuthenticatedUI(false);
  signedIn.hidden=true;formArea.hidden=false;setMode("login");
  say("Đã đăng xuất. Dữ liệu đã đồng bộ vẫn được giữ trên tài khoản cá nhân.");
 });
@@ -411,6 +431,7 @@ $("staffHomeSignOut").addEventListener("click",async()=>{
   const result=await api("load",{},stored.token);
   formArea.hidden=true;signedIn.hidden=false;
   $("staffSignedInText").textContent="Đang đăng nhập với tài khoản: "+(result.username||stored.username)+". Dữ liệu cá nhân đã sẵn sàng.";
+  setAuthenticatedUI(true);
   say("Bạn có thể tiếp tục vào Soạn Booking trên thiết bị này.",true);
  }catch(error){clearToken();setMode("login");say("Phiên đăng nhập không còn hợp lệ. Vui lòng đăng nhập lại.");}
 })();
