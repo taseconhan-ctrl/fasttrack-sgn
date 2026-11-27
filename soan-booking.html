@@ -951,7 +951,7 @@ $("savedDateFilter").addEventListener("change",renderSavedReviewArchive);$("save
 $("savedPartnerFilter").addEventListener("change",renderSavedReviewArchive);$("savedDirectionFilter").addEventListener("change",renderSavedReviewArchive);
 $("clearSavedDate").addEventListener("click",()=>{$("savedDateFilter").value="";renderSavedReviewArchive();});
 $("clearSavedArchive").addEventListener("click",()=>{if(!confirm("Xóa toàn bộ lịch sử đã lưu trên thiết bị này?"))return;savedReviewItems=[];persistSavedReview();renderSavedReviewArchive();toast("Đã xóa toàn bộ lịch sử.");});
-$("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("skippedBookings").innerHTML="";processedBookings=[];allBookingsCache=[];skippedBookingsCache=[];$("status").textContent="Đã xóa dữ liệu.";});
+$("clear").addEventListener("click",()=>{try{sessionStorage.removeItem(BOOKING_SESSION_KEY);}catch(e){}$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("skippedBookings").innerHTML="";processedBookings=[];allBookingsCache=[];skippedBookingsCache=[];$("status").textContent="Đã xóa dữ liệu.";});
 document.addEventListener("click",e=>{
  const del=e.target.closest(".delete-saved-review");if(del){const key=del.dataset.savedKey;if(!confirm("Xóa booking này khỏi lịch sử?"))return;savedReviewItems=savedReviewItems.filter(x=>x.key!==key);persistSavedReview();renderSavedReviewArchive();toast("Đã xóa booking khỏi lịch sử.");return;}
  const saveContact=e.target.closest(".save-contact");
@@ -981,6 +981,37 @@ document.addEventListener("click",e=>{
  if(copyStore.has(key)) copyText(copyStore.get(key));
 });
 window.copyText=copyText;
+
+// Lưu phiên Soạn Booking để chuyển qua Lịch sử rồi quay lại không mất dữ liệu.
+const BOOKING_SESSION_KEY="fasttrack_sgn_booking_session_v1";
+function saveBookingSession(){
+ try{
+  const snapshot={raw:$("raw")?.value||"",allBookings:!!$("allBookings")?.checked,staffProfile:$("staffProfile")?.value||"",staff:$("staff")?.value||"",phone:$("phone")?.value||"",hotline:$("hotline")?.value||"",savedAt:Date.now()};
+  if(snapshot.raw.trim())sessionStorage.setItem(BOOKING_SESSION_KEY,JSON.stringify(snapshot));
+  else sessionStorage.removeItem(BOOKING_SESSION_KEY);
+ }catch(e){}
+}
+["raw","allBookings","staffProfile","staff","phone","hotline"].forEach(id=>{
+ const el=$(id);
+ if(el){el.addEventListener("input",saveBookingSession);el.addEventListener("change",saveBookingSession);}
+});
+window.addEventListener("pagehide",saveBookingSession);
+if(!archiveView){
+ try{
+  const snapshot=JSON.parse(sessionStorage.getItem(BOOKING_SESSION_KEY)||"null");
+  if(snapshot&&snapshot.raw&&$("raw")){
+   $("raw").value=snapshot.raw;
+   $("allBookings").checked=!!snapshot.allBookings;
+   if(snapshot.staffProfile)$("staffProfile").value=snapshot.staffProfile;
+   if(snapshot.staff)$("staff").value=snapshot.staff;
+   if(snapshot.phone)$("phone").value=snapshot.phone;
+   if(snapshot.hotline)$("hotline").value=snapshot.hotline;
+   run();
+   $("status").textContent="Đã khôi phục phiên Soạn Booking trước đó; kết quả phân tích được tạo lại tự động.";
+   $("status").className="status good";
+  }
+ }catch(e){console.warn("Không thể khôi phục phiên Soạn Booking:",e);}
+}
 </script>
 
 <style id="christmas-audio-player-style">
