@@ -345,45 +345,12 @@ button.danger{background:#9c3942!important;color:#fff!important}
   <p>Xử lý booking trực tiếp trên trình duyệt · Tạo nội dung và link liên hệ để nhân viên kiểm tra, sao chép hoặc mở bản nháp</p>
   <p style="margin-top:12px"><a href="index.html" style="display:inline-block;background:#fff;color:#14233f;padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:700">← Trở về</a></p>
 </header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav>
-<style id="cloud-auth-style">
-#cloudAuthGate{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:18px;background:radial-gradient(ellipse at 20% 0%,#284b3e,#101918 65%);color:#f5f0e5}
-#cloudAuthGate[hidden]{display:none!important}
-#cloudAuthGate .auth-card{width:min(440px,100%);padding:26px;border:1px solid #8f7547;border-radius:20px;background:linear-gradient(145deg,#1d2b26,#14201d);box-shadow:0 24px 70px #0008}
-#cloudAuthGate h2{margin:0 0 8px;color:#f5e5bc;font-size:23px}
-#cloudAuthGate p{color:#c5d0c7;font-size:14px}
-#cloudAuthGate label{display:block;margin:16px 0 7px;color:#e8dfca}
-#cloudAuthGate input{width:100%;max-width:none;min-height:46px;padding:11px;border:1px solid #657b6d;border-radius:10px;background:#f8faf7;color:#172b25;font-size:16px}
-#cloudAuthGate button{width:100%;justify-content:center;margin-top:14px;min-height:46px}
-#cloudAuthMessage{min-height:24px;margin-top:12px;color:#f1d58e;font-size:13px}
+<style id="cloud-account-style">
 #cloudAccountBar{position:fixed;right:14px;top:12px;z-index:99990;display:flex;align-items:center;gap:9px;padding:7px 10px;border:1px solid #8f7547;border-radius:999px;background:#142b25ed;color:#f7efdf;font-size:12px;box-shadow:0 5px 18px #0004}
 #cloudAccountBar[hidden]{display:none!important}
 #cloudAccountBar button{padding:6px 9px;font-size:11px}
 @media(max-width:600px){#cloudAccountBar{top:auto;bottom:76px;right:9px;max-width:calc(100vw - 18px)}#cloudAccountEmail{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 </style>
-<section id="cloudAuthGate" aria-label="Đăng nhập bằng tên tài khoản và PIN">
- <div class="auth-card">
-  <div style="font-size:30px;margin-bottom:8px">🔐</div>
-  <h2>Fast Track SGN – Khu vực cá nhân</h2>
-  <p>Mỗi nhân viên tự tạo tên đăng nhập và PIN 4 chữ số. Dùng cùng tài khoản trên các thiết bị của mình để đồng bộ dữ liệu riêng.</p>
-  <div class="auth-mode" style="display:flex;gap:8px;margin:14px 0">
-   <button type="button" id="pinModeLogin" class="secondary" style="flex:1;margin:0">Đăng nhập</button>
-   <button type="button" id="pinModeRegister" class="ghost" style="flex:1;margin:0">Tạo tài khoản</button>
-  </div>
-  <form id="cloudAuthForm">
-   <label for="cloudAuthUsername">Tên đăng nhập</label>
-   <input id="cloudAuthUsername" type="text" autocomplete="username" minlength="3" maxlength="24" placeholder="Ví dụ: nhan, an, quang" required>
-   <label for="cloudAuthPin">PIN 4 chữ số</label>
-   <input id="cloudAuthPin" type="password" inputmode="numeric" autocomplete="current-password" pattern="[0-9]{4}" maxlength="4" placeholder="Nhập PIN 4 số" required>
-   <div id="pinConfirmWrap" hidden>
-    <label for="cloudAuthPinConfirm">Nhập lại PIN</label>
-    <input id="cloudAuthPinConfirm" type="password" inputmode="numeric" autocomplete="new-password" pattern="[0-9]{4}" maxlength="4" placeholder="Xác nhận PIN 4 số">
-   </div>
-   <button id="cloudAuthSubmit" type="submit">Đăng nhập</button>
-  </form>
-  <div id="cloudAuthMessage" role="status" aria-live="polite">Dữ liệu chỉ được tải sau khi đăng nhập.</div>
-  <p style="font-size:11px;margin-bottom:0">PIN 4 số có độ bảo mật thấp hơn mật khẩu dài. Hệ thống giới hạn 5 lần nhập sai và tạm khóa 15 phút. Không dùng PIN này cho tài khoản ngân hàng hoặc dịch vụ khác.</p>
- </div>
-</section>
 <div id="cloudAccountBar" hidden><span>☁️ <span id="cloudAccountEmail"></span></span><button type="button" id="cloudSignOut" class="secondary">Đăng xuất</button></div>
 <main id="bookingMain">
 <div class="archive-entry"><a class="linkbtn" href="soan-booking.html?view=archive">📚 Mở PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</a></div>
@@ -413,7 +380,7 @@ button.danger{background:#9c3942!important;color:#fff!important}
 <div id="summary" class="panel hidden"></div>
 <div id="results"></div>
 <div id="skippedBookings"></div>
-<div id="reviews"></div><section id="savedReviewArchive" class="panel" hidden><div class="topline archive-nav"><h2>PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</h2><a class="linkbtn secondary" href="soan-booking.html">← Quay lại Soạn Booking</a></div><p class="hint">Lịch sử được đồng bộ riêng tư theo tài khoản; dùng cùng email trên điện thoại và máy tính. Xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
+<div id="reviews"></div><section id="savedReviewArchive" class="panel" hidden><div class="topline archive-nav"><h2>PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</h2><a class="linkbtn secondary" href="soan-booking.html">← Quay lại Soạn Booking</a></div><p class="hint">Lịch sử được đồng bộ riêng tư theo tài khoản; dùng cùng tên đăng nhập trên điện thoại và máy tính. Xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
 </main>
 <script>
 "use strict";
@@ -1055,25 +1022,16 @@ if(!archiveView){
 }
 
 </script>
+
 <script type="module" id="private-cloud-sync">
 const SUPABASE_URL="https://xyhvgttywjleirsiabve.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
 const PIN_API=SUPABASE_URL+"/functions/v1/staff-pin-auth";
 const TOKEN_KEY="fasttrack_staff_pin_session_v1";
-const gate=document.getElementById("cloudAuthGate");
-const message=document.getElementById("cloudAuthMessage");
-const form=document.getElementById("cloudAuthForm");
-const submit=document.getElementById("cloudAuthSubmit");
-const accountBar=document.getElementById("cloudAccountBar");
+const gateAccountBar=document.getElementById("cloudAccountBar");
 const accountEmail=document.getElementById("cloudAccountEmail");
-const usernameInput=document.getElementById("cloudAuthUsername");
-const pinInput=document.getElementById("cloudAuthPin");
-const confirmInput=document.getElementById("cloudAuthPinConfirm");
-const confirmWrap=document.getElementById("pinConfirmWrap");
-let activeUser=null,cloudReady=false,syncTimer=null,syncInFlight=false,syncAgain=false,authMode="login";
-function authMessage(text,good=false){message.textContent=text;message.style.color=good?"#a9e8bd":"#f1d58e";}
+let activeUser=null,cloudReady=false,syncTimer=null,syncInFlight=false,syncAgain=false;
 function getStoredToken(){try{return JSON.parse(localStorage.getItem(TOKEN_KEY)||"null");}catch(e){return null;}}
-function setStoredToken(data){localStorage.setItem(TOKEN_KEY,JSON.stringify({token:data.token,expiresAt:data.expiresAt,username:data.username}));}
 function clearStoredToken(){localStorage.removeItem(TOKEN_KEY);}
 async function api(action,payload={},token=null){
  const headers={"Content-Type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY};
@@ -1120,14 +1078,13 @@ function applyState(state){
  }
 }
 function showAuthenticated(username){
- activeUser=username;gate.hidden=true;accountBar.hidden=false;
+ activeUser=username;gateAccountBar.hidden=false;
  accountEmail.textContent="Tài khoản: "+username;
 }
 async function restoreCloudState(username,state){
  showAuthenticated(username);
  applyState(state||{});
  cloudReady=true;
- authMessage("Đã đăng nhập và đồng bộ dữ liệu riêng.",true);
 }
 async function writeCloudState(){
  if(!cloudReady||!activeUser)return;
@@ -1154,57 +1111,29 @@ async function writeCloudState(){
   console.error("Cloud sync failed:",error);
   const status=document.getElementById("status");
   if(status){status.textContent="Chưa đồng bộ được lên đám mây: "+(error.message||"Lỗi kết nối")+". Dữ liệu trên thiết bị vẫn được giữ.";status.className="status warn";}
-  if(error.message.includes("Phiên đăng nhập")||error.message.includes("hết hạn")){cloudReady=false;clearStoredToken();gate.hidden=false;accountBar.hidden=true;authMessage(error.message);}
+  if(error.message.includes("Phiên đăng nhập")||error.message.includes("hết hạn")){cloudReady=false;clearStoredToken();location.replace("index.html");}
  }finally{syncInFlight=false;}
 }
 function scheduleCloudSync(){if(!cloudReady||!activeUser)return;clearTimeout(syncTimer);syncTimer=setTimeout(()=>writeCloudState(),900);}
 window.scheduleCloudSync=scheduleCloudSync;
-function setMode(mode){
- authMode=mode;const registering=mode==="register";
- confirmWrap.hidden=!registering;confirmInput.required=registering;
- submit.textContent=registering?"Tạo tài khoản":"Đăng nhập";
- document.getElementById("pinModeLogin").className=registering?"ghost":"secondary";
- document.getElementById("pinModeRegister").className=registering?"secondary":"ghost";
- pinInput.autocomplete=registering?"new-password":"current-password";
- authMessage(registering?"Tạo tên đăng nhập riêng và PIN 4 số. Tên đã có người dùng sẽ không đăng ký lại.":"Nhập tên đăng nhập và PIN để mở dữ liệu của bạn.");
-}
-document.getElementById("pinModeLogin").addEventListener("click",()=>setMode("login"));
-document.getElementById("pinModeRegister").addEventListener("click",()=>setMode("register"));
-[pinInput,confirmInput].forEach(input=>input.addEventListener("input",()=>{input.value=input.value.replace(/\D/g,"").slice(0,4);}));
-form.addEventListener("submit",async event=>{
- event.preventDefault();
- const username=usernameInput.value.trim().toLowerCase(),pin=pinInput.value;
- if(!/^[a-z0-9][a-z0-9._-]{2,23}$/.test(username)){authMessage("Tên đăng nhập phải dài 3–24 ký tự, dùng chữ không dấu, số, dấu chấm, gạch ngang hoặc gạch dưới.");return;}
- if(!/^\d{4}$/.test(pin)){authMessage("PIN phải gồm đúng 4 chữ số.");return;}
- if(authMode==="register"&&pin!==confirmInput.value){authMessage("Hai lần nhập PIN không khớp.");return;}
- submit.disabled=true;submit.textContent=authMode==="register"?"Đang tạo tài khoản…":"Đang đăng nhập…";
- try{
-  const result=authMode==="register"
-   ?await api("register",{username,pin,initialState:localSnapshot()})
-   :await api("login",{username,pin});
-  setStoredToken(result);
-  pinInput.value="";confirmInput.value="";
-  await restoreCloudState(result.username,result.state||{});
- }catch(error){authMessage(error.message||"Không thể đăng nhập. Vui lòng thử lại.");}
- finally{submit.disabled=false;submit.textContent=authMode==="register"?"Tạo tài khoản":"Đăng nhập";}
-});
 document.getElementById("cloudSignOut").addEventListener("click",async()=>{
  const stored=getStoredToken();cloudReady=false;activeUser=null;clearTimeout(syncTimer);
  try{if(stored?.token)await api("logout",{},stored.token);}catch(e){}
- clearStoredToken();accountBar.hidden=true;gate.hidden=false;
- sessionStorage.removeItem(BOOKING_SESSION_KEY);localStorage.removeItem(SAVED_REVIEW_KEY);savedReviewItems=[];
+ clearStoredToken();sessionStorage.removeItem(BOOKING_SESSION_KEY);localStorage.removeItem(SAVED_REVIEW_KEY);savedReviewItems=[];
  if($("raw"))$("raw").value="";
- authMessage("Đã đăng xuất. Dữ liệu đã đồng bộ vẫn được giữ trên tài khoản cá nhân.");
+ location.href="index.html";
 });
 (async()=>{
+ const stored=getStoredToken();
+ if(!stored?.token||!stored.expiresAt||new Date(stored.expiresAt).getTime()<=Date.now()){
+  clearStoredToken();location.replace("index.html");return;
+ }
  try{
-  const stored=getStoredToken();
-  if(stored?.token&&new Date(stored.expiresAt).getTime()>Date.now()){
-   try{const result=await api("load",{},stored.token);await restoreCloudState(stored.username,result.state||{});return;}
-   catch(error){clearStoredToken();authMessage("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");}
-  }else if(stored)clearStoredToken();
-  gate.hidden=false;setMode("login");
- }catch(error){gate.hidden=false;authMessage("Không khởi tạo được kết nối đồng bộ: "+(error.message||"Kiểm tra mạng."));}
+  const result=await api("load",{},stored.token);
+  await restoreCloudState(result.username||stored.username,result.state||{});
+ }catch(error){
+  clearStoredToken();location.replace("index.html");
+ }
 })();
 </script>
 <style id="christmas-audio-player-style">
