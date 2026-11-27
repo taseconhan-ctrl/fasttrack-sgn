@@ -290,3 +290,67 @@ html body .ft-app *,
 html body #globalStaffAuthBar * {
   font-kerning: normal;
 }
+
+
+/* Christmas UI button contrast audit — one consistent, accessible palette. */
+html body .ft-app .ft-content button,
+html body .ft-app .ft-content .btn,
+html body .ft-app .ft-content .linkbtn,
+html body .ft-app .ft-content .back,
+html body .ft-app #staffAuthPanel .auth-actions a,
+html body #globalStaffAuthBar button {
+  font-weight: 750 !important;
+  text-decoration: none !important;
+  text-shadow: none !important;
+  opacity: 1;
+}
+
+/* Primary actions: evergreen with white text. */
+html body .ft-app .ft-content button:not(.secondary):not(.ghost):not(.danger):not(.back):not(.delete),
+html body .ft-app .ft-content .btn:not(.secondary):not(.ghost):not(.danger),
+html body .ft-app .ft-content .linkbtn:not(.secondary),
+html body .ft-app .ft-content .hero-cta,
+html body .ft-app #staffAuthPanel .auth-actions a {
+  background: #176b4b !important;
+  border: 1px solid #176b4b !important;
+  color: #ffffff !important;
+}
+
+/* Secondary / navigation actions: warm ivory with dark evergreen text. */
+html body .ft-app .ft-content button.secondary,
+html body .ft-app .ft-content button.ghost,
+html body .ft-app .ft-content button.back,
+html body .ft-app .ft-content .btn.secondary,
+html body .ft-app .ft-content .btn.ghost,
+html body .ft-app .ft-content .linkbtn.secondary,
+html body .ft-app .ft-content .back,
+html body .ft-app #staffAuthPanel .auth-actions button,
+html body #globalStaffAuthBar button {
+  background: #fff4dc !important;
+  border: 1px solid #d9bd83 !important;
+  color: #254b3b !important;
+}
+
+/* Destructive actions: solid red with white text, never white-on-white. */
+html body .ft-app .ft-content button.danger,
+html body .ft-app .ft-content button.delete,
+html body .ft-app .ft-content .btn.danger,
+html body .ft-app .ft-content .btn-danger {
+  background: #b4232a !important;
+  border: 1px solid #b4232a !important;
+  color: #ffffff !important;
+}
+
+/* Disabled controls remain legible while clearly inactive. */
+html body .ft-app .ft-content button:disabled,
+html body .ft-app .ft-content .btn:disabled {
+  opacity: .55 !important;
+  cursor: not-allowed !important;
+}
+html body .ft-app .ft-content button:focus-visible,
+html body .ft-app .ft-content .btn:focus-visible,
+html body .ft-app .ft-content .linkbtn:focus-visible,
+html body #globalStaffAuthBar button:focus-visible {
+  outline: 3px solid #e3b341 !important;
+  outline-offset: 2px !important;
+}
