@@ -225,7 +225,7 @@ a:focus-visible,button:focus-visible{outline:3px solid #d6b45f!important;outline
 .archive-entry{margin:0 0 16px}
 .archive-nav{gap:12px;margin-bottom:10px}
 /* Ở giao diện soạn booking, không hiển thị khối lịch sử; chỉ mở qua nút riêng */
-body:not(.archive-only) #savedReviewArchive{display:none!important}
+body:not(.archive-only) #savedReviewArchive, #savedReviewArchive[hidden]{display:none!important}
 body.archive-only #bookingMain>*:not(#savedReviewArchive){display:none!important}
 body.archive-only #savedReviewArchive{display:block!important;margin-top:0}
 body.archive-only #bookingMain{max-width:1400px}
@@ -373,11 +373,14 @@ button.danger{background:#9c3942!important;color:#fff!important}
 <div id="summary" class="panel hidden"></div>
 <div id="results"></div>
 <div id="skippedBookings"></div>
-<div id="reviews"></div><section id="savedReviewArchive" class="panel"><div class="topline archive-nav"><h2>PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</h2><a class="linkbtn secondary" href="soan-booking.html">← Quay lại Soạn Booking</a></div><p class="hint">Lịch sử lưu trên thiết bị này; xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
+<div id="reviews"></div><section id="savedReviewArchive" class="panel" hidden><div class="topline archive-nav"><h2>PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</h2><a class="linkbtn secondary" href="soan-booking.html">← Quay lại Soạn Booking</a></div><p class="hint">Lịch sử lưu trên thiết bị này; xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
 </main>
 <script>
 "use strict";
-if(new URLSearchParams(location.search).get("view")==="archive") document.body.classList.add("archive-only");
+const archiveView=new URLSearchParams(location.search).get("view")==="archive";
+document.body.classList.toggle("archive-only",archiveView);
+const archiveSection=document.getElementById("savedReviewArchive");
+if(archiveSection){if(archiveView)archiveSection.removeAttribute("hidden");else archiveSection.setAttribute("hidden","");}
 
 const $ = id => document.getElementById(id);
 const STAFF_PROFILES = {
