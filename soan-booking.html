@@ -791,7 +791,7 @@ function buildOne(b,staff,phone,hotline){
  if(!b.email)warnings.push("Không có email khách");
  if(!sub)warnings.push("Chưa đủ dữ liệu tạo Subject");
  if(!confirmed)warnings.push("Trạng thái không phải Đã xác nhận");
- if(!unassigned)warnings.push("Đã có nhân viên nhận việc: "+assigned);
+ if(dir!=="ARRIVAL"&&!unassigned)warnings.push("Đã có nhân viên nhận việc: "+assigned);
  let copySubject=sub;
  // Review table rule: order ID appears in its own column, so remove it from review subject only.
  if(b.order&&copySubject) copySubject=copySubject.replace(b.order,"").replace(/\s+–\s+–\s+/g," – ").replace(/^ – | – $/g,"").replace(/🛫 – /,"🛫 ");
@@ -951,7 +951,7 @@ async function copyText(s){
 function toast(msg,good=true){const el=$("status");if(!el)return;el.textContent=msg;el.className="status "+(good?"good":"warn")}
 function skippedReasons(b,all){
  const reasons=[];
- if(!b.unassigned)reasons.push("Đã có nhân viên nhận việc: "+(b.staffAssign||"không rõ"));
+ if(b.dir!=="ARRIVAL"&&!b.unassigned)reasons.push("Đã có nhân viên nhận việc: "+(b.staffAssign||"không rõ"));
  if(!all && !b.confirmed)reasons.push("Trạng thái booking không phải “Đã xác nhận”");
  return [...new Set(reasons)];
 }
@@ -972,7 +972,7 @@ function renderSkippedBookings(items,all){
   const alreadyComposed=processedBookings.some(x=>x.raw===b.raw);
   return `<article class="booking"><div class="topline"><h3>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.dir||"Chưa xác định loại")}</h3><span class="pill bad">ĐÃ BỎ QUA</span></div><div class="meta"><span class="pill">${esc(b.flight||"Chưa có flight")}</span><span class="pill">${esc(b.date||"")} ${esc(b.time||"")}</span><span class="pill">${b.pax||b.names.length||0} khách</span></div><div class="grid"><div class="kv"><small>Khách</small><b>${esc(b.names.join(", "))}</b></div><div class="kv"><small>Nhân viên nhận việc</small><b>${esc(b.staffAssign||"Trống")}</b></div><div class="kv"><small>Trạng thái</small><b>${esc(b.status||"")}</b></div></div><div class="status warn"><b>Lý do bỏ qua:</b><ul>${reason.map(x=>"<li>"+esc(x)+"</li>").join("")||"<li>Booking được đưa vào đây theo bộ lọc hiện tại.</li>"}</ul>${missing.length?`<p><b>Thông tin còn thiếu (nếu có):</b> ${missing.map(esc).join(", ")}. Các trường này sẽ để trống khi soạn.</p>`:""}</div><div class="controls"><button type="button" class="compose-one-skipped" data-skipped-index="${i}" ${alreadyComposed?"disabled":""}>${alreadyComposed?"Đã soạn tại đây":"Soạn booking này"}</button></div><div class="skipped-compose-output"></div></article>`;
  }).join("");
- return `<section class="panel"><div class="topline"><h2>BOOKING BỊ BỎ QUA (${items.length})</h2><span class="pill bad">Có lý do cho từng booking</span></div><p class="hint">Chỉ ghi lý do theo bộ lọc: booking chưa xác nhận hoặc đã có nhân viên nhận việc. Thiếu trường dữ liệu không ngăn việc soạn; trường thiếu sẽ để trống. Bấm “Soạn booking này” ở từng booking nếu muốn đưa riêng booking đó vào danh sách soạn.</p>${rows}</section>`;
+ return `<section class="panel"><div class="topline"><h2>BOOKING BỊ BỎ QUA (${items.length})</h2><span class="pill bad">Có lý do cho từng booking</span></div><p class="hint">Chỉ ghi lý do theo bộ lọc: booking chưa xác nhận hoặc booking TIỄN đã có nhân viên nhận việc. Mục ĐÓN không lọc theo nhân viên nhận việc. Thiếu trường dữ liệu không ngăn việc soạn; trường thiếu sẽ để trống. Bấm “Soạn booking này” ở từng booking nếu muốn đưa riêng booking đó vào danh sách soạn.</p>${rows}</section>`;
 }
 function run(){
  const raw=$("raw").value;
@@ -981,7 +981,7 @@ function run(){
  const staff=$("staff").value.trim()||"Nhan",phone=$("phone").value.trim()||"+84 867802129",hotline=$("hotline").value.trim()||"+84 866624188";
  const all=$("allBookings").checked;
  const made=parsed.map(b=>buildOne(b,staff,phone,hotline));
- const kept=made.filter(b=>(all || b.unassigned) && (all || b.confirmed));
+ const kept=made.filter(b=>(all || b.dir==="ARRIVAL" || b.unassigned) && (all || b.confirmed));
  const skipped=made.filter(b=>!kept.includes(b));
  $("summary").classList.remove("hidden");
  processedBookings=kept;
