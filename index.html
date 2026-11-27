@@ -317,7 +317,8 @@ body.staff-authenticated .ft-account-link{display:none!important}
   <span class="ft-nav-label">BOOKING MANAGEMENT</span>
   <a class="ft-nav-link" href="soan-booking.html"><span class="ft-nav-icon">▤</span><span>Soạn Booking</span></a>
   <span class="ft-nav-label">OPERATIONS</span>
-  <a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">↙</span><span>Đón khách</span></a>
+  <a class="ft-nav-link" href="ung-don-khach.html"><span class="ft-nav-icon">↙</span><span>Điều hành đón khách</span></a>
+  <a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">◷</span><span>Đón khách cũ</span></a>
   <span class="ft-nav-label">PEOPLE & PLANNING</span>
   <a class="ft-nav-link" href="xep-lich.html"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a>
  </nav>
@@ -340,7 +341,7 @@ body.staff-authenticated .ft-account-link{display:none!important}
  <div id="staffAuthFormArea">
   <div class="auth-mode">
    <button type="button" id="staffPinLoginMode" class="secondary">Đăng nhập</button>
-   <button type="button" id="staffPinRegisterMode" class="ghost">Tạo tài khoản</button>
+   <button type="button" id="staffPinRegisterMode" class="ghost" hidden>Tạo tài khoản</button>
   </div>
   <form id="staffPinAuthForm">
    <label for="staffPinUsername">Tên đăng nhập</label>
@@ -357,7 +358,7 @@ body.staff-authenticated .ft-account-link{display:none!important}
  <div id="staffSignedIn" hidden>
   <p id="staffSignedInText" style="font-weight:750;color:#f5dfaa"></p>
   <div class="auth-actions">
-   <a href="soan-booking.html">Soạn Booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a>
+   <a href="soan-booking.html">Soạn Booking</a><a href="ung-don-khach.html">Điều hành đón khách</a><a href="don-khach.html">Đón khách cũ</a><a href="xep-lich.html">Xếp lịch</a>
    <button type="button" id="staffHomeSignOut">Đăng xuất</button>
   </div>
  </div>
@@ -377,6 +378,12 @@ body.staff-authenticated .ft-account-link{display:none!important}
       <h3>XẾP LỊCH NHÂN VIÊN</h3>
       <p>Tự động phân ca theo quy tắc Fast Track SGN, chỉnh sửa lịch từng ngày, kiểm tra điều kiện và xuất bảng phân ca.</p>
       <span class="go">Mở chức năng <span aria-hidden="true">→</span></span>
+    </a>
+    <a class="item" href="ung-don-khach.html">
+      <span class="icon" aria-hidden="true">✦</span>
+      <h3>ĐIỀU HÀNH ĐÓN KHÁCH</h3>
+      <p>Danh sách booking đồng bộ, nhận khách tránh trùng, cập nhật ống/bãi, giờ dự kiến đáp và ảnh minh chứng.</p>
+      <span class="go">Mở ứng dụng <span aria-hidden="true">→</span></span>
     </a>
     <a class="item" href="don-khach.html">
       <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
@@ -468,7 +475,7 @@ form.addEventListener("submit",async event=>{
    :await api("login",{username,pin});
   saveToken(result);
   say("Đăng nhập thành công. Đang mở không gian làm việc…",true);
-  const requestedNext=new URLSearchParams(location.search).get("next");const allowedNext=new Set(["don-khach.html","soan-booking.html","xep-lich.html"]);location.href=allowedNext.has(requestedNext)?requestedNext:"soan-booking.html";
+  const requestedNext=new URLSearchParams(location.search).get("next");const allowedNext=new Set(["don-khach.html","ung-don-khach.html","soan-booking.html","xep-lich.html"]);location.href=allowedNext.has(requestedNext)?requestedNext:"soan-booking.html";
  }catch(error){say(error.message||"Không thể đăng nhập. Vui lòng thử lại.");}
  finally{submit.disabled=false;submit.textContent=authMode==="register"?"Tạo tài khoản":"Đăng nhập";}
 });
