@@ -821,7 +821,22 @@ function renderSavedReviewArchive(){
  const filtered=savedReviewItems.filter(x=>(!dateFilter||dateToIso(x.date)===dateFilter)&&(partnerFilter==="__ALL__"||(x.agency||"Chưa rõ đối tác")===partnerFilter)&&(directionFilter==="ALL"||x.dir===directionFilter));
  const groups={};filtered.forEach(x=>{(groups[x.date] ||= []).push(x);});
  $("savedDailySummary").innerHTML=Object.keys(groups).sort((a,b)=>dateToIso(b).localeCompare(dateToIso(a))).map(d=>{const v=groups[d],arr=v.filter(x=>x.dir==="ARRIVAL").length,dep=v.filter(x=>x.dir==="DEPARTURE").length;return '<div class="kv" style="margin:8px 0"><b>'+esc(d)+'</b><div class="hint">Tổng '+v.length+' booking · ĐÓN: '+arr+' · TIỄN: '+dep+'</div></div>';}).join("")||'<p class="muted">Không có booking phù hợp với bộ lọc.</p>';
- function table(dir,title){const list=filtered.filter(x=>x.dir===dir&&x.sub),rows=list.map((x,i)=>{const line=[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",x.estimatedArrival||"",x.reviewSubject].join(" | ");return '<tr><td>'+(i+1)+'</td><td>'+esc(x.date)+'</td><td>'+esc(x.order)+'</td><td>'+esc(x.reviewPhone)+'</td><td>'+esc(x.agency||"Chưa rõ agency")+'</td><td><input type="time" class="saved-estimated-arrival" data-saved-key="'+esc(x.key)+'" value="'+esc(x.estimatedArrival||"")+'" aria-label="Giờ dự kiến đến sân bay" style="min-width:112px;padding:7px;border:1px solid #bbc6d8;border-radius:7px"></td><td>'+esc(x.reviewSubject)+'</td><td>'+copyButton(line,"Copy dòng")+' <button type="button" class="mini ghost delete-saved-review" data-saved-key="'+esc(x.key)+'">Xóa</button></td></tr>';});const all=list.map(x=>[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",x.estimatedArrival||"",x.reviewSubject].join(" | ")).join("\\n");return '<section class="review"><div class="topline"><h3>'+title+'</h3>'+copyButton(all,"Copy tất cả","secondary")+'</div><div class="tablewrap"><table><thead><tr><th>#</th><th>Ngày bay</th><th>Mã order</th><th>Số điện thoại</th><th>Agency</th><th>Giờ dự kiến đến sân bay</th><th>Subject</th><th>Thao tác</th></tr></thead><tbody>'+(rows.join("")||'<tr><td colspan="8" class="muted">Không có booking.</td></tr>')+'</tbody></table></div></section>';}
+ function table(dir,title){
+  const list=filtered.filter(x=>x.dir===dir&&x.sub);
+  const isDeparture=dir==="DEPARTURE";
+  const rows=list.map((x,i)=>{
+   const base=[x.order,x.reviewPhone,x.agency||"Chưa rõ agency"];
+   if(isDeparture)base.push(x.estimatedArrival||"");
+   base.push(x.reviewSubject);
+   const line=base.join(" | ");
+   const timeCell=isDeparture?'<td><input type="time" class="saved-estimated-arrival" data-saved-key="'+esc(x.key)+'" value="'+esc(x.estimatedArrival||"")+'" aria-label="Giờ dự kiến đến sân bay" style="min-width:112px;padding:7px;border:1px solid #bbc6d8;border-radius:7px"></td>':"";
+   return '<tr><td>'+(i+1)+'</td><td>'+esc(x.date)+'</td><td>'+esc(x.order)+'</td><td>'+esc(x.reviewPhone)+'</td><td>'+esc(x.agency||"Chưa rõ agency")+'</td>'+timeCell+'<td>'+esc(x.reviewSubject)+'</td><td>'+copyButton(line,"Copy dòng")+' <button type="button" class="mini ghost delete-saved-review" data-saved-key="'+esc(x.key)+'">Xóa</button></td></tr>';
+  });
+  const all=list.map(x=>[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",...(isDeparture?[x.estimatedArrival||""]:[]),x.reviewSubject].join(" | ")).join("\\n");
+  const timeHead=isDeparture?"<th>Giờ dự kiến đến sân bay</th>":"";
+  const colspan=isDeparture?8:7;
+  return '<section class="review"><div class="topline"><h3>'+title+'</h3>'+copyButton(all,"Copy tất cả","secondary")+'</div><div class="tablewrap"><table><thead><tr><th>#</th><th>Ngày bay</th><th>Mã order</th><th>Số điện thoại</th><th>Agency</th>'+timeHead+'<th>Subject</th><th>Thao tác</th></tr></thead><tbody>'+(rows.join("")||'<tr><td colspan="'+colspan+'" class="muted">Không có booking.</td></tr>')+'</tbody></table></div></section>';
+ }
  $("savedReviewTables").innerHTML=table("ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+table("DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
 }
 loadSavedReview();renderSavedReviewArchive();
