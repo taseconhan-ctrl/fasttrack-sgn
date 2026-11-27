@@ -692,6 +692,48 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 }
 @media(prefers-reduced-motion:reduce){.ft-sidebar,.ft-main{transition:none!important}}
 </style>
+<style id="ft-operations-theme-overrides">
+/* Legacy operation components adapted to the shared black-and-champagne shell. */
+.ft-content .panel,.ft-content .booking,.ft-content .review,.ft-content .staff,.ft-content .workspace-choice,.ft-content .archive-entry{
+ background:#171717!important;color:#f5f0e6!important;border:1px solid #34312a!important;border-radius:13px!important;box-shadow:0 8px 24px #0004!important
+}
+.ft-content .panel:hover,.ft-content .workspace-choice:hover{border-color:#806b3f!important;box-shadow:0 10px 28px #0005!important}
+.ft-content .panel h2,.ft-content .booking h2,.ft-content .review h2,.ft-content h2,.ft-content h3{color:#dcc58a!important}
+.ft-content .panel h2,.ft-content .booking h2,.ft-content .review h2{border-color:#34312a!important}
+.ft-content p,.ft-content .muted,.ft-content small,.ft-content .hint,.ft-content .description{color:#aaa49a!important}
+.ft-content label,.ft-content .toolbar label,.ft-content .controls label{color:#d8cfbd!important}
+.ft-content input:not([type=checkbox]):not([type=radio]),.ft-content select,.ft-content textarea{
+ background:#10100f!important;color:#f5f0e6!important;border:1px solid #494337!important;border-radius:8px!important;box-shadow:none!important
+}
+.ft-content input::placeholder,.ft-content textarea::placeholder{color:#777168!important}
+.ft-content input:focus,.ft-content select:focus,.ft-content textarea:focus{outline:none!important;border-color:#b89b5e!important;box-shadow:0 0 0 3px #b89b5e24!important}
+.ft-content input[type=checkbox],.ft-content input[type=radio]{accent-color:#b89b5e}
+.ft-content button,.ft-content .btn{
+ border:1px solid #806b3f!important;border-radius:8px!important;background:linear-gradient(135deg,#c5a96b,#a88a4e)!important;color:#17140e!important;font-weight:750!important;box-shadow:none!important
+}
+.ft-content button.secondary,.ft-content button.ghost,.ft-content button.back,.ft-content .btn.secondary{
+ border:1px solid #514a3b!important;background:#24221d!important;color:#e4d8c0!important
+}
+.ft-content button.danger,.ft-content button.delete,.ft-content .btn.danger{border-color:#854848!important;background:#492525!important;color:#f3d7d7!important}
+.ft-content button:disabled{opacity:.48!important}
+.ft-content .tablewrap,.ft-content .table-wrapper,.ft-content .table-responsive{max-width:100%!important;overflow:auto!important;border:1px solid #34312a!important;border-radius:10px!important;background:#141414!important}
+.ft-content table{color:#e9e2d5!important;border-color:#34312a!important}
+.ft-content th{background:#29251d!important;color:#dcc58a!important;border-color:#49402f!important}
+.ft-content td{background:#171717!important;color:#e8e1d5!important;border-color:#34312a!important}
+.ft-content tbody tr:nth-child(even) td{background:#1c1b18!important}
+.ft-content tbody tr:hover td{background:#29251d!important}
+.ft-content th:first-child,.ft-content td:first-child{background:#211f1a!important;color:#eee5d4!important}
+.ft-content pre,.ft-content code{background:#111!important;color:#e8dfce!important;border-color:#403a2e!important}
+.ft-content .workspace-choice{color:#f5f0e6!important}
+.ft-content .workspace-choice strong,.ft-content .workspace-choice .workspace-copy strong{color:#dcc58a!important}
+.ft-content .workspace-choice small,.ft-content .workspace-arrow{color:#aaa49a!important}
+.ft-content .status,.ft-content .badge{border-color:#514a3b!important}
+@media(max-width:680px){
+ .ft-content .panel{padding:15px!important}
+ .ft-content .toolbar,.ft-content .controls{gap:9px!important}
+ .ft-content table{min-width:680px}
+}
+</style>
 </head><body>
 <div class="ft-app" id="ftApp">
 <aside class="ft-sidebar" id="ftSidebar" aria-label="Điều hướng chính">
