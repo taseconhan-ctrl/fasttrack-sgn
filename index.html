@@ -765,6 +765,42 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 .ft-content input[type="checkbox"],.ft-content input[type="radio"]{
   accent-color:var(--ft-gold)!important
 }
+
+
+/* Responsive operational layouts: keep wide data inside its own scroll region. */
+.ft-content,.ft-content *{box-sizing:border-box}
+.ft-content{min-width:0;max-width:100%}
+.ft-content .tablewrap,.ft-content .table-wrapper,.ft-content .table-responsive{
+  display:block;width:100%;max-width:100%;min-width:0;overflow-x:auto!important;overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-gutter:stable
+}
+.ft-content table{width:100%;max-width:none}
+.ft-content input:not([type=checkbox]):not([type=radio]),
+.ft-content select,.ft-content textarea{max-width:100%;min-width:0}
+.ft-content textarea{width:100%;resize:vertical}
+.ft-content .fields>* ,.ft-content .grid>*{min-width:0;max-width:100%}
+.ft-content .toolbar,.ft-content .controls{min-width:0;max-width:100%}
+.ft-content .toolbar>*,.ft-content .controls>*{min-width:0;max-width:100%}
+@media(max-width:680px){
+  .ft-content .fields{grid-template-columns:minmax(0,1fr)!important}
+  .ft-content .toolbar{grid-template-columns:minmax(0,1fr)!important;align-items:stretch!important}
+  .ft-content .controls{display:flex!important;flex-wrap:wrap!important;align-items:stretch!important}
+  .ft-content .controls>*{flex:1 1 100%!important;width:100%;min-width:0!important}
+  .ft-content .toolbar button,.ft-content .controls button{width:100%;min-width:0!important}
+  .ft-content .tablewrap,.ft-content .table-wrapper,.ft-content .table-responsive{
+    max-height:65vh;overflow-x:auto!important;overflow-y:auto!important
+  }
+  .ft-content table{min-width:680px}
+  .ft-content #schedule{min-width:980px}
+  .ft-content #cloudAccountBar{width:100%!important;margin:0 0 12px!important;flex-wrap:wrap!important}
+  .ft-content .panel{min-width:0}
+}
+@media(max-width:380px){
+  .ft-content{width:calc(100% - 20px)!important}
+  .ft-content .panel{padding:12px!important}
+  .ft-content th,.ft-content td{padding:7px 8px!important}
+}
+
 </style>
 </head>
 <body>
