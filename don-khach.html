@@ -1,6 +1,29 @@
 <!doctype html>
 <html lang="vi">
 <head>
+<script>document.documentElement.classList.add("staff-auth-pending");</script>
+<style>html.staff-auth-pending body{visibility:hidden}#globalStaffAuthBar{position:fixed;top:10px;right:12px;z-index:99999;display:flex;align-items:center;gap:9px;padding:7px 10px;border:1px solid #d8c99f;border-radius:10px;background:#102a25ee;color:#fff8e8;font:12px system-ui;box-shadow:0 4px 16px #0003}#globalStaffAuthBar button{border:1px solid #d8c99f;border-radius:7px;padding:6px 9px;background:#315c4d;color:#fff8e8;font-weight:700;cursor:pointer}</style>
+<script type="module" id="global-staff-pin-gate">
+const API="https://xyhvgttywjleirsiabve.supabase.co/functions/v1/staff-pin-auth";
+const KEY="fasttrack_staff_pin_session_v1";
+const PUBLISHABLE="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
+function stored(){try{return JSON.parse(localStorage.getItem(KEY)||"null")}catch{return null}}
+function goLogin(){const next=location.pathname.split("/").pop()+location.search+location.hash;location.replace("index.html?next="+encodeURIComponent(next))}
+async function call(action,token){const r=await fetch(API,{method:"POST",headers:{"Content-Type":"application/json","apikey":PUBLISHABLE,"Authorization":"Bearer "+token},body:JSON.stringify({action})});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||"Phiên đăng nhập không hợp lệ");return d}
+(async()=>{
+ const s=stored();
+ if(!s?.token||!s.expiresAt||new Date(s.expiresAt).getTime()<=Date.now()){localStorage.removeItem(KEY);return goLogin()}
+ try{
+  const data=await call("load",s.token);
+  const bar=document.createElement("div");bar.id="globalStaffAuthBar";
+  const label=document.createElement("span");label.textContent="Tài khoản: "+(data.username||s.username||"nhân viên");
+  const btn=document.createElement("button");btn.type="button";btn.textContent="Đăng xuất";
+  btn.addEventListener("click",async()=>{btn.disabled=true;try{await call("logout",s.token)}catch{}localStorage.removeItem(KEY);sessionStorage.removeItem("fasttrack_sgn_booking_session_v1");localStorage.removeItem("fasttrack_sgn_saved_review_history_v1");location.replace("index.html")});
+  bar.append(label,btn);document.body.appendChild(bar);
+  document.documentElement.classList.remove("staff-auth-pending");
+ }catch(e){localStorage.removeItem(KEY);goLogin()}
+})();
+</script>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ĐÓN KHÁCH | TA SẼ CỐ</title>
 <style>
