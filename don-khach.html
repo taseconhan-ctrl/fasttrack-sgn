@@ -408,7 +408,7 @@ function parseRows(text){
    if(!typ){const raw=clean(c[5]||c[4]);typ=normalizeType(raw);}
    if(!typ)continue;
    const rawDate=c.length>=9?c[6]:c[3];
-   out.push([a,f,n,tim,typ,clean(ord),staff,dateISO(rawDate||""),"Chưa phân công",""]);
+   out.push([a,f,n,tim,typ,clean(ord),staff,dateISO(rawDate||"")||$("serviceDate").value,"Chưa phân công","",clean(c.length>=9?c[1]:""),normalizeTime(c.length>=9?c[2]:"")]);
  }
  return out;
 }
@@ -420,7 +420,7 @@ function tsv(rows){return [HEAD.join("\t"),...rows.map(r=>[r[0],r[1],r[2],r[7]||
 function renderTable(id,rows){
  const staffOptions=current=>'<option value="">Chưa phân công</option>'+[...new Set([...STAFF,...(current?[current]:[])])].map(s=>'<option value="'+esc(s)+'" '+(s===current?'selected':'')+'>'+esc(s)+'</option>').join("");
  const statusOptions=current=>STATUSES.map(s=>'<option '+(s===(current||"Chưa phân công")?'selected':'')+'>'+s+'</option>').join("");
- $(id).innerHTML=rows.length?rows.map(r=>{const full=id==="arrivalRows"&&r[4]==="Arrival FULL",bg=full?agencyColor(r[0]):"",idx=data.indexOf(r);return '<tr class="'+(full?"arrival-full-row":"")+'" style="'+(full?"background:"+bg:"")+'"><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[7]||"Chưa có ngày")+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td><td>'+esc(r[5])+'</td><td><select aria-label="Nhân viên phụ trách" data-staff="'+idx+'">'+staffOptions(r[6])+'</select></td><td><select aria-label="Trạng thái đón" data-status="'+idx+'">'+statusOptions(r[8])+'</select></td><td>'+esc(r[9]||"—")+'</td></tr>';}).join(""):'<tr><td colspan="10" style="text-align:center;color:#68776d">Không có booking phù hợp với ngày / bộ lọc đã chọn.</td></tr>';
+ $(id).innerHTML=rows.length?rows.map(r=>{const full=id==="arrivalRows"&&r[4]==="Arrival FULL",bg=full?agencyColor(r[0]):"",idx=data.indexOf(r);return '<tr class="'+(full?"arrival-full-row":"")+'" style="'+(full?"background:"+bg:"")+'"><td>'+esc(r[0])+'</td><td>'+esc(r[1])+'</td><td>'+esc(r[2])+'</td><td>'+esc(r[7]||"Chưa có ngày")+'</td><td>'+esc(r[3])+'</td><td>'+esc(r[4])+'</td><td>'+esc(r[5])+'</td><td><select aria-label="Nhân viên phụ trách" data-staff="'+idx+'">'+staffOptions(r[6])+'</select></td><td>'+esc(r[8]||"Chưa phân công")+'</td><td>'+esc(r[9]||"—")+'</td></tr>';}).join(""):'<tr><td colspan="10" style="text-align:center;color:#68776d">Không có booking phù hợp với ngày / bộ lọc đã chọn.</td></tr>';
  document.querySelectorAll("[data-staff]").forEach(el=>el.addEventListener("change",async e=>{const row=data[Number(e.target.dataset.staff)];if(!row||!row[12])return;const old=row[6];row[6]=e.target.value;try{await cloudCall("update_responsible",{id:row[12],responsible_staff:row[6]});row[9]=new Date().toLocaleString("vi-VN");save();$("status").textContent="Đã cập nhật NV phụ trách trên booking gốc.";}catch(err){row[6]=old;e.target.value=old;$("status").textContent=err.message;}}));
 
 }
