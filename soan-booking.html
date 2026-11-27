@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fast Track SGN ✈ Christmas Operations</title>
+<title>Soạn Booking | Fast Track SGN</title>
 <style>
 :root{--bg:#f4f6fa;--card:#fff;--ink:#172033;--muted:#65718a;--line:#dce2ec;--accent:#2257c7;--soft:#eaf0ff;--good:#087443;--warn:#946200;--bad:#a22b36}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
@@ -337,6 +337,195 @@ td a{color:#f1d28b!important}
 button.secondary,.ghost{background:#f5eddb!important;color:#284137!important;border-color:#c6b37d!important}
 button.danger{background:#9c3942!important;color:#fff!important}
 #christmas-audio-player{color:#fff!important}
+</style>
+<style id="fasttrack-practical-layout">
+/* FAST TRACK SGN — Practical operations interface (holiday theme removed) */
+:root{
+  --ft-navy:#142b45;--ft-navy-2:#1c3c5b;--ft-green:#176b55;--ft-green-2:#21836a;
+  --ft-bg:#f3f6f9;--ft-card:#fff;--ft-ink:#1e293b;--ft-muted:#64748b;
+  --ft-line:#dce4ec;--ft-soft:#edf3f7;--ft-radius:14px;
+  --ft-shadow:0 5px 18px rgba(20,43,69,.07);
+}
+html{background:var(--ft-bg)!important;scroll-behavior:smooth}
+body{
+  margin:0!important;background:var(--ft-bg)!important;color:var(--ft-ink)!important;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif!important;
+  font-size:15px!important;line-height:1.55!important;
+}
+body:before,body:after{display:none!important;content:none!important}
+header{
+  position:relative!important;background:var(--ft-navy)!important;color:#fff!important;
+  border:0!important;border-bottom:3px solid var(--ft-green)!important;
+  box-shadow:none!important;padding:20px max(18px,calc((100% - 1240px)/2))!important;
+}
+header:empty{display:none!important}
+header h1,.brand{margin:0!important;color:#fff!important;font-size:clamp(21px,2.6vw,27px)!important;
+  font-weight:800!important;letter-spacing:.2px!important;text-shadow:none!important}
+header p,.sub{margin:4px 0 0!important;color:#d7e2ed!important;font-size:13px!important;letter-spacing:0!important}
+.winter-nav,.site-nav{
+  position:sticky!important;top:0!important;z-index:1000!important;display:flex!important;
+  align-items:center!important;justify-content:space-between!important;gap:16px!important;
+  min-height:56px!important;padding:8px max(18px,calc((100% - 1240px)/2))!important;
+  background:#fff!important;border:0!important;border-bottom:1px solid var(--ft-line)!important;
+  box-shadow:0 2px 8px rgba(20,43,69,.04)!important;
+}
+.nav-brand{color:var(--ft-navy)!important;font-weight:850!important;font-size:14px!important;
+  letter-spacing:.5px!important;text-decoration:none!important;white-space:nowrap}
+.nav-links{display:flex!important;align-items:center!important;gap:5px!important;flex-wrap:wrap!important}
+.nav-links a{display:inline-flex!important;align-items:center!important;padding:8px 11px!important;
+  border-radius:9px!important;color:#425466!important;text-decoration:none!important;font-size:13px!important;font-weight:650!important}
+.nav-links a:hover,.nav-links a:focus-visible{background:#edf4f1!important;color:var(--ft-green)!important}
+main,.wrap,#bookingMain{
+  width:min(1240px,calc(100% - 36px))!important;max-width:1240px!important;
+  margin:22px auto 48px!important;padding:0!important;
+}
+main{display:block}
+.panel,.booking,.review,#staffAuthPanel,.intro,.item,.staff{
+  border:1px solid var(--ft-line)!important;border-radius:var(--ft-radius)!important;
+  background:var(--ft-card)!important;box-shadow:var(--ft-shadow)!important;
+}
+.panel,.booking,.review{padding:20px!important;margin:0 0 16px!important}
+.panel:before,.panel:after,.intro:before,.intro:after,.item:after{display:none!important;content:none!important}
+h1,h2,h3{color:var(--ft-navy)!important;line-height:1.3!important;text-decoration:none!important}
+h2,.panel h2,.booking h2,.review h2{font-size:18px!important;font-weight:780!important;margin:0 0 14px!important;
+  padding:0 0 10px!important;border-bottom:1px solid #e8edf2!important;letter-spacing:0!important}
+h3{font-size:16px!important;font-weight:750!important}
+p{line-height:1.55}
+label{display:block!important;color:#34465a!important;font-size:13px!important;font-weight:700!important;margin:0 0 6px!important}
+input:not([type=checkbox]):not([type=radio]),select,textarea{
+  width:100%;max-width:100%;min-height:42px;padding:9px 11px!important;
+  border:1px solid #cbd5df!important;border-radius:9px!important;background:#fff!important;
+  color:var(--ft-ink)!important;font:inherit!important;box-shadow:none!important;
+}
+textarea{min-height:140px;resize:vertical;line-height:1.55!important}
+input:focus,select:focus,textarea:focus{outline:none!important;border-color:#36856f!important;
+  box-shadow:0 0 0 3px rgba(33,131,106,.13)!important}
+input[type=checkbox],input[type=radio]{accent-color:var(--ft-green)}
+button,.linkbtn,.back,.hero-cta{
+  min-height:39px!important;padding:9px 14px!important;border-radius:9px!important;
+  font:700 13px/1.25 inherit!important;letter-spacing:0!important;box-shadow:none!important;
+  transition:background .15s ease,border-color .15s ease,transform .15s ease!important;
+}
+button:not(.secondary):not(.ghost):not(.danger),.linkbtn:not(.secondary),.back,.hero-cta{
+  background:var(--ft-green)!important;color:#fff!important;border:1px solid var(--ft-green)!important;
+}
+button:not(:disabled):hover,.linkbtn:hover,.back:hover,.hero-cta:hover{filter:brightness(1.05)!important;transform:translateY(-1px)}
+button.secondary,.linkbtn.secondary,button.ghost,.ghost{
+  background:#f4f7f9!important;color:#334b60!important;border:1px solid #d7e0e8!important}
+button.danger{background:#a63c46!important;color:#fff!important;border:1px solid #a63c46!important}
+button:disabled{opacity:.55!important;cursor:not-allowed!important;transform:none!important}
+.controls,.toolbar,.top,.topline,.sticky-actions{
+  display:flex!important;align-items:flex-end!important;gap:10px!important;flex-wrap:wrap!important}
+.controls>div,.toolbar>div{flex:1 1 180px;min-width:150px}
+.controls button,.toolbar button{flex:0 0 auto}
+.top,.topline{align-items:center!important;justify-content:space-between!important}
+.hint,.muted,.foot{color:var(--ft-muted)!important;font-size:13px!important;line-height:1.55!important}
+.status{padding:11px 13px!important;border:1px solid #dce5eb!important;border-radius:10px!important;
+  background:#f5f8fa!important;color:#405466!important}
+.status.good,.pill.good{background:#edf8f1!important;color:#17613f!important;border-color:#b9dfc6!important}
+.status.warn,.pill.warn{background:#fff8e8!important;color:#805c19!important;border-color:#ead7a7!important}
+.status.bad,.pill.bad{background:#fff0f0!important;color:#9b3038!important;border-color:#e6c0c2!important}
+.count,.pill,.sectiontag,.tag{display:inline-flex!important;align-items:center!important;
+  border-radius:999px!important;padding:4px 9px!important;background:#edf3f7!important;
+  color:#40566b!important;font-size:12px!important;font-weight:750!important}
+.tablewrap{width:100%!important;overflow:auto!important;border:1px solid var(--ft-line)!important;
+  border-radius:11px!important;background:#fff!important;box-shadow:none!important}
+table{width:100%;border-collapse:separate!important;border-spacing:0!important;font-size:13px!important}
+th{position:sticky;top:0;background:#edf2f6!important;color:#31465a!important;font-weight:800!important;
+  text-align:left!important;white-space:nowrap}
+td,th{padding:9px 10px!important;border-bottom:1px solid #e8edf2!important;border-right:0!important}
+tbody td{background:#fff!important;color:var(--ft-ink)!important}
+tbody tr:nth-child(even) td{background:#fafbfd!important}
+tbody tr:hover td{background:#f0f7f4!important}
+td a{color:#176b55!important}
+pre{overflow:auto!important;padding:13px!important;border:1px solid var(--ft-line)!important;
+  border-radius:10px!important;background:#f7f9fb!important;color:#24364a!important;line-height:1.6!important}
+.archive-entry{margin:0 0 14px!important}
+#staffAuthPanel{
+  width:min(100%,560px)!important;margin:18px auto 26px!important;padding:24px!important;
+  color:var(--ft-ink)!important;background:#fff!important;border:1px solid var(--ft-line)!important;
+}
+#staffAuthPanel h2{font-size:21px!important;color:var(--ft-navy)!important;border:0!important;margin-bottom:8px!important}
+#staffAuthPanel p{color:var(--ft-muted)!important}
+#staffAuthPanel form{display:grid!important;gap:8px!important}
+#staffAuthPanel input{margin-bottom:8px!important}
+#staffAuthPanel .auth-mode{display:flex!important;gap:8px!important;margin:12px 0!important}
+#staffAuthPanel .auth-mode button{flex:1}
+#staffAuthPanel .auth-actions{display:flex!important;gap:9px!important;flex-wrap:wrap!important}
+#staffAuthPanel .auth-actions a{display:inline-flex;align-items:center;padding:9px 13px;border-radius:9px;
+  background:var(--ft-green)!important;color:#fff!important;text-decoration:none!important;font-weight:700}
+#staffAuthMessage{color:var(--ft-muted)!important;min-height:20px}
+.intro,.home-hero{
+  padding:22px 24px!important;margin:0 0 18px!important;border:1px solid var(--ft-line)!important;
+  border-left:4px solid var(--ft-green)!important;border-radius:13px!important;background:#fff!important;
+  box-shadow:var(--ft-shadow)!important;text-align:left!important
+}
+.intro h2,.home-hero h2{font-size:clamp(22px,3vw,29px)!important;border:0!important;margin:0 0 7px!important}
+.intro p,.home-hero p{margin:0!important;color:var(--ft-muted)!important}
+.hero-kicker{display:block!important;margin:0 0 7px!important;color:var(--ft-green)!important;
+  font-size:11px!important;font-weight:800!important;letter-spacing:1px!important}
+.menu{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:14px!important}
+.item{
+  display:flex!important;flex-direction:column!important;min-height:190px!important;padding:20px!important;
+  text-decoration:none!important;color:var(--ft-ink)!important;border-top:3px solid var(--ft-green)!important;
+  border-radius:13px!important;background:#fff!important;box-shadow:var(--ft-shadow)!important
+}
+.item:nth-child(2){border-top-color:#356d9b!important;background:#fff!important}
+.item:nth-child(3){border-top-color:#b88738!important;background:#fff!important}
+.item:hover{transform:translateY(-2px)!important;border-color:#b9c9d5!important}
+.item h3{margin:0 0 8px!important;color:var(--ft-navy)!important;font-size:17px!important}
+.item p{margin:0 0 15px!important;color:var(--ft-muted)!important;font-size:13px!important}
+.icon{width:44px!important;height:44px!important;margin:0 0 14px!important;border-radius:11px!important;
+  background:#edf4f1!important;color:var(--ft-green)!important;box-shadow:none!important}
+.icon svg{width:23px!important;height:23px!important}
+.go{margin-top:auto!important;color:var(--ft-green)!important;font-weight:800!important}
+footer{padding:16px!important;text-align:center!important;background:var(--ft-navy)!important;
+  color:#d7e2ed!important;border:0!important;font-size:11px!important;letter-spacing:.3px!important}
+#christmas-audio-player,#santa-reindeer-run,#winter-snow,.winter-village,.festive-tree,
+#christmas-audio-toggle{display:none!important}
+.winter-hero{display:none!important}
+#globalStaffAuthBar{z-index:1200!important}
+.staffgrid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important}
+.staff{padding:14px!important;background:#fff!important;border:1px solid var(--ft-line)!important}
+.staff .fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+.staff .wide{grid-column:1/-1!important}
+.summary{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:10px!important;margin:12px 0!important}
+.metric{padding:12px!important;border:1px solid var(--ft-line)!important;border-radius:10px!important;background:#f8fafb!important}
+.metric b{display:block!important;color:var(--ft-navy)!important;font-size:21px!important}
+.metric span{color:var(--ft-muted)!important;font-size:12px!important}
+.sticky-actions{position:static!important;background:transparent!important}
+.errlist{padding-left:22px!important;color:#9b3038!important}
+#schedule{min-width:980px!important}
+#schedule select{min-width:58px!important;padding:5px!important}
+.foot{padding:10px 0!important}
+@media(max-width:850px){
+ .menu{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .staffgrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .summary{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+@media(max-width:620px){
+ body{font-size:14px!important}
+ header{padding:15px 14px!important}
+ .winter-nav,.site-nav{position:relative!important;display:block!important;padding:8px 12px!important}
+ .nav-brand{display:block!important;margin:0 0 6px!important}
+ .nav-links{gap:3px!important}
+ .nav-links a{padding:7px 8px!important;font-size:12px!important}
+ main,.wrap,#bookingMain{width:calc(100% - 20px)!important;margin:13px auto 28px!important}
+ .panel,.booking,.review{padding:14px!important;margin-bottom:11px!important}
+ h2,.panel h2,.booking h2,.review h2{font-size:16px!important}
+ .controls,.toolbar{align-items:stretch!important}
+ .controls>div,.toolbar>div{flex:1 1 100%;min-width:0}
+ .controls button,.toolbar button{flex:1 1 calc(50% - 6px);min-width:0}
+ .menu{grid-template-columns:1fr!important;gap:10px!important}
+ .item{min-height:0!important;padding:15px!important}
+ .intro,.home-hero{padding:17px!important}
+ #staffAuthPanel{padding:17px!important;margin:12px auto 18px!important}
+ .staffgrid{grid-template-columns:1fr!important}
+ .staff .fields{grid-template-columns:1fr 1fr!important}
+ .summary{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .tablewrap{border-radius:9px!important}
+ td,th{padding:7px 8px!important}
+}
 </style>
 </head>
 <body>
@@ -1136,19 +1325,7 @@ document.getElementById("cloudSignOut").addEventListener("click",async()=>{
  }
 })();
 </script>
-<style id="christmas-audio-player-style">
-#christmas-audio-player{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;align-items:stretch;gap:8px;width:min(270px,calc(100vw - 20px));padding:11px;border:1px solid rgba(255,215,120,.78);border-radius:18px;background:linear-gradient(145deg,#102c27f7,#7d1728f5);box-shadow:0 8px 26px #071b18bb;color:#fff;font:600 13px/1.25 system-ui,-apple-system,Segoe UI,sans-serif;backdrop-filter:blur(9px)}
-#christmas-audio-player .music-toolbar{display:flex;align-items:center;gap:7px}
-#christmas-audio-player .music-note{font-size:20px}
-#christmas-audio-player button{border:0;border-radius:999px;background:#f4d58a;color:#17372e;padding:9px 12px;font:700 12px system-ui;cursor:pointer;white-space:nowrap}
-#christmas-audio-player button:focus-visible,#christmas-audio-player select:focus-visible{outline:3px solid #fff;outline-offset:3px}
-#christmas-audio-player select{min-width:0;flex:1;border:1px solid #d9bd78;border-radius:999px;background:#fff8e8;color:#17372e;padding:9px 8px;font:700 12px system-ui}
-#christmas-audio-player .music-credit{font-size:10px;opacity:.9}
-#christmas-audio-player .music-credit a{color:#ffe6a5}
-#tet-player-shell{display:none;overflow:hidden;border-radius:12px;background:#000;min-height:200px}
-#tet-youtube-player{width:100%;height:200px}
-@media(max-width:600px){#christmas-audio-player{right:10px;bottom:10px;width:min(270px,calc(100vw - 20px));padding:9px}#christmas-audio-player button{padding:9px 10px;font-size:11px}#christmas-audio-player select{font-size:11px}}
-</style>
+
 <div id="santa-reindeer-run" aria-hidden="true"><span class="santa-team">🦌🦌🛷🎅</span><span class="santa-sparkles">✨❄️✨</span></div>
 <div id="christmas-audio-player" aria-label="Trình phát nhạc Giáng Sinh và nhạc Tết Việt Nam">
   <div class="music-toolbar">
@@ -1167,146 +1344,9 @@ document.getElementById("cloudSignOut").addEventListener("click",async()=>{
     <source src="https://incompetech.com/music/royalty-free/mp3-royaltyfree/Jingle%20Bells%203.mp3" type="audio/mpeg">
   </audio>
 </div>
-<script id="christmas-audio-player-script">
-(function(){
-  if(window.__fastTrackMusicInitialized)return;
-  window.__fastTrackMusicInitialized=true;
-  const root=document.getElementById('christmas-audio-player');
-  const button=document.getElementById('christmas-audio-toggle');
-  const audio=document.getElementById('christmas-background-audio');
-  const select=document.getElementById('music-track-select');
-  const shell=document.getElementById('tet-player-shell');
-  const credit=document.getElementById('music-track-credit');
-  if(!root||!button||!audio||!select)return;
-  audio.volume=0.2;
-  const tracks={
-    "tet-ngaytet":{id:"JvELlns3OqI",name:"Ngày Tết quê em",credit:"Xuân Mai · Làng Văn Music",url:"https://www.youtube.com/watch?v=JvELlns3OqI"},
-    "tet-dongday":{id:"gOtfJ151ue4",name:"Tết đong đầy",credit:"KHOA x Kay Trần x Duck V · Focus Entertainment",url:"https://www.youtube.com/watch?v=gOtfJ151ue4"},
-    "tet-xuandave":{id:"mvxlpZ9IDcc",name:"Xuân đã về",credit:"Lưu Ánh Loan · Official",url:"https://www.youtube.com/watch?v=mvxlpZ9IDcc"}
-  };
-  let player=null,apiLoading=false,apiReady=false,pendingTrack=null,currentTrack="christmas",playing=false;
-  function label(){button.textContent=playing?"⏸ Tạm dừng":"▶ Phát nhạc";button.setAttribute('aria-pressed',playing?"true":"false");}
-  function setCredit(html){credit.innerHTML=html;}
-  function loadApi(){
-    if(window.YT&&window.YT.Player){apiReady=true;createPlayer();return;}
-    if(apiLoading)return;
-    apiLoading=true;
-    const previous=window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady=function(){
-      if(typeof previous==="function")previous();
-      apiReady=true;apiLoading=false;createPlayer();
-    };
-    const script=document.createElement('script');
-    script.src="https://www.youtube.com/iframe_api";
-    script.async=true;
-    document.head.appendChild(script);
-  }
-  function createPlayer(){
-    if(!apiReady||player||!pendingTrack)return;
-    const track=tracks[pendingTrack];
-    player=new YT.Player('tet-youtube-player',{
-      width:'248',height:'200',videoId:track.id,
-      playerVars:{autoplay:1,controls:1,playsinline:1,rel:0,origin:location.origin},
-      events:{
-        onReady:function(event){event.target.playVideo();},
-        onStateChange:function(event){
-          if(currentTrack==="christmas")return;
-          playing=event.data===YT.PlayerState.PLAYING;
-          label();
-        },
-        onError:function(){playing=false;label();setCredit("Video này hiện không phát được trong trình nhúng. <a href='"+track.url+"' target='_blank' rel='noopener'>Mở trên YouTube</a>");}
-      }
-    });
-  }
-  function chooseTrack(value){
-    currentTrack=value;
-    if(value==="christmas"){
-      if(player&&player.pauseVideo)player.pauseVideo();
-      shell.style.display="none";
-      setCredit('Jingle Bells · <a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100187" target="_blank" rel="noopener">Kevin MacLeod</a>');
-      audio.play().then(()=>{playing=true;label();}).catch(()=>{playing=false;button.textContent="🎵 Chạm để phát nhạc";label();});
-      return;
-    }
-    audio.pause();
-    playing=false;
-    shell.style.display="block";
-    pendingTrack=value;
-    const track=tracks[value];
-    setCredit(track.name+" · "+track.credit+" · <a href='"+track.url+"' target='_blank' rel='noopener'>YouTube</a>");
-    if(player&&player.loadVideoById){player.loadVideoById(track.id);player.playVideo();}
-    else loadApi();
-    label();
-  }
-  select.addEventListener('change',function(){chooseTrack(select.value);});
-  button.addEventListener('click',function(){
-    if(currentTrack==="christmas"){
-      if(audio.paused){audio.play().then(()=>{playing=true;label();}).catch(()=>{button.textContent="🎵 Chạm để phát nhạc";});}
-      else{audio.pause();playing=false;label();}
-    }else if(player){
-      const state=player.getPlayerState();
-      if(state===YT.PlayerState.PLAYING)player.pauseVideo();else player.playVideo();
-    }
-  });
-  audio.addEventListener('play',function(){if(currentTrack==="christmas"){playing=true;label();}});
-  audio.addEventListener('pause',function(){if(currentTrack==="christmas"){playing=false;label();}});
-  window.__fastTrackChooseMusic=chooseTrack;
-  try{audio.play().then(()=>{playing=true;label();}).catch(()=>{playing=false;button.textContent="🎵 Chạm để phát nhạc";});}catch(e){playing=false;label();}
-})();
-</script>
 
 
-<script id="persistent-music-navigation">
-(function(){
-  if(window.__fastTrackPersistentNavInstalled)return;
-  window.__fastTrackPersistentNavInstalled=true;
-  const allowed=new Set(['/fasttrack-sgn/','/fasttrack-sgn/index.html','/fasttrack-sgn/soan-booking.html','/fasttrack-sgn/don-khach.html']);
-  async function navigate(url,addHistory){
-    const target=new URL(url,location.href);
-    if(target.origin!==location.origin||!allowed.has(target.pathname)){location.href=url;return;}
-    try{
-      const response=await fetch(target.href,{credentials:'same-origin'});
-      if(!response.ok)throw new Error('Navigation failed');
-      const html=await response.text();
-      const next=new DOMParser().parseFromString(html,'text/html');
-      const player=document.getElementById('christmas-audio-player');
-      const santa=document.getElementById('santa-reindeer-run');
-      const pageScripts=[...next.body.querySelectorAll('script')].filter(s=>s.id!=='christmas-audio-player-script'&&s.id!=='persistent-music-navigation');
-      const navScriptSource=next.getElementById('persistent-music-navigation')?.textContent||'';
-      document.title=next.title||document.title;
-      document.head.querySelectorAll('style').forEach(s=>s.remove());
-      next.head.querySelectorAll('style').forEach(s=>document.head.appendChild(s.cloneNode(true)));
-      for(const node of [...document.body.childNodes])if(node!==player&&node!==santa)node.remove();
-      const pageNodes=[...next.body.childNodes].filter(n=>!(n.nodeType===1&&(n.id==='christmas-audio-player'||n.id==='santa-reindeer-run'||n.id==='persistent-music-navigation'||n.id==='christmas-audio-player-script')));
-      for(const node of pageNodes){if(player)document.body.insertBefore(node,player);else document.body.appendChild(node);}
-      if(addHistory)history.pushState({},'',target.pathname+target.search+target.hash);
-      window.scrollTo(0,0);
-      for(const oldScript of pageScripts){
-        const script=document.createElement('script');
-        script.textContent='(function(){\n'+oldScript.textContent+'\n}).call(window);';
-        document.body.appendChild(script);
-      }
-      if(navScriptSource){
-        const script=document.createElement('script');
-        script.id='persistent-music-navigation';
-        script.textContent=navScriptSource;
-        document.body.appendChild(script);
-      }
-    }catch(error){location.href=url;}
-  }
-  document.addEventListener('click',function(event){
-    if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
-    const link=event.target.closest('a[href]');
-    if(!link||link.target&&link.target!=='_self'||link.hasAttribute('download'))return;
-    const url=new URL(link.href,location.href);
-    if(url.origin!==location.origin||!allowed.has(url.pathname))return;
-    // Các chế độ xem bằng query string (ví dụ ?view=archive) phải tải trang đầy đủ
-    // để body class, thuộc tính hidden và script khởi tạo được đồng bộ từ đầu.
-    if(url.searchParams.has('view'))return;
-    event.preventDefault();
-    navigate(url.href,true);
-  });
-  window.addEventListener('popstate',function(){navigate(location.href,false);});
-})();
-</script>
-<script id="winter-snow-script">(function(){if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;if(document.getElementById('winter-snow'))return;const c=document.createElement('canvas');c.id='winter-snow';c.setAttribute('aria-hidden','true');Object.assign(c.style,{position:'fixed',inset:'0',width:'100%',height:'100%',pointerEvents:'none',zIndex:'20'});document.body.appendChild(c);const x=c.getContext('2d');let w=0,h=0,flakes=[];function size(){const d=Math.min(devicePixelRatio||1,1.5);w=c.width=Math.floor(innerWidth*d);h=c.height=Math.floor(innerHeight*d);c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';x.setTransform(d,0,0,d,0,0);flakes=Array.from({length:Math.min(90,Math.floor(innerWidth/12))},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*2+0.6,v:Math.random()*0.65+0.25,s:Math.random()*0.7-0.35,a:Math.random()*0.55+0.2}));}function draw(){x.clearRect(0,0,innerWidth,innerHeight);for(const f of flakes){x.beginPath();x.fillStyle='rgba(255,248,226,'+f.a+')';x.arc(f.x,f.y,f.r,0,Math.PI*2);x.fill();f.y+=f.v;f.x+=f.s+Math.sin(f.y/55)*.18;if(f.y>innerHeight+5){f.y=-5;f.x=Math.random()*innerWidth;}if(f.x>innerWidth+5)f.x=-5;if(f.x< -5)f.x=innerWidth+5;}requestAnimationFrame(draw);}addEventListener('resize',size,{passive:true});size();draw();})();</script></body>
+
+
+</body>
 </html>
