@@ -744,7 +744,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 </head>
 <body>
 <div class="ft-app" id="ftApp">
-<aside class="ft-sidebar" id="ftSidebar" aria-label="Điều hướng chính">
+<aside class="ft-sidebar" id="ftSidebar" aria-label="Điều hướng chính" aria-label="Điều hướng chính">
  <a class="ft-brand" href="index.html"><span class="ft-brand-mark">FT</span><span class="ft-brand-copy"><b>FAST TRACK SGN</b><small>EXECUTIVE OPERATIONS</small></span></a>
  <nav class="ft-nav">
   <span class="ft-nav-label">WORKSPACE</span>
@@ -760,7 +760,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 </aside>
 <div class="ft-main" id="ftMain">
 <header class="ft-topbar">
- <button class="ft-menu-toggle" id="ftMenuToggle" type="button" aria-label="Mở hoặc thu gọn menu"><span></span><span></span><span></span></button>
+ <button class="ft-menu-toggle" id="ftMenuToggle" type="button" aria-label="Mở hoặc thu gọn menu" aria-controls="ftSidebar" aria-expanded="true"><span></span><span></span><span></span></button>
  <div class="ft-top-context"><small>FAST TRACK SGN</small><b>Trung tâm điều hành</b></div>
  <div class="ft-top-spacer"></div>
  <a class="ft-account-link" href="#staffAuthPanel">Tài khoản nhân viên <span>↗</span></a>
@@ -826,13 +826,16 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 </div>
 
 
-<script id="ft-shell-navigation">
-(()=>{const app=document.getElementById("ftApp"),toggle=document.getElementById("ftMenuToggle"),side=document.getElementById("ftSidebar");if(!app||!toggle||!side)return;
-toggle.addEventListener("click",()=>{if(window.matchMedia("(max-width: 680px)").matches)app.classList.toggle("ft-mobile-open");else app.classList.toggle("ft-collapsed");});
-document.addEventListener("click",e=>{if(app.classList.contains("ft-mobile-open")&&!e.target.closest("#ftSidebar")&&!e.target.closest("#ftMenuToggle"))app.classList.remove("ft-mobile-open");});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")app.classList.remove("ft-mobile-open");});
-})();
-</script>
+<script id="ft-shell-navigation">(()=>{const app=document.getElementById("ftApp"),toggle=document.getElementById("ftMenuToggle"),side=document.getElementById("ftSidebar");if(!app||!toggle||!side)return;
+const mobile=window.matchMedia("(max-width: 680px)");
+const sync=()=>toggle.setAttribute("aria-expanded",String(mobile.matches?app.classList.contains("ft-mobile-open"):!app.classList.contains("ft-collapsed")));
+sync();
+toggle.setAttribute("aria-controls","ftSidebar");
+toggle.addEventListener("click",()=>{if(mobile.matches)app.classList.toggle("ft-mobile-open");else app.classList.toggle("ft-collapsed");sync();});
+document.addEventListener("click",e=>{if(app.classList.contains("ft-mobile-open")&&!e.target.closest("#ftSidebar")&&!e.target.closest("#ftMenuToggle")){app.classList.remove("ft-mobile-open");sync();}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&app.classList.contains("ft-mobile-open")){app.classList.remove("ft-mobile-open");sync();toggle.focus();}});
+mobile.addEventListener("change",()=>{app.classList.remove("ft-mobile-open");sync();});
+})();</script>
 <script type="module" id="staff-home-pin-auth">
 const SUPABASE_URL="https://xyhvgttywjleirsiabve.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
