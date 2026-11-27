@@ -362,7 +362,7 @@ button.danger{background:#9c3942!important;color:#fff!important}
 <div id="summary" class="panel hidden"></div>
 <div id="results"></div>
 <div id="skippedBookings"></div>
-<div id="reviews"></div><section id="savedReviewArchive" class="panel"><h2>PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</h2><p class="hint">Lịch sử lưu trên thiết bị này; xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
+<div id="reviews"></div><section id="savedReviewArchive" class="panel"><h2>PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</h2><p class="hint">Lịch sử lưu trên thiết bị này; xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
 </main>
 <script>
 "use strict";
@@ -773,7 +773,7 @@ function updateBookingContact(index){
  const email=$("contactEmail-"+index)?.value.trim()||"";
  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast("Email chưa đúng định dạng. Vui lòng kiểm tra lại.",false);return;}
  if(phone&&!/^[+\d][\d\s().-]{6,24}$/.test(phone)){toast("Số điện thoại chưa đúng định dạng. Hãy nhập cả mã quốc gia, ví dụ +84...",false);return;}
- b.phone=phone;b.email=email;b.intl=internationalPhone(phone,b.country);b.vn=localVNPhone(phone);
+ b.phone=phone;b.email=email;b.intl=internationalPhone(phone,b.country);b.vn=localVNPhone(phone);b.reviewPhone=b.intl?("+"+b.intl):(phone||"Không có số điện thoại");
  b.wa=b.intl&&b.en?"https://wa.me/"+b.intl+"?text="+encodeURIComponent(b.en):"";
  b.gm=email&&b.order&&b.flight&&b.date&&b.en?gmailLink(email,b.sub,b.en):"";
  b.zalo=isPartner(b)&&b.vn?"https://zalo.me/"+b.vn:"";
@@ -807,18 +807,24 @@ function renderReview(items,dir,title){
 }
 const SAVED_REVIEW_KEY="fasttrack_sgn_saved_review_history_v1";
 let savedReviewItems=[];
-function loadSavedReview(){try{const v=JSON.parse(localStorage.getItem(SAVED_REVIEW_KEY)||"[]");savedReviewItems=Array.isArray(v)?v:[];}catch(e){savedReviewItems=[];}}
+function savedReviewKey(x){const names=Array.isArray(x.names)?x.names.join(","):(x.names||"");return [x.dir||"",x.date||"",x.order||"",x.flight||"",names].join("|");}
+function dedupeSavedReviews(items){const map=new Map();(Array.isArray(items)?items:[]).forEach(x=>{if(!x||!x.sub||!x.dir||!x.date)return;const key=x.key||savedReviewKey(x);map.set(key,{...x,key});});return [...map.values()].sort((a,b)=>dateToIso(b.date).localeCompare(dateToIso(a.date)));}
+function loadSavedReview(){try{const v=JSON.parse(localStorage.getItem(SAVED_REVIEW_KEY)||"[]");const source=Array.isArray(v)?v:[];savedReviewItems=dedupeSavedReviews(source);if(savedReviewItems.length!==source.length)persistSavedReview();}catch(e){savedReviewItems=[];}}
 function persistSavedReview(){try{localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));}catch(e){toast("Không thể lưu lịch sử: bộ nhớ trình duyệt có thể đã đầy hoặc bị chặn.",false);}}
 function dateToIso(v){const m=String(v||"").match(/^(\d{2})\/(\d{2})\/(\d{4})$/);return m?m[3]+"-"+m[2]+"-"+m[1]:"";}
-function saveReviewItems(items){loadSavedReview();const map=new Map(savedReviewItems.map(x=>[x.key,x]));items.filter(x=>x.sub&&x.dir&&x.date).forEach(x=>{const key=[x.dir,x.date,x.order||"",x.flight||"",x.names.join(",")].join("|");map.set(key,{...x,key,savedAt:new Date().toISOString()});});savedReviewItems=[...map.values()].sort((a,b)=>dateToIso(b.date).localeCompare(dateToIso(a.date)));persistSavedReview();renderSavedReviewArchive();}
+function saveReviewItems(items){loadSavedReview();const map=new Map(savedReviewItems.map(x=>[x.key||savedReviewKey(x),x]));items.filter(x=>x.sub&&x.dir&&x.date).forEach(x=>{const key=savedReviewKey(x);map.set(key,{...x,key,savedAt:new Date().toISOString()});});savedReviewItems=dedupeSavedReviews([...map.values()]);persistSavedReview();renderSavedReviewArchive();}
 function renderSavedReviewArchive(){
- const filter=$("savedDateFilter")?.value||"",filtered=savedReviewItems.filter(x=>!filter||dateToIso(x.date)===filter),groups={};filtered.forEach(x=>{(groups[x.date] ||= []).push(x);});
- $("savedDailySummary").innerHTML=Object.keys(groups).sort((a,b)=>dateToIso(b).localeCompare(dateToIso(a))).map(d=>{const v=groups[d],arr=v.filter(x=>x.dir==="ARRIVAL").length,dep=v.filter(x=>x.dir==="DEPARTURE").length;return `<div class="kv" style="margin:8px 0"><b>${esc(d)}</b><div class="hint">Tổng ${v.length} booking · ĐÓN: ${arr} · TIỄN: ${dep}</div></div>`;}).join("")||'<p class="muted">Chưa có booking đã lưu trong ngày được chọn.</p>';
- function table(dir,title){const list=filtered.filter(x=>x.dir===dir&&x.sub),rows=list.map((x,i)=>{const line=[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",x.reviewSubject].join(" | ");return `<tr><td>${i+1}</td><td>${esc(x.date)}</td><td>${esc(x.order)}</td><td>${esc(x.reviewPhone)}</td><td>${esc(x.agency||"Chưa rõ agency")}</td><td>${esc(x.reviewSubject)}</td><td>${copyButton(line,"Copy dòng")} <button type="button" class="mini ghost delete-saved-review" data-saved-key="${esc(x.key)}">Xóa</button></td></tr>`;});const all=list.map(x=>[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",x.reviewSubject].join(" | ")).join("\n");return `<section class="review"><div class="topline"><h3>${title}</h3>${copyButton(all,"Copy tất cả","secondary")}</div><div class="tablewrap"><table><thead><tr><th>#</th><th>Ngày bay</th><th>Mã order</th><th>Số điện thoại</th><th>Agency</th><th>Subject</th><th>Thao tác</th></tr></thead><tbody>${rows.join("")||'<tr><td colspan="7" class="muted">Không có booking.</td></tr>'}</tbody></table></div></section>`;}
+ const dateFilter=$("savedDateFilter")?.value||"",directionFilter=$("savedDirectionFilter")?.value||"ALL";
+ const partners=[...new Set(savedReviewItems.map(x=>x.agency||"Chưa rõ đối tác"))].sort((a,b)=>a.localeCompare(b,"vi"));
+ const ps=$("savedPartnerFilter");if(ps){const prev=ps.value||"__ALL__";ps.innerHTML='<option value="__ALL__">Tất cả đối tác</option>'+partners.map(p=>'<option value="'+esc(p)+'">'+esc(p)+'</option>').join("");ps.value=partners.includes(prev)?prev:"__ALL__";}
+ const partnerFilter=ps?.value||"__ALL__";
+ const filtered=savedReviewItems.filter(x=>(!dateFilter||dateToIso(x.date)===dateFilter)&&(partnerFilter==="__ALL__"||(x.agency||"Chưa rõ đối tác")===partnerFilter)&&(directionFilter==="ALL"||x.dir===directionFilter));
+ const groups={};filtered.forEach(x=>{(groups[x.date] ||= []).push(x);});
+ $("savedDailySummary").innerHTML=Object.keys(groups).sort((a,b)=>dateToIso(b).localeCompare(dateToIso(a))).map(d=>{const v=groups[d],arr=v.filter(x=>x.dir==="ARRIVAL").length,dep=v.filter(x=>x.dir==="DEPARTURE").length;return '<div class="kv" style="margin:8px 0"><b>'+esc(d)+'</b><div class="hint">Tổng '+v.length+' booking · ĐÓN: '+arr+' · TIỄN: '+dep+'</div></div>';}).join("")||'<p class="muted">Không có booking phù hợp với bộ lọc.</p>';
+ function table(dir,title){const list=filtered.filter(x=>x.dir===dir&&x.sub),rows=list.map((x,i)=>{const line=[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",x.reviewSubject].join(" | ");return '<tr><td>'+(i+1)+'</td><td>'+esc(x.date)+'</td><td>'+esc(x.order)+'</td><td>'+esc(x.reviewPhone)+'</td><td>'+esc(x.agency||"Chưa rõ agency")+'</td><td>'+esc(x.reviewSubject)+'</td><td>'+copyButton(line,"Copy dòng")+' <button type="button" class="mini ghost delete-saved-review" data-saved-key="'+esc(x.key)+'">Xóa</button></td></tr>';});const all=list.map(x=>[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",x.reviewSubject].join(" | ")).join("\\n");return '<section class="review"><div class="topline"><h3>'+title+'</h3>'+copyButton(all,"Copy tất cả","secondary")+'</div><div class="tablewrap"><table><thead><tr><th>#</th><th>Ngày bay</th><th>Mã order</th><th>Số điện thoại</th><th>Agency</th><th>Subject</th><th>Thao tác</th></tr></thead><tbody>'+(rows.join("")||'<tr><td colspan="7" class="muted">Không có booking.</td></tr>')+'</tbody></table></div></section>';}
  $("savedReviewTables").innerHTML=table("ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+table("DEPARTURE","BẢNG COPY SUBJECT – TIỄN");
 }
-loadSavedReview();
-renderSavedReviewArchive();
+loadSavedReview();renderSavedReviewArchive();
 function renderFilteredBookings(){
  const select=$("partnerFilter");
  const partner=select?select.value:"__ALL__";
@@ -909,7 +915,7 @@ function run(){
  $("status").className="status good";
 }
 $("run").addEventListener("click",run);
-$("savedDateFilter").addEventListener("change",renderSavedReviewArchive);
+$("savedDateFilter").addEventListener("change",renderSavedReviewArchive);$("savedPartnerFilter").addEventListener("change",renderSavedReviewArchive);$("savedDirectionFilter").addEventListener("change",renderSavedReviewArchive);
 $("clearSavedDate").addEventListener("click",()=>{$("savedDateFilter").value="";renderSavedReviewArchive();});
 $("clearSavedArchive").addEventListener("click",()=>{if(!confirm("Xóa toàn bộ lịch sử đã lưu trên thiết bị này?"))return;savedReviewItems=[];persistSavedReview();renderSavedReviewArchive();toast("Đã xóa toàn bộ lịch sử.");});
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("skippedBookings").innerHTML="";processedBookings=[];allBookingsCache=[];skippedBookingsCache=[];$("status").textContent="Đã xóa dữ liệu.";});
