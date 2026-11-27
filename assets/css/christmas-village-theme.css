@@ -171,3 +171,23 @@ html body #bookingMain .actions a.linkbtn[href*="mail.google.com"]:hover{
   color:#ffffff!important;-webkit-text-fill-color:#ffffff!important;
   transform:translateY(-1px)!important;
 }
+
+
+/* Contact editor panel — deep evergreen section with clear field contrast. */
+html body #bookingMain .booking .contact-edit-panel{
+ background:linear-gradient(145deg,#123f32,#0d3028)!important;border:1px solid #397456!important;
+ border-left:4px solid #4d9a68!important;border-radius:12px!important;padding:16px!important;
+ color:#f5f4e8!important;box-shadow:0 8px 22px rgba(0,0,0,.22)!important;
+}
+html body #bookingMain .booking .contact-edit-panel > b,
+html body #bookingMain .booking .contact-edit-panel label{color:#f4f7ed!important;font-weight:750!important}
+html body #bookingMain .booking .contact-edit-panel p,
+html body #bookingMain .booking .contact-edit-panel .hint{color:#c9dfcf!important}
+html body #bookingMain .booking .contact-edit-panel input{
+ background:#f8f5e9!important;color:#183b2d!important;border:1px solid #82a98c!important;
+}
+html body #bookingMain .booking .contact-edit-panel input::placeholder{color:#6d8272!important}
+html body #bookingMain .booking .contact-edit-panel .save-contact{
+ background:#1b7047!important;border:1px solid #67a77a!important;color:#fff!important;
+}
+html body #bookingMain .booking .contact-edit-panel .save-contact:hover{background:#155b39!important}
