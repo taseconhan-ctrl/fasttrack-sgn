@@ -321,11 +321,11 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 <div class="controls">
 <div><label for="search">Tìm kiếm</label><input id="search" placeholder="Tên khách, chuyến bay, agency, order, nhân viên..."></div>
 <div><label for="staffFilter">Nhân viên thực hiện</label><select id="staffFilter"><option value="">Tất cả nhân viên</option></select></div>
-<div><label for="filterDate">Chọn ngày đón</label><input id="filterDate" type="date"></div>
+<div><label for="filterDate">Ngày phục vụ</label><input id="filterDate" type="date"></div>
 <div><label for="statusFilter">Trạng thái đón</label><select id="statusFilter"><option value="">Tất cả trạng thái</option><option>Chưa phân công</option><option>Đã phân công</option><option>Đang đón</option><option>Đã đón</option><option>Không gặp khách</option></select></div>
 <div style="flex:0 0 auto;min-width:auto"><button class="secondary" id="clearDate">Xóa lọc ngày</button></div>
 </div>
-<p class="hint">Chọn một ngày để chỉ xem booking đúng ngày đó. NV phụ trách được cập nhật tại đây và đồng bộ sang danh sách chung. NV trực tiếp đón được ghi nhận riêng trong Ứng dụng đón khách.</p>
+<p class="hint">Chọn ngày phục vụ để lọc cả booking ĐÓN và TIỄN. NV phụ trách được cập nhật tại đây và đồng bộ sang danh sách chung; nhân viên trực tiếp thực hiện được ghi nhận riêng trong Ứng dụng đón khách.</p>
 </section>
 <section class="panel">
 <div class="top"><h2><span class="sectiontag">ARRIVAL</span> Danh sách khách đón</h2><span class="count" id="arrivalCount">0 booking</span></div>
@@ -356,18 +356,18 @@ async function loadCloud(){ $("status").textContent="Đang tải danh sách book
 async function syncParsed(rows){const bookings=rows.map(r=>({agency:r[0],parking_gate:r[10]||null,estimated_arrival_time:r[11]||null,flight:r[1],guest_name:r[2],service_time:r[3],service_type:r[4],order_id:r[5],responsible_staff:r[6]||null,service_date:r[7]||$("serviceDate").value}));const d=await cloudCall("source_sync",{bookings});await loadCloud();return d;}
 
 const HEAD=["Agency","Flight","Name","Date","Time","Type","Order","NV phụ trách","Trạng thái","Cập nhật lúc"];
-const STAFF=["Tuấn Khánh","Minh Khoa","Văn Diệp","Việt Quang","Đồng Hưng","Lý Ngọc Dũng","Ngọc Nhân","Thanh Hằng","Nhật Quang","Vũ Văn Bình","Trung An"];
+const STAFF=["Tuấn Khánh","Minh Khoa","Văn Diệp","Việt Quang","Đông Hưng","Lý Ngọc Dũng","Ngọc Nhân","Thanh Hùng","Nhật Quang","Vũ Văn Bình","Trung An"];
 const STATUSES=["Chưa phân công","Đã phân công","Đang đón","Đã đón","Không gặp khách"];
 const clean=s=>String(s??"").replace(/^\uFEFF/,"").trim();
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function normalizeAgency(v,notes){let a=clean(v);const u=a.toUpperCase();if(u==="CTRIP TRAVEL HOLDING (HONG KONG) LIMITED")return "Ctrip";if(u.includes("CTCP GIẢI PHÁP THÔNG MINH LINKCARE"))return "LINKCARE";if(u.includes("CTCP TIẾP THỊ SỐ TÔ QUÀ"))return "URBOX";if(u==="KLOOK TRAVEL TECHNOLOGY LIMITED"||u==="KLOOK TRAVEL")return "KLOOK";if(u==="SGN - DỊCH VỤ"||u==="SGN-DỊCH VỤ")return notes.find(x=>x)||"";return a;}
+function normalizeAgency(v,notes){const a=clean(v),u=a.toUpperCase();if(/LINKCARE|VIETINBANK|\bUOB\b/.test(u))return "LINKCARE";if(/TÔ HÒA|TO HOA|TÔ QUÀ|TO QUA|URBOX/.test(u))return "URBOX";if(/VIETTEL/.test(u))return "VIETTEL";if(/CTRIP/.test(u))return "Ctrip";if(/DRAGON\s*PASS/.test(u))return "Dragon Pass";if(/KLOOK/.test(u))return "KLOOK";if(/TRIP\.COM/.test(u))return "Trip.com";if(/KKDAY/.test(u))return "KKday";if(/^SGN\s*[-–—]?\s*DỊCH VỤ$/i.test(a))return notes.find(x=>x)||"";return a;}
 function normalizeFlight(v){return clean(v).replace(/[\s-]+/g,"").toUpperCase();}
 function normalizeName(v){let n=clean(v).replace(/\s*,\s*\+\s*(\d+)$/," +$1");if(/\+\d+$/.test(n))return n.replace(/\s*\+\s*/," +");const parts=n.split(/\s*,\s*/).filter(Boolean);if(parts.length>1)return parts[0]+" +"+(parts.length-1);return n;}
 function dateISO(v){const t=clean(v);let m=t.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);if(m)return m[3]+"-"+String(Number(m[2])).padStart(2,"0")+"-"+String(Number(m[1])).padStart(2,"0");m=t.match(/^(\d{4})-(\d{2})-(\d{2})/);return m?m[1]+"-"+m[2]+"-"+m[3]:"";}
 function normalizeTime(v){let t=clean(v);if(!t)return "";let dated=t.match(/(?:^|\s)(\d{1,2}):(\d{2})(?:\s*$)/);if(dated)return String(Number(dated[1])).padStart(2,"0")+":"+dated[2];let m=t.match(/^(\d{1,2})[.:hH](\d{1,2})$/);if(m)return String(Number(m[1])).padStart(2,"0")+":"+String(Number(m[2])).padStart(2,"0");m=t.match(/^(\d{1,2}):(\d{1,2})$/);if(m)return String(Number(m[1])).padStart(2,"0")+":"+String(Number(m[2])).padStart(2,"0");return t;}
 function agencyColor(agency){const colors=["#ffe3dc","#fff0c2","#dff2df","#e5f0e6","#eadfff","#ffe0f0","#d9f2f0","#f0e8d8","#e5ebc9","#f7e5e5","#f8dfc4","#d7e9e2"];const agencies=[...new Set(data.map(r=>r[0]||"Chưa rõ"))].sort();const index=agencies.indexOf(agency||"Chưa rõ");return colors[(index<0?0:index)%colors.length];}
-function normalizeType(v){const t=clean(v).toLowerCase();if(!t)return "";const dep=/departure|tiễn/.test(t),full=/full|vip|thương gia|business/.test(t);if(dep)return full?"Departure FULL":"Departure Kci";if(/arrival|đón/.test(t))return full?"Arrival FULL":"Arrival";return "";}
-function normalizeStaff(v){let s=clean(v);if(!s||s==="_")return "";s=s.replace(/\+?\d[\d\s().-]{7,}/g,"").replace(/\bSGN\b/gi,"").replace(/^\s*[-–—]+\s*/,"").replace(/\s*[-–—]+\s*$/,"").trim();s=s.replace(/^(Mr\.?|Ms\.?|Mrs\.?|Miss\.?|Anh|Chị)\s+/i,"").trim();return s;}
+function normalizeType(v){const t=clean(v).toLowerCase();if(!t)return "";const dep=/departure|tiễn/.test(t),domestic=/quốc nội|domestic/.test(t),full=/full|vip|thương gia|business/.test(t);if(dep)return full?"Departure FULL":domestic?"Departure Domestic":"Departure Kci";if(/arrival|đón/.test(t))return full?"Arrival FULL":"Arrival";return "";}
+function normalizeStaff(v){let s=clean(v);if(!s||s==="_"||/^SGN\s*[-–—]?\s*DỊCH VỤ(?: FAST TRACK)?$/i.test(s))return "";s=s.replace(/\+?\d[\d\s().-]{7,}/g,"").replace(/\bSGN\b/gi,"").replace(/^\s*[-–—]+\s*/,"").replace(/\s*[-–—]+\s*$/,"").trim();s=s.replace(/^(Mr\.?|Ms\.?|Mrs\.?|Miss\.?|Anh|Chị)\s+/i,"").trim();return s;}
 function parseVerticalRows(text){
  const lines=String(text||"").replace(/\\r/g,"").split("\\n").map(clean).filter(Boolean);
  const starts=[];
