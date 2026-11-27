@@ -64,7 +64,9 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 const URL="https://xyhvgttywjleirsiabve.supabase.co";
 const KEY="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
 const TOKEN_KEY="fasttrack_staff_pin_session_v1";
-const API=URL+"/functions/v1/staff-bookings";\nconst ADMIN_API=URL+"/functions/v1/staff-admin";\nconst AUTH_API=URL+"/functions/v1/staff-pin-auth";
+const API=URL+"/functions/v1/staff-bookings";
+const ADMIN_API=URL+"/functions/v1/staff-admin";
+const AUTH_API=URL+"/functions/v1/staff-pin-auth";
 const $=id=>document.getElementById(id);
 let token=null,profile=null,bookings=[],editing=null,evidenceBookingId=null;
 function getSession(){try{return JSON.parse(localStorage.getItem(TOKEN_KEY)||"null")}catch{return null}}
