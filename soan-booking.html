@@ -768,11 +768,11 @@ function buildOne(b,staff,phone,hotline,staffVN){
   const dir=direction(b),agency=normalizeAgency(b.agency);
   const sub=subject(b),en=(dir&&b.flight&&b.date)?bodyEnglish(b,staff,phone,hotline):"",vi=(dir&&isPartner(b)&&b.flight&&b.date&&b.time)?bodyVietnamese(b,staffVN):"";
   const intl=internationalPhone(b.phone,b.country),vn=localVNPhone(b.phone);
-  const wa=intl&&en?\`https://wa.me/\${intl}?text=\${encodeURIComponent(en)}\`:"";
-  const validEmail=/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(b.email||"");
-  const gmailSubject=b.order?\`Fast Track Airport Pick-up Service – Tan Son Nhat Airport - \${b.order}\`:sub;
+  const wa=intl&&en?`https://wa.me/${intl}?text=${encodeURIComponent(en)}`:"";
+  const validEmail=/^[^\s@]+@[^\s@]+\\.[^\s@]+$/.test(b.email||"");
+  const gmailSubject=b.order?`Fast Track Airport Pick-up Service – Tan Son Nhat Airport - ${b.order}`:sub;
   const gm=validEmail&&b.order&&b.flight&&b.date&&en?gmailLink(b.email,gmailSubject,en):"";
-  const zalo=isPartner(b)&&vn?\`https://zalo.me/\${vn}\`:"";
+  const zalo=isPartner(b)&&vn?`https://zalo.me/${vn}`:"";
   const assigned=clean(b.staffAssign),confirmed=/đã xác nhận/i.test(b.status);
   const unassigned=!assigned||assigned==="_"||/^[-_]+$/.test(assigned)||/chưa phân công/i.test(assigned);
   const warnings=[];
@@ -788,7 +788,7 @@ function buildOne(b,staff,phone,hotline,staffVN){
   if(dir==="DEPARTURE"&&!unassigned)warnings.push("Đã có nhân viên nhận việc: "+assigned);
   if(!dir)warnings.push("Chưa xác định được loại dịch vụ ĐÓN/TIỄN");
   let copySubject=sub;
-  if(b.order&&copySubject)copySubject=copySubject.replace(b.order,"").replace(/\\s+–\\s+–\\s+/g," – ").replace(/^ – | – $/g,"").replace(/🛫 – /,"🛫 ");
+  if(b.order&&copySubject)copySubject=copySubject.replace(b.order,"").replace(/\s+–\s+–\s+/g," – ").replace(/^ – | – $/g,"").replace(/🛫 – /,"🛫 ");
   return {...b,dir,agency,sub,en,vi,wa,gm,zalo,intl,vn,confirmed,unassigned,warnings,reviewSubject:copySubject,reviewPhone:intl?("+"+intl):(b.phone||"Không có số điện thoại")};
 }
 function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:`<span class="muted">Không tạo được – thiếu dữ liệu phù hợp</span>`}
@@ -853,10 +853,10 @@ function fmtDateTime(d){return `${String(d.getDate()).padStart(2,"0")}/${String(
 function renderReview(items,dir,title){
   const list=items.filter(x=>x.dir===dir&&x.sub);
   const lineFor=(x,i)=>[i+1,x.order,x.reviewPhone,x.agency||"Chưa rõ agency",x.reviewSubject].join(" | ");
-  const rows=list.map((x,i)=>{const line=lineFor(x,i);return \`<tr><td>\${i+1}</td><td>\${esc(x.order)}</td><td>\${esc(x.reviewPhone)}</td><td>\${esc(x.agency||"Chưa rõ agency")}</td><td>\${esc(x.reviewSubject)}</td><td>\${copyButton(line,"Copy dòng")}</td></tr>\`;});
-  const all=list.map(lineFor).join("\\n");
+  const rows=list.map((x,i)=>{const line=lineFor(x,i);return `<tr><td>${i+1}</td><td>${esc(x.order)}</td><td>${esc(x.reviewPhone)}</td><td>${esc(x.agency||"Chưa rõ agency")}</td><td>${esc(x.reviewSubject)}</td><td>${copyButton(line,"Copy dòng")}</td></tr>`;});
+  const all=list.map(lineFor).join("\n");
   const copyAll=list.length?copyButton(all,"COPY TẤT CẢ","secondary"):'<span class="muted">Không có booking để sao chép</span>';
-  return \`<section class="review"><div class="topline"><h2>\${title}</h2>\${copyAll}</div><div class="tablewrap"><table><thead><tr><th>STT</th><th>Mã order</th><th>Số điện thoại</th><th>Agency</th><th>Subject (không lặp mã order)</th><th>Copy</th></tr></thead><tbody>\${rows.join("")||\`<tr><td colspan="6" class="muted">Không có booking.</td></tr>\`}</tbody></table></div></section>\`;
+  return `<section class="review"><div class="topline"><h2>${title}</h2>${copyAll}</div><div class="tablewrap"><table><thead><tr><th>STT</th><th>Mã order</th><th>Số điện thoại</th><th>Agency</th><th>Subject (không lặp mã order)</th><th>Copy</th></tr></thead><tbody>${rows.join("")||`<tr><td colspan="6" class="muted">Không có booking.</td></tr>`}</tbody></table></div></section>`;
 }
 function renderReviewTables(){
   const items=processedBookings.filter(x=>x.sub);
