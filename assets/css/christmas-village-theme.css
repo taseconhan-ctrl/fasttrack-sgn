@@ -287,3 +287,10 @@ html body .ft-nav-link.active,
 html body .ft-nav-link:hover{
   background:#24483e!important;color:#e7f1e7!important;border-color:#4d765d!important;
 }
+
+
+/* FINAL NO-BLUE SAFETY LAYER — all pages and dynamically rendered UI. */
+:root{color-scheme:dark;--ft-blue:#1b7047!important;--blue:#1b7047!important;--navy:#123b35!important;--info:#397e55!important}
+html,body{accent-color:#1b7047!important}
+html body a,html body a:visited{ text-decoration-color:#397e55 }
+html body :focus-visible{outline-color:#4d9a68!important}
