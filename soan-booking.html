@@ -837,9 +837,9 @@ function renderSavedReviewArchive(){
  const groups={};filtered.forEach(x=>{(groups[x.date] ||= []).push(x);});
  $("savedDailySummary").innerHTML=Object.keys(groups).sort((a,b)=>dateToIso(b).localeCompare(dateToIso(a))).map(d=>{const v=groups[d],arr=v.filter(x=>x.dir==="ARRIVAL").length,dep=v.filter(x=>x.dir==="DEPARTURE").length;return '<div class="kv" style="margin:8px 0"><b>'+esc(d)+'</b><div class="hint">Tổng '+v.length+' booking · ĐÓN: '+arr+' · TIỄN: '+dep+'</div></div>';}).join("")||'<p class="muted">Không có booking phù hợp với bộ lọc.</p>';
  function table(dir,title){
-  const list=filtered.filter(x=>x.dir===dir&&x.sub);
+  const list=filtered.filter(x=>x.dir===dir);
   const isDeparture=dir==="DEPARTURE";
-  const archiveSubject=x=>String(x.reviewSubject||"").split(" – ").filter(part=>part.trim()!==(x.agency||"Chưa rõ agency").trim()).join(" – ").replace(/🛫 – /,"🛫 ");
+  const archiveSubject=x=>String(x.reviewSubject||x.sub||"Chưa có Subject được lưu").split(" – ").filter(part=>part.trim()!==(x.agency||"Chưa rõ agency").trim()).join(" – ").replace(/🛫 – /,"🛫 ");
   const rows=list.map((x,i)=>{
    const base=[x.order,x.reviewPhone,x.agency||"Chưa rõ agency"];
    if(isDeparture)base.push(x.estimatedArrival||"");
