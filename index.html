@@ -608,7 +608,7 @@ form.addEventListener("submit",async event=>{
    :await api("login",{username,pin});
   saveToken(result);
   say("Đăng nhập thành công. Đang mở không gian làm việc…",true);
-  location.href="soan-booking.html";
+  const requestedNext=new URLSearchParams(location.search).get("next");const allowedNext=new Set(["don-khach.html","soan-booking.html","xep-lich.html"]);location.href=allowedNext.has(requestedNext)?requestedNext:"soan-booking.html";
  }catch(error){say(error.message||"Không thể đăng nhập. Vui lòng thử lại.");}
  finally{submit.disabled=false;submit.textContent=authMode==="register"?"Tạo tài khoản":"Đăng nhập";}
 });
