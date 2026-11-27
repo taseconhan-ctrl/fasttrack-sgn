@@ -728,8 +728,14 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 .ft-content .workspace-choice strong,.ft-content .workspace-choice .workspace-copy strong{color:#dcc58a!important}
 .ft-content .workspace-choice small,.ft-content .workspace-arrow{color:#aaa49a!important}
 .ft-content .status,.ft-content .badge{border-color:#514a3b!important}
+#globalStaffAuthBar{top:80px!important;right:18px!important;z-index:1100!important;background:#171716!important;border:1px solid #806b3f!important;color:#f5f0e6!important;box-shadow:0 8px 24px #0007!important}
+#globalStaffAuthBar button{border:1px solid #806b3f!important;border-radius:7px!important;background:#29251d!important;color:#dcc58a!important}
+.ft-content #cloudAccountBar{position:relative!important;inset:auto!important;right:auto!important;top:auto!important;bottom:auto!important;display:flex!important;width:max-content!important;max-width:100%!important;margin:0 0 14px auto!important;box-sizing:border-box!important;background:#171716!important;border:1px solid #806b3f!important;color:#f5f0e6!important}
+.ft-content #cloudAccountBar[hidden]{display:none!important}
+.ft-content #cloudAccountBar button{border:1px solid #806b3f!important;background:#29251d!important;color:#dcc58a!important}
 @media(max-width:680px){
- .ft-content .panel{padding:15px!important}
+ #globalStaffAuthBar{top:68px!important;right:10px!important;max-width:calc(100vw - 20px)!important}
+{padding:15px!important}
  .ft-content .toolbar,.ft-content .controls{gap:9px!important}
  .ft-content table{min-width:680px}
 }
