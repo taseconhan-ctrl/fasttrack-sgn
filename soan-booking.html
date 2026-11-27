@@ -360,18 +360,28 @@ button.danger{background:#9c3942!important;color:#fff!important}
 #cloudAccountBar button{padding:6px 9px;font-size:11px}
 @media(max-width:600px){#cloudAccountBar{top:auto;bottom:76px;right:9px;max-width:calc(100vw - 18px)}#cloudAccountEmail{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 </style>
-<section id="cloudAuthGate" aria-label="Đăng nhập đồng bộ riêng tư">
+<section id="cloudAuthGate" aria-label="Đăng nhập bằng tên tài khoản và PIN">
  <div class="auth-card">
   <div style="font-size:30px;margin-bottom:8px">🔐</div>
-  <h2>Fast Track SGN – Đồng bộ riêng tư</h2>
-  <p>Đăng nhập bằng email của bạn. Mã xác nhận sẽ được gửi qua email; dùng cùng email trên điện thoại và máy tính để truy cập chung dữ liệu.</p>
+  <h2>Fast Track SGN – Khu vực cá nhân</h2>
+  <p>Mỗi nhân viên tự tạo tên đăng nhập và PIN 4 chữ số. Dùng cùng tài khoản trên các thiết bị của mình để đồng bộ dữ liệu riêng.</p>
+  <div class="auth-mode" style="display:flex;gap:8px;margin:14px 0">
+   <button type="button" id="pinModeLogin" class="secondary" style="flex:1;margin:0">Đăng nhập</button>
+   <button type="button" id="pinModeRegister" class="ghost" style="flex:1;margin:0">Tạo tài khoản</button>
+  </div>
   <form id="cloudAuthForm">
-   <label for="cloudAuthEmail">Email đăng nhập</label>
-   <input id="cloudAuthEmail" type="email" autocomplete="email" placeholder="Nhập email của bạn" required>
-   <button id="cloudAuthSubmit" type="submit">Gửi liên kết đăng nhập</button>
+   <label for="cloudAuthUsername">Tên đăng nhập</label>
+   <input id="cloudAuthUsername" type="text" autocomplete="username" minlength="3" maxlength="24" placeholder="Ví dụ: nhan, an, quang" required>
+   <label for="cloudAuthPin">PIN 4 chữ số</label>
+   <input id="cloudAuthPin" type="password" inputmode="numeric" autocomplete="current-password" pattern="[0-9]{4}" maxlength="4" placeholder="Nhập PIN 4 số" required>
+   <div id="pinConfirmWrap" hidden>
+    <label for="cloudAuthPinConfirm">Nhập lại PIN</label>
+    <input id="cloudAuthPinConfirm" type="password" inputmode="numeric" autocomplete="new-password" pattern="[0-9]{4}" maxlength="4" placeholder="Xác nhận PIN 4 số">
+   </div>
+   <button id="cloudAuthSubmit" type="submit">Đăng nhập</button>
   </form>
-  <div id="cloudAuthMessage" role="status" aria-live="polite">Dữ liệu chỉ được tải sau khi xác thực tài khoản.</div>
-  <p style="font-size:11px;margin-bottom:0">Không nhập mật khẩu hoặc mã xác thực vào nơi khác. Kết nối được bảo vệ bằng xác thực Supabase và chính sách RLS theo tài khoản.</p>
+  <div id="cloudAuthMessage" role="status" aria-live="polite">Dữ liệu chỉ được tải sau khi đăng nhập.</div>
+  <p style="font-size:11px;margin-bottom:0">PIN 4 số có độ bảo mật thấp hơn mật khẩu dài. Hệ thống giới hạn 5 lần nhập sai và tạm khóa 15 phút. Không dùng PIN này cho tài khoản ngân hàng hoặc dịch vụ khác.</p>
  </div>
 </section>
 <div id="cloudAccountBar" hidden><span>☁️ <span id="cloudAccountEmail"></span></span><button type="button" id="cloudSignOut" class="secondary">Đăng xuất</button></div>
@@ -1048,21 +1058,34 @@ if(!archiveView){
 <script type="module" id="private-cloud-sync">
 const SUPABASE_URL="https://xyhvgttywjleirsiabve.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
-const WORKSPACE_TABLE="private_booking_workspace";
+const PIN_API=SUPABASE_URL+"/functions/v1/staff-pin-auth";
+const TOKEN_KEY="fasttrack_staff_pin_session_v1";
 const gate=document.getElementById("cloudAuthGate");
 const message=document.getElementById("cloudAuthMessage");
 const form=document.getElementById("cloudAuthForm");
 const submit=document.getElementById("cloudAuthSubmit");
 const accountBar=document.getElementById("cloudAccountBar");
 const accountEmail=document.getElementById("cloudAccountEmail");
-let supabase=null,activeUser=null,cloudReady=false,syncTimer=null,syncInFlight=false,syncAgain=false;
+const usernameInput=document.getElementById("cloudAuthUsername");
+const pinInput=document.getElementById("cloudAuthPin");
+const confirmInput=document.getElementById("cloudAuthPinConfirm");
+const confirmWrap=document.getElementById("pinConfirmWrap");
+let activeUser=null,cloudReady=false,syncTimer=null,syncInFlight=false,syncAgain=false,authMode="login";
 function authMessage(text,good=false){message.textContent=text;message.style.color=good?"#a9e8bd":"#f1d58e";}
-function showAuthenticated(user){activeUser=user;gate.hidden=true;accountBar.hidden=false;accountEmail.textContent=user.email||"Tài khoản đã đăng nhập";}
+function getStoredToken(){try{return JSON.parse(localStorage.getItem(TOKEN_KEY)||"null");}catch(e){return null;}}
+function setStoredToken(data){localStorage.setItem(TOKEN_KEY,JSON.stringify({token:data.token,expiresAt:data.expiresAt,username:data.username}));}
+function clearStoredToken(){localStorage.removeItem(TOKEN_KEY);}
+async function api(action,payload={},token=null){
+ const headers={"Content-Type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY};
+ if(token)headers.Authorization="Bearer "+token;
+ const response=await fetch(PIN_API,{method:"POST",headers,body:JSON.stringify({action,...payload})});
+ let data={};try{data=await response.json();}catch(e){}
+ if(!response.ok)throw new Error(data.error||"Lỗi kết nối máy chủ.");
+ return data;
+}
 function localSnapshot(){
- let session=null;
- try{session=JSON.parse(sessionStorage.getItem(BOOKING_SESSION_KEY)||"null");}catch(e){}
- let reviews=[];
- try{const parsed=JSON.parse(localStorage.getItem(SAVED_REVIEW_KEY)||"[]");reviews=Array.isArray(parsed)?parsed:[];}catch(e){}
+ let session=null;try{session=JSON.parse(sessionStorage.getItem(BOOKING_SESSION_KEY)||"null");}catch(e){}
+ let reviews=[];try{const parsed=JSON.parse(localStorage.getItem(SAVED_REVIEW_KEY)||"[]");reviews=Array.isArray(parsed)?parsed:[];}catch(e){}
  return {bookingSession:session,reviewItems:reviews};
 }
 function mergeReviews(remote,local){
@@ -1074,57 +1097,14 @@ function mergeReviews(remote,local){
  });
  return dedupeSavedReviews([...map.values()]);
 }
-async function writeCloudState(){
- if(!cloudReady||!activeUser)return;
- if(syncInFlight){syncAgain=true;return;}
- syncInFlight=true;
- try{
-  do{
-   syncAgain=false;
-   const local=localSnapshot();
-   const {data:latest,error:readError}=await supabase.from(WORKSPACE_TABLE).select("state").eq("user_id",activeUser.id).maybeSingle();
-   if(readError)throw readError;
-   const remote=latest?.state||{};
-   const localSession=local.bookingSession,remoteSession=remote.bookingSession;
-   const session=remoteSession&&(!localSession||Number(remoteSession.savedAt||0)>Number(localSession.savedAt||0))?remoteSession:localSession;
-   const state={bookingSession:session||null,reviewItems:mergeReviews(remote.reviewItems,local.reviewItems)};
-   if(session)sessionStorage.setItem(BOOKING_SESSION_KEY,JSON.stringify(session));
-   else sessionStorage.removeItem(BOOKING_SESSION_KEY);
-   savedReviewItems=state.reviewItems;
-   localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));
-   const {error}=await supabase.from(WORKSPACE_TABLE).upsert({
-    user_id:activeUser.id,state,updated_at:new Date().toISOString()
-   },{onConflict:"user_id"});
-   if(error)throw error;
-  }while(syncAgain);
- }catch(error){
-  console.error("Cloud sync failed:",error);
-  const status=document.getElementById("status");
-  if(status){status.textContent="Chưa đồng bộ được lên đám mây: "+(error.message||"Lỗi kết nối")+". Dữ liệu trên thiết bị vẫn được giữ.";status.className="status warn";}
- }finally{syncInFlight=false;}
-}
-function scheduleCloudSync(){
- if(!cloudReady||!activeUser)return;
- clearTimeout(syncTimer);
- syncTimer=setTimeout(()=>writeCloudState(),900);
-}
-window.scheduleCloudSync=scheduleCloudSync;
-async function restoreCloudState(user){
- showAuthenticated(user);
- authMessage("Đang tải dữ liệu riêng tư…");
- const {data,error}=await supabase.from(WORKSPACE_TABLE).select("state,updated_at").eq("user_id",user.id).maybeSingle();
- if(error)throw error;
- const local=localSnapshot(),remote=data?.state||{};
- const mergedReviews=mergeReviews(remote.reviewItems,local.reviewItems);
- savedReviewItems=mergedReviews;
- localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));
- let session=local.bookingSession;
- const remoteSession=remote.bookingSession;
- if(remoteSession&&(!session||Number(remoteSession.savedAt||0)>Number(session.savedAt||0)))session=remoteSession;
+function applyState(state){
+ const session=state?.bookingSession||null;
  if(session)sessionStorage.setItem(BOOKING_SESSION_KEY,JSON.stringify(session));
- cloudReady=true;
+ else sessionStorage.removeItem(BOOKING_SESSION_KEY);
+ savedReviewItems=Array.isArray(state?.reviewItems)?dedupeSavedReviews(state.reviewItems):[];
+ localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));
  renderSavedReviewArchive();
- if(!archiveView&&session&&session.raw&&$("raw")){
+ if(!archiveView&&session&&!session.cleared&&session.raw&&$("raw")){
   $("raw").value=session.raw;
   $("allBookings").checked=!!session.allBookings;
   if(session.staffProfile)$("staffProfile").value=session.staffProfile;
@@ -1132,49 +1112,99 @@ async function restoreCloudState(user){
   if(session.phone)$("phone").value=session.phone;
   if(session.hotline)$("hotline").value=session.hotline;
   run();
-  $("status").textContent="Đã khôi phục phiên Soạn Booking và đồng bộ lịch sử từ tài khoản cá nhân.";
+  $("status").textContent="Đã khôi phục phiên Soạn Booking và dữ liệu riêng của "+activeUser+".";
   $("status").className="status good";
+ }else if(!archiveView&&$("raw")){
+  $("raw").value="";
+  if($("status")){$("status").textContent="Đã tải không gian làm việc riêng."; $("status").className="status good";}
  }
- authMessage("Đã đăng nhập và đồng bộ dữ liệu.",true);
- if(!data||JSON.stringify(local)!==JSON.stringify(remote))scheduleCloudSync();
 }
+function showAuthenticated(username){
+ activeUser=username;gate.hidden=true;accountBar.hidden=false;
+ accountEmail.textContent="Tài khoản: "+username;
+}
+async function restoreCloudState(username,state){
+ showAuthenticated(username);
+ applyState(state||{});
+ cloudReady=true;
+ authMessage("Đã đăng nhập và đồng bộ dữ liệu riêng.",true);
+}
+async function writeCloudState(){
+ if(!cloudReady||!activeUser)return;
+ if(syncInFlight){syncAgain=true;return;}
+ syncInFlight=true;
+ try{
+  do{
+   syncAgain=false;
+   const tokenData=getStoredToken();if(!tokenData?.token)throw new Error("Phiên đăng nhập không còn hợp lệ.");
+   const local=localSnapshot();
+   const latest=await api("load",{},tokenData.token);
+   const remote=latest.state||{};
+   const localSession=local.bookingSession,remoteSession=remote.bookingSession;
+   let session=localSession||remoteSession||null;
+   if(localSession&&remoteSession&&Number(remoteSession.savedAt||0)>Number(localSession.savedAt||0))session=remoteSession;
+   const state={bookingSession:session,reviewItems:mergeReviews(remote.reviewItems,local.reviewItems)};
+   if(session)sessionStorage.setItem(BOOKING_SESSION_KEY,JSON.stringify(session));
+   else sessionStorage.removeItem(BOOKING_SESSION_KEY);
+   savedReviewItems=state.reviewItems;
+   localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));
+   await api("save",{state},tokenData.token);
+  }while(syncAgain);
+ }catch(error){
+  console.error("Cloud sync failed:",error);
+  const status=document.getElementById("status");
+  if(status){status.textContent="Chưa đồng bộ được lên đám mây: "+(error.message||"Lỗi kết nối")+". Dữ liệu trên thiết bị vẫn được giữ.";status.className="status warn";}
+  if(error.message.includes("Phiên đăng nhập")||error.message.includes("hết hạn")){cloudReady=false;clearStoredToken();gate.hidden=false;accountBar.hidden=true;authMessage(error.message);}
+ }finally{syncInFlight=false;}
+}
+function scheduleCloudSync(){if(!cloudReady||!activeUser)return;clearTimeout(syncTimer);syncTimer=setTimeout(()=>writeCloudState(),900);}
+window.scheduleCloudSync=scheduleCloudSync;
+function setMode(mode){
+ authMode=mode;const registering=mode==="register";
+ confirmWrap.hidden=!registering;confirmInput.required=registering;
+ submit.textContent=registering?"Tạo tài khoản":"Đăng nhập";
+ document.getElementById("pinModeLogin").className=registering?"ghost":"secondary";
+ document.getElementById("pinModeRegister").className=registering?"secondary":"ghost";
+ pinInput.autocomplete=registering?"new-password":"current-password";
+ authMessage(registering?"Tạo tên đăng nhập riêng và PIN 4 số. Tên đã có người dùng sẽ không đăng ký lại.":"Nhập tên đăng nhập và PIN để mở dữ liệu của bạn.");
+}
+document.getElementById("pinModeLogin").addEventListener("click",()=>setMode("login"));
+document.getElementById("pinModeRegister").addEventListener("click",()=>setMode("register"));
+[pinInput,confirmInput].forEach(input=>input.addEventListener("input",()=>{input.value=input.value.replace(/\D/g,"").slice(0,4);}));
 form.addEventListener("submit",async event=>{
  event.preventDefault();
- const email=document.getElementById("cloudAuthEmail").value.trim();
- if(!email)return;
- submit.disabled=true;submit.textContent="Đang gửi…";
+ const username=usernameInput.value.trim().toLowerCase(),pin=pinInput.value;
+ if(!/^[a-z0-9][a-z0-9._-]{2,23}$/.test(username)){authMessage("Tên đăng nhập phải dài 3–24 ký tự, dùng chữ không dấu, số, dấu chấm, gạch ngang hoặc gạch dưới.");return;}
+ if(!/^\d{4}$/.test(pin)){authMessage("PIN phải gồm đúng 4 chữ số.");return;}
+ if(authMode==="register"&&pin!==confirmInput.value){authMessage("Hai lần nhập PIN không khớp.");return;}
+ submit.disabled=true;submit.textContent=authMode==="register"?"Đang tạo tài khoản…":"Đang đăng nhập…";
  try{
-  const {error}=await supabase.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname}});
-  if(error)throw error;
-  authMessage("Đã gửi liên kết đăng nhập đến "+email+". Mở email trên thiết bị này và bấm liên kết để xác thực.",true);
-  submit.textContent="Gửi lại liên kết";
- }catch(error){authMessage("Không gửi được email: "+(error.message||"Vui lòng thử lại."));submit.textContent="Gửi liên kết đăng nhập";}
- finally{submit.disabled=false;}
+  const result=authMode==="register"
+   ?await api("register",{username,pin,initialState:localSnapshot()})
+   :await api("login",{username,pin});
+  setStoredToken(result);
+  pinInput.value="";confirmInput.value="";
+  await restoreCloudState(result.username,result.state||{});
+ }catch(error){authMessage(error.message||"Không thể đăng nhập. Vui lòng thử lại.");}
+ finally{submit.disabled=false;submit.textContent=authMode==="register"?"Tạo tài khoản":"Đăng nhập";}
 });
 document.getElementById("cloudSignOut").addEventListener("click",async()=>{
- cloudReady=false;activeUser=null;accountBar.hidden=true;gate.hidden=false;
- await supabase.auth.signOut();
- authMessage("Đã đăng xuất. Dữ liệu cục bộ trên thiết bị không bị xóa.");
+ const stored=getStoredToken();cloudReady=false;activeUser=null;clearTimeout(syncTimer);
+ try{if(stored?.token)await api("logout",{},stored.token);}catch(e){}
+ clearStoredToken();accountBar.hidden=true;gate.hidden=false;
+ sessionStorage.removeItem(BOOKING_SESSION_KEY);localStorage.removeItem(SAVED_REVIEW_KEY);savedReviewItems=[];
+ if($("raw"))$("raw").value="";
+ authMessage("Đã đăng xuất. Dữ liệu đã đồng bộ vẫn được giữ trên tài khoản cá nhân.");
 });
 (async()=>{
  try{
-  const {createClient}=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
-  supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-  const {data:{session},error}=await supabase.auth.getSession();
-  if(error)throw error;
-  if(session?.user)await restoreCloudState(session.user);
-  else{gate.hidden=false;authMessage("Nhập email để nhận liên kết đăng nhập an toàn.");}
-  supabase.auth.onAuthStateChange(async(event,sessionNow)=>{
-   if(event==="SIGNED_IN"&&sessionNow?.user){
-    try{await restoreCloudState(sessionNow.user);}catch(error){cloudReady=false;authMessage("Đăng nhập thành công nhưng tải dữ liệu lỗi: "+(error.message||"Lỗi không xác định"));}
-   }
-   if(event==="SIGNED_OUT"){cloudReady=false;activeUser=null;gate.hidden=false;accountBar.hidden=true;}
-  });
- }catch(error){
-  console.error("Supabase initialization failed:",error);
-  gate.hidden=false;
-  authMessage("Không khởi tạo được kết nối đồng bộ: "+(error.message||"Kiểm tra kết nối mạng/CDN."));
- }
+  const stored=getStoredToken();
+  if(stored?.token&&new Date(stored.expiresAt).getTime()>Date.now()){
+   try{const result=await api("load",{},stored.token);await restoreCloudState(stored.username,result.state||{});return;}
+   catch(error){clearStoredToken();authMessage("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");}
+  }else if(stored)clearStoredToken();
+  gate.hidden=false;setMode("login");
+ }catch(error){gate.hidden=false;authMessage("Không khởi tạo được kết nối đồng bộ: "+(error.message||"Kiểm tra mạng."));}
 })();
 </script>
 <style id="christmas-audio-player-style">
