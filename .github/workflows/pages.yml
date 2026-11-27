@@ -23,6 +23,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Validate application JavaScript
+        run: node scripts/check-inline-js.mjs
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
