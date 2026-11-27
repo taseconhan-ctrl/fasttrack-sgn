@@ -356,7 +356,7 @@ async function loadCloud(){ $("status").textContent="Đang tải danh sách book
 async function syncParsed(rows){const bookings=rows.map(r=>({agency:r[0],parking_gate:r[10]||null,estimated_arrival_time:r[11]||null,flight:r[1],guest_name:r[2],service_time:r[3],service_type:r[4],order_id:r[5],responsible_staff:r[6]||null,service_date:r[7]||$("serviceDate").value}));const d=await cloudCall("source_sync",{bookings});await loadCloud();return d;}
 
 const HEAD=["Agency","Flight","Name","Date","Time","Type","Order","NV phụ trách","Trạng thái","Cập nhật lúc"];
-const STAFF=["Tuấn Khánh","Minh Khoa","Văn Diệp","Việt Quang","Đông Hưng","Lý Ngọc Dũng","Ngọc Nhân","Thanh Hùng","Nhật Quang","Vũ Văn Bình","Trung An"];
+const STAFF=["Tuấn Khánh","Minh Khoa","Văn Diệp","Việt Quang","Đông Hưng","Ngọc Dương","Ngọc Nhân","Thanh Hùng","Nhật Quang","Vũ Văn Bình","Trung An"];
 const STATUSES=["Chưa phân công","Đã phân công","Đang đón","Đã đón","Không gặp khách"];
 const clean=s=>String(s??"").replace(/^\uFEFF/,"").trim();
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
