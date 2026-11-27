@@ -816,8 +816,9 @@ function buildOne(b,staff,phone,hotline,staffVN){
 function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:`<span class="muted">Không tạo được – thiếu dữ liệu phù hợp</span>`}
 function block(title,content){return `<h3>${title}</h3><pre class="body-content">${esc(content)}</pre>`}
 function cardHtml(b,i,cacheIndex){
- const links=`<div class="actions">${linkHtml(b.wa,"WhatsApp")}${linkHtml(b.gm,"Gmail")}${linkHtml(b.zalo,"Zalo")}</div>`;
- const internal=isDomestic(b)?internalHtml(b):"";
+ const links=`<div class="actions">${linkHtml(b.wa,"WhatsApp")}${linkHtml(b.gm,"Gmail")}${linkHtml(b.zalo,"Zalo")}${b.calendar?linkHtml(b.calendar,"Google Calendar"):""}</div>`;
+ const enoughInternalData=!!(b.order&&b.flight&&b.date&&b.time&&b.names.length);
+ const internal=isDomestic(b)&&enoughInternalData?internalHtml(b):"";
  const noteLines=[...(b.warnings||[])];
  if(b.skipReason)noteLines.push("Lý do ban đầu bị bỏ qua: "+b.skipReason);
  const notes=noteLines.length?`<div class="status warn"><b>Ghi chú:</b><br>${noteLines.map(esc).join("<br>")}</div>`:"";
@@ -829,7 +830,7 @@ function cardHtml(b,i,cacheIndex){
  <h3>LIÊN HỆ</h3>
  <div class="kv contact-edit-panel" style="margin:10px 0">
  <b>Bổ sung / chỉnh sửa thông tin liên hệ</b>
- <p class="hint">Nhập số điện thoại có mã quốc gia (ví dụ +84...) và/hoặc Gmail. Sau khi cập nhật, link WhatsApp và Gmail sẽ được tạo lại ngay cho booking này.</p>
+ <p class="hint">Nhập số điện thoại có mã quốc gia (ví dụ +84...) và/hoặc email hợp lệ. Link WhatsApp, Gmail và lịch nhắc (nếu thuộc booking TIỄN đối tác) sẽ được cập nhật theo dữ liệu mới.</p>
  <div class="controls">
  <div><label for="contactPhone-${cacheIndex}">Số điện thoại</label><input id="contactPhone-${cacheIndex}" type="tel" value="${esc(b.phone||"")}" placeholder="+84..." autocomplete="tel"></div>
  <div><label for="contactEmail-${cacheIndex}">Gmail / Email</label><input id="contactEmail-${cacheIndex}" type="email" value="${esc(b.email||"")}" placeholder="customer@gmail.com" autocomplete="email"></div>
@@ -847,9 +848,11 @@ function updateBookingContact(index){
  if(phone&&!/^[+\d][\d\s().-]{6,24}$/.test(phone)){toast("Số điện thoại chưa đúng định dạng. Hãy nhập cả mã quốc gia, ví dụ +84...",false);return;}
  b.phone=phone;b.email=email;b.intl=internationalPhone(phone,b.country);b.vn=localVNPhone(phone);b.reviewPhone=b.intl?("+"+b.intl):(phone||"Không có số điện thoại");
  b.wa=b.intl&&b.en?"https://wa.me/"+b.intl+"?text="+encodeURIComponent(b.en):"";
- b.gm=email&&b.order&&b.flight&&b.date&&b.en?gmailLink(email,b.sub,b.en):"";
+ const gmailSubject=b.order?"Fast Track Airport Pick-up Service – Tan Son Nhat Airport - "+b.order:b.sub;
+ b.gm=email&&b.order&&b.flight&&b.date&&b.en?gmailLink(email,gmailSubject,b.en):"";
  b.zalo=isPartner(b)&&b.vn?"https://zalo.me/"+b.vn:"";
- b.warnings=(b.warnings||[]).filter(x=>!x.startsWith("Không chuẩn hóa được số WhatsApp")&&!x.startsWith("Không có email khách"));
+ b.calendar=calendarLink(b);
+ b.warnings=(b.warnings||[]).filter(x=>!x.startsWith("Không chuẩn hóa được số WhatsApp")&&!x.startsWith("Không có email khách")&&!x.startsWith("Email khách không hợp lệ"));
  if(phone&&!b.intl)b.warnings.push("Không chuẩn hóa được số WhatsApp; kiểm tra số và quốc gia hộ chiếu");
  if(!email)b.warnings.push("Không có email khách");
  renderFilteredBookings();saveReviewItems([b]);toast("Đã cập nhật liên hệ và lưu lại lịch sử booking.");
