@@ -981,7 +981,7 @@ $("savedDateFilter").addEventListener("change",renderSavedReviewArchive);$("save
 $("savedPartnerFilter").addEventListener("change",renderSavedReviewArchive);$("savedDirectionFilter").addEventListener("change",renderSavedReviewArchive);
 $("clearSavedDate").addEventListener("click",()=>{$("savedDateFilter").value="";renderSavedReviewArchive();});
 $("clearSavedArchive").addEventListener("click",()=>{if(!confirm("Xóa toàn bộ lịch sử đã lưu trên thiết bị này?"))return;savedReviewItems=[];persistSavedReview();renderSavedReviewArchive();toast("Đã xóa toàn bộ lịch sử.");});
-$("clear").addEventListener("click",()=>{try{sessionStorage.removeItem(BOOKING_SESSION_KEY);}catch(e){}$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("skippedBookings").innerHTML="";processedBookings=[];allBookingsCache=[];skippedBookingsCache=[];$("status").textContent="Đã xóa dữ liệu.";});
+$("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("skippedBookings").innerHTML="";processedBookings=[];allBookingsCache=[];skippedBookingsCache=[];saveBookingSession();$("status").textContent="Đã xóa dữ liệu.";});
 document.addEventListener("click",e=>{
  const del=e.target.closest(".delete-saved-review");if(del){const key=del.dataset.savedKey;if(!confirm("Xóa booking này khỏi lịch sử?"))return;savedReviewItems=savedReviewItems.filter(x=>x.key!==key);persistSavedReview();renderSavedReviewArchive();toast("Đã xóa booking khỏi lịch sử.");return;}
  const saveContact=e.target.closest(".save-contact");
@@ -1018,7 +1018,7 @@ function saveBookingSession(){
  try{
   const snapshot={raw:$("raw")?.value||"",allBookings:!!$("allBookings")?.checked,staffProfile:$("staffProfile")?.value||"",staff:$("staff")?.value||"",phone:$("phone")?.value||"",hotline:$("hotline")?.value||"",savedAt:Date.now()};
   if(snapshot.raw.trim())sessionStorage.setItem(BOOKING_SESSION_KEY,JSON.stringify(snapshot));
-  else sessionStorage.removeItem(BOOKING_SESSION_KEY);
+  else{snapshot.cleared=true;sessionStorage.setItem(BOOKING_SESSION_KEY,JSON.stringify(snapshot));}
   if(typeof scheduleCloudSync==="function")scheduleCloudSync();
  }catch(e){}
 }
@@ -1081,7 +1081,17 @@ async function writeCloudState(){
  try{
   do{
    syncAgain=false;
-   const state=localSnapshot();
+   const local=localSnapshot();
+   const {data:latest,error:readError}=await supabase.from(WORKSPACE_TABLE).select("state").eq("user_id",activeUser.id).maybeSingle();
+   if(readError)throw readError;
+   const remote=latest?.state||{};
+   const localSession=local.bookingSession,remoteSession=remote.bookingSession;
+   const session=remoteSession&&(!localSession||Number(remoteSession.savedAt||0)>Number(localSession.savedAt||0))?remoteSession:localSession;
+   const state={bookingSession:session||null,reviewItems:mergeReviews(remote.reviewItems,local.reviewItems)};
+   if(session)sessionStorage.setItem(BOOKING_SESSION_KEY,JSON.stringify(session));
+   else sessionStorage.removeItem(BOOKING_SESSION_KEY);
+   savedReviewItems=state.reviewItems;
+   localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));
    const {error}=await supabase.from(WORKSPACE_TABLE).upsert({
     user_id:activeUser.id,state,updated_at:new Date().toISOString()
    },{onConflict:"user_id"});
