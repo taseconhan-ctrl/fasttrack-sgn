@@ -855,7 +855,7 @@ let savedReviewItems=[];
 function savedReviewKey(x){const names=Array.isArray(x.names)?x.names.join(","):(x.names||"");return [x.dir||"",x.date||"",x.order||"",x.flight||"",x.order?"":names].join("|");}
 function dedupeSavedReviews(items){const map=new Map();(Array.isArray(items)?items:[]).forEach(x=>{if(!x||!x.sub||!x.dir||!x.date)return;const key=savedReviewKey(x);map.set(key,{...x,key});});return [...map.values()].sort((a,b)=>dateToIso(b.date).localeCompare(dateToIso(a.date)));}
 function loadSavedReview(){try{const v=JSON.parse(localStorage.getItem(SAVED_REVIEW_KEY)||"[]");const source=Array.isArray(v)?v:[];savedReviewItems=dedupeSavedReviews(source);if(savedReviewItems.length!==source.length)persistSavedReview();}catch(e){savedReviewItems=[];}}
-function persistSavedReview(){try{localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));if(typeof scheduleCloudSync==="function")scheduleCloudSync();}catch(e){toast("Không thể lưu lịch sử: bộ nhớ trình duyệt có thể đã đầy hoặc bị chặn.",false);}}
+function persistSavedReview(){try{localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));if(typeof window.scheduleCloudSync==="function")window.scheduleCloudSync();}catch(e){toast("Không thể lưu lịch sử: bộ nhớ trình duyệt có thể đã đầy hoặc bị chặn.",false);}}
 function dateToIso(v){const m=String(v||"").match(/^(\d{2})\/(\d{2})\/(\d{4})$/);return m?m[3]+"-"+m[2]+"-"+m[1]:"";}
 function saveReviewItems(items){loadSavedReview();const map=new Map(savedReviewItems.map(x=>[savedReviewKey(x),{...x,key:savedReviewKey(x)}]));items.filter(x=>x.sub&&x.dir&&x.date).forEach(x=>{const key=savedReviewKey(x);map.set(key,{...x,key,savedAt:new Date().toISOString()});});savedReviewItems=dedupeSavedReviews([...map.values()]);persistSavedReview();renderSavedReviewArchive();}
 function renderSavedReviewArchive(){
@@ -1098,6 +1098,7 @@ function scheduleCloudSync(){
  clearTimeout(syncTimer);
  syncTimer=setTimeout(()=>writeCloudState(),900);
 }
+window.scheduleCloudSync=scheduleCloudSync;
 async function restoreCloudState(user){
  showAuthenticated(user);
  authMessage("Đang tải dữ liệu riêng tư…");
