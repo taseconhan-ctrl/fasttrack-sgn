@@ -392,8 +392,21 @@ body.staff-authenticated .ft-account-link{display:none!important}
   <p id="staffSignedInText" style="font-weight:750;color:#f5dfaa"></p>
   <div class="auth-actions">
    <a href="soan-booking.html">Soạn Booking</a><a href="ung-don-khach.html">Điều hành đón khách</a><a href="don-khach.html">Đón khách cũ</a><a href="xep-lich.html">Xếp lịch</a>
+   <a href="index.html?settings=pin">Đổi mã PIN</a>
    <button type="button" id="staffHomeSignOut">Đăng xuất</button>
   </div>
+  <section id="staffPinChangePanel" hidden style="margin-top:18px;padding:18px;border:1px solid #b99b62;border-radius:12px;background:#18251f;text-align:left">
+   <h3 style="margin:0 0 12px;color:#f5dfaa">Đổi mã PIN</h3>
+   <form id="staffPinChangeForm">
+    <label for="staffCurrentPin">PIN hiện tại</label>
+    <input id="staffCurrentPin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="current-password" placeholder="Nhập PIN hiện tại" required>
+    <label for="staffNewPin">PIN mới (4 chữ số)</label>
+    <input id="staffNewPin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="new-password" placeholder="Nhập PIN mới" required>
+    <label for="staffNewPinConfirm">Nhập lại PIN mới</label>
+    <input id="staffNewPinConfirm" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="new-password" placeholder="Xác nhận PIN mới" required>
+    <button id="staffPinChangeSubmit" type="submit">Xác nhận đổi PIN</button>
+   </form>
+  </section>
  </div>
  <div id="staffAuthMessage" role="status" aria-live="polite">Dữ liệu cá nhân chỉ được tải sau khi đăng nhập.</div>
  <p style="font-size:11px;margin-bottom:0">Tên đăng nhập dài 3–24 ký tự, dùng chữ không dấu, số, dấu chấm, gạch ngang hoặc gạch dưới. PIN 4 số có độ bảo mật thấp hơn mật khẩu dài; hệ thống giới hạn 5 lần nhập sai và tạm khóa 15 phút. Không dùng PIN này cho ngân hàng hoặc dịch vụ khác.</p>
@@ -512,6 +525,20 @@ form.addEventListener("submit",async event=>{
  }catch(error){say(error.message||"Không thể đăng nhập. Vui lòng thử lại.");}
  finally{submit.disabled=false;submit.textContent=authMode==="register"?"Tạo tài khoản":"Đăng nhập";}
 });
+["staffCurrentPin","staffNewPin","staffNewPinConfirm"].forEach(id=>$(id).addEventListener("input",()=>$(id).value=$(id).value.replace(/\\D/g,"").slice(0,4)));
+$("staffPinChangeForm").addEventListener("submit",async event=>{
+ event.preventDefault();
+ const currentPin=$("staffCurrentPin").value,newPin=$("staffNewPin").value,confirmPin=$("staffNewPinConfirm").value;
+ if(!/^\\d{4}$/.test(currentPin)||!/^\\d{4}$/.test(newPin)){say("Mỗi mã PIN phải gồm đúng 4 chữ số.");return;}
+ if(newPin!==confirmPin){say("Hai lần nhập PIN mới không khớp.");return;}
+ const button=$("staffPinChangeSubmit");button.disabled=true;button.textContent="Đang cập nhật…";
+ try{
+  const stored=getToken();if(!stored?.token)throw new Error("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.");
+  await api("change_pin",{currentPin,newPin},stored.token);
+  $("staffPinChangeForm").reset();say("Đã đổi PIN thành công. Phiên đăng nhập hiện tại vẫn được giữ; các phiên khác đã bị đăng xuất.",true);
+ }catch(error){say(error.message||"Không thể đổi PIN. Vui lòng thử lại.");}
+ finally{button.disabled=false;button.textContent="Xác nhận đổi PIN";}
+});
 $("staffHomeSignOut").addEventListener("click",async()=>{
  const stored=getToken();
  try{if(stored?.token)await api("logout",{},stored.token);}catch(e){}
@@ -522,10 +549,18 @@ $("staffHomeSignOut").addEventListener("click",async()=>{
 });
 (async()=>{
  const stored=getToken();
+ const pinSettingsMode=new URLSearchParams(location.search).get("settings")==="pin";
  if(!stored?.token)return setMode("login");
  if(!stored.expiresAt||new Date(stored.expiresAt).getTime()<=Date.now()){clearToken();return setMode("login");}
  try{
   const result=await api("load",{},stored.token);
+  if(pinSettingsMode){
+   formArea.hidden=true;signedIn.hidden=false;setAuthenticatedUI(true);
+   $("staffPinChangePanel").hidden=false;
+   $("staffSignedInText").textContent="Đã đăng nhập: "+(stored.username||"nhân viên");
+   say("Xác minh PIN hiện tại trước khi đổi sang PIN mới.");
+   return;
+  }
   const requestedNext=new URLSearchParams(location.search).get("next");const allowedNext=new Set(["don-khach.html","ung-don-khach.html","soan-booking.html","xep-lich.html"]);location.replace(allowedNext.has(requestedNext)?requestedNext:"soan-booking.html");
  }catch(error){clearToken();setMode("login");say("Phiên đăng nhập không còn hợp lệ. Vui lòng đăng nhập lại.");}
 })();
