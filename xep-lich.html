@@ -858,6 +858,78 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 }
 
 </style>
+
+<style id="ft-mobile-contrast-fix">
+/* Mobile readability and contrast patch */
+.ft-content .kv{
+  min-width:0!important;max-width:100%!important;
+  padding:12px 13px!important;margin:8px 0!important;
+  border:1px solid #514a3b!important;border-radius:11px!important;
+  background:#24221d!important;color:#f5f0e6!important;
+}
+.ft-content .kv b,.ft-content .kv strong{
+  color:#f5f0e6!important;font-weight:750!important;
+  overflow-wrap:anywhere!important;word-break:normal!important;
+}
+.ft-content .kv small{
+  display:block!important;margin:0 0 5px!important;
+  color:#d0c3a8!important;font-size:12px!important;font-weight:700!important;
+}
+.ft-content .kv p,.ft-content .kv .hint{
+  color:#c2bbae!important;overflow-wrap:anywhere!important;
+}
+.ft-content .booking .grid{
+  display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))!important;
+  gap:9px!important;min-width:0!important;
+}
+.ft-content .booking .meta{
+  display:flex!important;flex-wrap:wrap!important;gap:7px!important;
+  min-width:0!important;max-width:100%!important;
+}
+.ft-content .booking .topline{
+  min-width:0!important;align-items:flex-start!important;
+}
+.ft-content .booking .topline h2{
+  min-width:0!important;max-width:100%!important;
+  overflow-wrap:anywhere!important;word-break:normal!important;
+}
+.ft-content pre{
+  display:block!important;width:100%!important;max-width:100%!important;min-width:0!important;
+  padding:13px!important;border:1px solid #494337!important;border-radius:10px!important;
+  background:#10100f!important;color:#f5f0e6!important;
+  white-space:pre-wrap!important;overflow-wrap:anywhere!important;word-break:normal!important;
+  overflow-x:hidden!important;line-height:1.65!important;
+}
+.ft-content .booking,.ft-content .booking *{min-width:0}
+.ft-content .booking p,.ft-content .booking h3,.ft-content .booking .actions{
+  max-width:100%!important;overflow-wrap:anywhere!important;
+}
+.ft-topbar{height:auto!important;min-height:60px!important}
+.ft-top-context{min-width:0!important;flex:1 1 150px!important}
+.ft-top-context b{line-height:1.35!important;overflow-wrap:anywhere!important}
+.ft-account-link{max-width:45vw!important;white-space:normal!important;overflow-wrap:anywhere!important}
+@media(max-width:680px){
+  html,body{max-width:100%!important;overflow-x:hidden!important}
+  .ft-topbar{min-height:60px!important;padding:9px 12px!important;gap:8px!important;flex-wrap:wrap!important}
+  .ft-top-context{flex:1 1 145px!important}
+  .ft-top-context small{font-size:8px!important;letter-spacing:1px!important}
+  .ft-top-context b{font-size:12px!important}
+  .ft-account-link{flex:0 1 auto!important;max-width:42vw!important;padding:7px 8px!important;font-size:10px!important}
+  .ft-content{width:calc(100% - 24px)!important;padding:14px 0 24px!important}
+  .ft-content .panel,.ft-content .booking,.ft-content .review{padding:13px!important}
+  .ft-content .booking .grid{grid-template-columns:minmax(0,1fr)!important}
+  .ft-content .kv{padding:12px!important;margin:7px 0!important}
+  .ft-content pre{font-size:13px!important;line-height:1.6!important;padding:12px!important}
+  .ft-content .booking .topline{gap:8px!important}
+  .ft-content .booking .topline h2{font-size:16px!important;line-height:1.4!important}
+}
+@media(max-width:380px){
+  .ft-top-context{flex-basis:125px!important}
+  .ft-account-link{max-width:39vw!important;font-size:9px!important}
+  .ft-content .booking .meta .pill{font-size:10px!important;padding:5px 7px!important}
+}
+</style>
+
 </head><body>
 <div class="ft-app" id="ftApp">
 <aside class="ft-sidebar" id="ftSidebar" aria-label="Điều hướng chính" aria-label="Điều hướng chính">
