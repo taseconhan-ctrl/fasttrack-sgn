@@ -1825,5 +1825,73 @@ button.secondary,button.ghost{background:#eef3f9!important;color:#294563!importa
 }
 @media(max-width:380px){.ft-content{padding:9px!important}.ft-content .panel,.ft-content .booking,.ft-content .review{padding:11px!important}}
 </style>
+<style id="ft-mobile-first-v1">
+/* Phone-first refinement; CSS only, preserving all booking and data logic. */
+.ft-app,.ft-main,.ft-content,.ft-content *{box-sizing:border-box}
+.ft-app,.ft-main,.ft-content{min-width:0;max-width:100%}
+@media(max-width:760px){
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:76px}
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}
+body{font-size:15px!important;line-height:1.55!important}
+.ft-app{display:block!important;min-height:100dvh!important}
+.ft-main,.ft-app.ft-collapsed .ft-main{width:100%!important;max-width:100%!important;margin:0!important;min-width:0!important}
+.ft-topbar{position:sticky!important;top:0!important;z-index:80!important;display:flex!important;align-items:center!important;min-height:58px!important;padding:8px 12px!important;gap:9px!important;flex-wrap:nowrap!important;background:#fff!important;border-bottom:1px solid #d9e3ef!important;box-shadow:0 2px 9px rgba(23,54,93,.06)!important}
+.ft-menu-toggle{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 44px!important;width:44px!important;height:44px!important;min-width:44px!important;min-height:44px!important}
+.ft-top-context{flex:1 1 auto!important;min-width:0!important;line-height:1.25!important}
+.ft-top-context b{display:block!important;font-size:13px!important;line-height:1.3!important;white-space:normal!important}
+.ft-top-context small{display:block!important;font-size:9px!important;line-height:1.3!important;letter-spacing:.07em!important}
+.ft-account-link{flex:0 1 auto!important;max-width:34vw!important;min-width:0!important;padding:8px 9px!important;font-size:10px!important;line-height:1.25!important;white-space:normal!important;overflow-wrap:anywhere!important}
+.ft-sidebar{position:fixed!important;top:0!important;bottom:0!important;left:0!important;width:min(300px,86vw)!important;height:100dvh!important;max-height:100dvh!important;overflow-y:auto!important;overscroll-behavior:contain!important;z-index:102!important;padding-top:env(safe-area-inset-top)!important;transform:translateX(-105%)!important;transition:transform .22s ease!important}
+.ft-app.ft-mobile-open .ft-sidebar{transform:translateX(0)!important}
+.ft-app.ft-mobile-open:after{content:"";position:fixed;inset:0;background:rgba(15,35,60,.42);z-index:101}
+.ft-content{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important;padding:14px 12px calc(24px + env(safe-area-inset-bottom))!important;overflow:visible!important}
+.ft-content h1{font-size:clamp(21px,5.5vw,27px)!important;line-height:1.25!important;margin-top:4px!important}
+.ft-content h2{font-size:19px!important;line-height:1.35!important}
+.ft-content h3{font-size:16px!important;line-height:1.4!important}
+.ft-content p,.ft-content label,.ft-content .hint,.ft-content .muted{line-height:1.55!important}
+.ft-content .panel,.ft-content .booking,.ft-content .review,.ft-content .card,.ft-content .item,.ft-content .staff,.ft-content .intro{width:100%!important;max-width:100%!important;min-width:0!important;margin:0 0 12px!important;padding:14px!important;border-radius:13px!important}
+.ft-content .fields,.ft-content .field-grid,.ft-content .form-grid{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+.ft-content .field,.ft-content .form-group,.ft-content .form-row{min-width:0!important;width:100%!important}
+.ft-content input:not([type=checkbox]):not([type=radio]),.ft-content select,.ft-content textarea,input:not([type=checkbox]):not([type=radio]),select,textarea{width:100%!important;max-width:100%!important;min-width:0!important;min-height:46px!important;padding:11px 12px!important;font-size:16px!important;line-height:1.35!important;border-radius:9px!important}
+.ft-content textarea,textarea{min-height:112px!important}
+.ft-content button,.ft-content .linkbtn,.ft-content .back,.ft-content .hero-cta,button,.linkbtn,.back,.hero-cta{min-height:46px!important;max-width:100%!important;font-size:14px!important;line-height:1.3!important;padding:11px 13px!important;white-space:normal!important;overflow-wrap:anywhere!important;touch-action:manipulation}
+.ft-content .toolbar,.ft-content .controls,.ft-content .sticky-actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;align-items:stretch!important}
+.ft-content .toolbar>*,.ft-content .controls>*,.ft-content .sticky-actions>*{width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important}
+.ft-content .toolbar button,.ft-content .controls button,.ft-content .sticky-actions button{width:100%!important;min-width:0!important}
+.ft-content .summary{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+.ft-content .summary>*{min-width:0!important;padding:11px!important}
+.ft-content .menu{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+.ft-content .menu .item{min-height:0!important;padding:16px!important}
+.ft-content .workspace-switcher{grid-template-columns:minmax(0,1fr)!important;gap:10px!important}
+.ft-content .workspace-choice{min-height:74px!important;padding:13px!important}
+.ft-content .tablewrap,.ft-content .table-wrapper,.ft-content .table-responsive,.tablewrap,.table-wrapper,.table-responsive{display:block!important;width:100%!important;max-width:100%!important;overflow-x:auto!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior-x:contain!important;border-radius:9px!important}
+.ft-content table,table{width:max-content!important;min-width:620px!important;max-width:none!important;font-size:12px!important}
+.ft-content th,.ft-content td,th,td{padding:8px 9px!important;white-space:nowrap!important;line-height:1.35!important}
+.ft-content pre,.ft-content code{max-width:100%!important;overflow-x:auto!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important;font-size:13px!important}
+#globalStaffAuthBar{position:relative!important;top:auto!important;right:auto!important;left:auto!important;width:calc(100% - 24px)!important;max-width:none!important;margin:10px 12px!important;z-index:90!important;flex-wrap:wrap!important;justify-content:space-between!important;gap:8px!important;padding:9px 10px!important}
+#staffAuthPanel{width:calc(100% - 24px)!important;max-width:560px!important;margin:14px auto 22px!important;padding:17px!important;border-radius:14px!important}
+#staffAuthPanel .auth-mode{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#staffAuthPanel .auth-actions{display:grid!important;grid-template-columns:1fr!important}
+#bookingMain #run,#bookingMain #import,#bookingMain #auto{width:100%!important;min-width:0!important}
+#bookingMain .archive-entry{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:8px!important}
+#bookingMain .archive-entry .linkbtn{width:100%!important;justify-content:center!important}
+#schedule{min-width:900px!important}
+#schedule th:first-child,#schedule td:first-child{position:sticky!important;left:0!important;z-index:2!important;background:#edf3fb!important;color:#17365d!important;box-shadow:2px 0 4px rgba(23,54,93,.08)!important}
+#schedule th:first-child{z-index:3!important}
+#schedule select{min-width:58px!important;min-height:40px!important;padding:5px!important;font-size:14px!important}
+#cloudAccountBar{position:relative!important;top:auto!important;right:auto!important;width:100%!important;max-width:100%!important;margin:0 0 12px!important;flex-wrap:wrap!important;gap:8px!important}
+}
+@media(max-width:420px){
+.ft-topbar{padding:7px 9px!important;gap:7px!important}
+.ft-top-context b{font-size:12px!important}
+.ft-account-link{max-width:31vw!important;font-size:9px!important;padding:7px!important}
+.ft-content{padding:11px 9px calc(20px + env(safe-area-inset-bottom))!important}
+.ft-content .panel,.ft-content .booking,.ft-content .review,.ft-content .card{padding:12px!important}
+.ft-content .toolbar,.ft-content .controls,.ft-content .sticky-actions{grid-template-columns:minmax(0,1fr)!important}
+.ft-content .summary{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#staffAuthPanel{width:calc(100% - 18px)!important;padding:14px!important}
+}
+@media(prefers-reduced-motion:reduce){.ft-sidebar{transition:none!important}}
+</style>
 </body>
 </html>
