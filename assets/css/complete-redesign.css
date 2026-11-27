@@ -266,3 +266,27 @@ body .ft-app #staffAuthPanel label{color:var(--muted)!important}
   body .ft-app .ft-content .review,
   body .ft-app .ft-content .staff{border-radius:11px!important}
 }
+
+/* Vietnamese typography lock — final override for every page component. */
+html body,
+html body .ft-app,
+html body .ft-app *,
+html body #globalStaffAuthBar,
+html body #globalStaffAuthBar *,
+html body button,
+html body input,
+html body select,
+html body textarea,
+html body option,
+html body ::placeholder {
+  font-family: Arial, Tahoma, sans-serif !important;
+  font-synthesis: weight style !important;
+}
+html body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+html body .ft-app *,
+html body #globalStaffAuthBar * {
+  font-kerning: normal;
+}
