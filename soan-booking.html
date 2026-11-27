@@ -22,14 +22,14 @@ input,select,textarea,button{font-family:Arial,"Segoe UI",Tahoma,sans-serif!impo
 .workspace-switcher{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important;margin:0 0 20px!important}
 .workspace-choice{display:flex!important;align-items:center!important;gap:13px!important;min-height:94px!important;padding:17px 19px!important;border:1px solid var(--ft-line,#d8e0e8)!important;border-radius:15px!important;background:#fff!important;color:var(--ft-navy,#14233f)!important;text-decoration:none!important;box-shadow:0 5px 16px #14233f0c!important;transition:transform .18s ease,box-shadow .18s ease!important}
 .workspace-choice:hover{transform:translateY(-2px)!important;box-shadow:0 9px 22px #14233f18!important}
-.workspace-choice.composer-choice{border-left:5px solid var(--ft-blue,#2563a6)!important}
+.workspace-choice.composer-choice{border-left:5px solid var(--ft-blue,#1b7047)!important}
 .workspace-choice.archive-choice{border-left:5px solid var(--ft-green,#16835d)!important}
 .workspace-icon{display:grid;place-items:center;flex:0 0 46px;width:46px;height:46px;border-radius:12px;background:#edf3fa;font-size:23px}
 .archive-choice .workspace-icon{background:#eaf5ef}
 .workspace-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}
 .workspace-copy strong{font-size:15px;line-height:1.35;font-weight:800}
-.workspace-copy small{font-size:12px;line-height:1.45;color:#64748b}
-.workspace-arrow{font-size:12px;font-weight:800;white-space:nowrap;color:#315f91}
+.workspace-copy small{font-size:12px;line-height:1.45;color:#6b7b70}
+.workspace-arrow{font-size:12px;font-weight:800;white-space:nowrap;color:#397e55}
 .archive-choice .workspace-arrow{color:#18734f}
 body.archive-only #bookingMain>*:not(#savedReviewArchive){display:none!important}
 body.archive-only #savedReviewArchive{display:block!important}
@@ -291,7 +291,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 </style>
 <link rel="stylesheet" href="assets/css/shared-ui.css?v=ui-refresh-20261127">
 <link rel="stylesheet" href="assets/css/complete-redesign.css?v=20261127d">
-<link rel="stylesheet" href="assets/css/christmas-village-theme.css?v=20261127b">
+<link rel="stylesheet" href="assets/css/christmas-village-theme.css?v=20261127c">
 </head>
 <body>
 <div class="ft-app" id="ftApp">
@@ -341,7 +341,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 <div id="summary" class="panel hidden"></div>
 <div id="results"></div>
 <div id="skippedBookings"></div>
-<div id="reviews"></div><section id="savedReviewArchive" class="panel" hidden><div class="topline archive-nav"><h2>ĐỐI SOÁT</h2><a class="linkbtn secondary" href="soan-booking.html">← Quay lại Soạn Booking</a></div><p class="hint">Lịch sử được đồng bộ riêng tư theo tài khoản; dùng cùng tên đăng nhập trên điện thoại và máy tính. Xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
+<div id="reviews"></div><section id="savedReviewArchive" class="panel" hidden><div class="topline archive-nav"><h2>ĐỐI SOÁT</h2><a class="linkbtn secondary" href="soan-booking.html">← Quay lại Soạn Booking</a></div><p class="hint">Lịch sử được đồng bộ riêng tư theo tài khoản; dùng cùng tên đăng nhập trên điện thoại và máy tính. Xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
 </main>
 </div></div></div>
 
@@ -811,7 +811,7 @@ function renderSavedReviewArchive(){
    if(isDeparture)base.push(x.estimatedArrival||"");
    base.push(archiveSubject(x));
    const line=base.join(" | ");
-   const timeCell=isDeparture?'<td><input type="time" class="saved-estimated-arrival" data-saved-key="'+esc(x.key||savedReviewKey(x))+'" value="'+esc(x.estimatedArrival||"")+'" aria-label="Giờ dự kiến đến sân bay" style="min-width:112px;padding:7px;border:1px solid #bbc6d8;border-radius:7px"></td>':"";
+   const timeCell=isDeparture?'<td><input type="time" class="saved-estimated-arrival" data-saved-key="'+esc(x.key||savedReviewKey(x))+'" value="'+esc(x.estimatedArrival||"")+'" aria-label="Giờ dự kiến đến sân bay" style="min-width:112px;padding:7px;border:1px solid #c5d2c8;border-radius:7px"></td>':"";
    return '<tr><td>'+(i+1)+'</td><td>'+esc(x.date)+'</td><td>'+esc(x.order)+'</td><td>'+esc(x.reviewPhone)+'</td><td>'+esc(x.agency||"Chưa rõ agency")+'</td>'+timeCell+'<td>'+esc(archiveSubject(x))+'</td><td>'+copyButton(line,"Copy dòng")+' <button type="button" class="mini ghost delete-saved-review" data-saved-key="'+esc(x.key||savedReviewKey(x))+'">Xóa</button></td></tr>';
   });
   const all=list.map(x=>[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",...(isDeparture?[x.estimatedArrival||""]:[]),archiveSubject(x)].join(" | ")).join("\\n");
@@ -849,8 +849,8 @@ function renderFilteredBookings(){
   <div class="booking-direction-list">${items.map((b,i)=>cardHtml(b,i,allBookingsCache.indexOf(b))).join("")||'<p class="muted" style="padding:14px 4px">Không có booking trong mục này.</p>'}</div>
  </section>`;
  $("results").innerHTML=dir==="ALL"
-  ? renderGroup(arrival,"✈️ ĐÓN KHÁCH","arrival-group","#16866f")+renderGroup(departure,"🛫 TIỄN KHÁCH","departure-group","#397db1")+(unknown.length?renderGroup(unknown,"CHƯA XÁC ĐỊNH LOẠI DỊCH VỤ","unknown-group","#c18a35"):"")
-  : (dir==="ARRIVAL"?renderGroup(arrival,"✈️ ĐÓN KHÁCH","arrival-group","#16866f"):renderGroup(departure,"🛫 TIỄN KHÁCH","departure-group","#397db1"))+(unknown.length?renderGroup(unknown,"CHƯA XÁC ĐỊNH LOẠI DỊCH VỤ","unknown-group","#c18a35"):"");
+  ? renderGroup(arrival,"✈️ ĐÓN KHÁCH","arrival-group","#16866f")+renderGroup(departure,"🛫 TIỄN KHÁCH","departure-group","#1b7047")+(unknown.length?renderGroup(unknown,"CHƯA XÁC ĐỊNH LOẠI DỊCH VỤ","unknown-group","#c18a35"):"")
+  : (dir==="ARRIVAL"?renderGroup(arrival,"✈️ ĐÓN KHÁCH","arrival-group","#16866f"):renderGroup(departure,"🛫 TIỄN KHÁCH","departure-group","#1b7047"))+(unknown.length?renderGroup(unknown,"CHƯA XÁC ĐỊNH LOẠI DỊCH VỤ","unknown-group","#c18a35"):"");
  $("reviews").innerHTML="";
  const count=$("filterCount");
  if(count) count.textContent=`Đang hiển thị ${shown.length}/${processedBookings.length} booking · ĐÓN ${arrival.length} · TIỄN ${departure.length}`;
@@ -914,7 +914,7 @@ function run(){
  saveReviewItems(kept);
  const partners=[...new Set(made.map(x=>x.agency||"Chưa rõ đối tác"))].sort((a,b)=>a.localeCompare(b,"vi"));
  $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?'<p class="hint">Có '+skipped.length+' booking bị loại khỏi kết quả chính; xem bảng BOOKING BỊ BỎ QUA bên dưới để biết lý do từng booking.</p>':""}
- <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm tất cả booking</label><input id="bookingSearch" type="text" placeholder="Tìm mọi booking: mã order / tên / chuyến bay / SĐT / nhân viên..." style="width:min(340px,85vw);max-width:none"><p class="hint">Khi nhập từ khóa, hệ thống tìm trong toàn bộ booking đã dán, gồm cả booking đã có nhân viên nhận việc, chưa xác nhận và booking cũ. Không giới hạn theo điều kiện lọc mặc định.</p></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #bbc6d8;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #bbc6d8;border-radius:8px"><option value="__ALL__">Tất cả (${made.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${made.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
+ <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm tất cả booking</label><input id="bookingSearch" type="text" placeholder="Tìm mọi booking: mã order / tên / chuyến bay / SĐT / nhân viên..." style="width:min(340px,85vw);max-width:none"><p class="hint">Khi nhập từ khóa, hệ thống tìm trong toàn bộ booking đã dán, gồm cả booking đã có nhân viên nhận việc, chưa xác nhận và booking cũ. Không giới hạn theo điều kiện lọc mặc định.</p></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #c5d2c8;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="__ALL__">Tất cả (${made.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${made.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
  renderFilteredBookings();
  skippedBookingsCache=skipped;
  $("skippedBookings").innerHTML=renderSkippedBookings(skipped,all);
