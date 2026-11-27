@@ -345,6 +345,36 @@ button.danger{background:#9c3942!important;color:#fff!important}
   <p>Xử lý booking trực tiếp trên trình duyệt · Tạo nội dung và link liên hệ để nhân viên kiểm tra, sao chép hoặc mở bản nháp</p>
   <p style="margin-top:12px"><a href="index.html" style="display:inline-block;background:#fff;color:#14233f;padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:700">← Trở về</a></p>
 </header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav>
+<style id="cloud-auth-style">
+#cloudAuthGate{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:18px;background:radial-gradient(ellipse at 20% 0%,#284b3e,#101918 65%);color:#f5f0e5}
+#cloudAuthGate[hidden]{display:none!important}
+#cloudAuthGate .auth-card{width:min(440px,100%);padding:26px;border:1px solid #8f7547;border-radius:20px;background:linear-gradient(145deg,#1d2b26,#14201d);box-shadow:0 24px 70px #0008}
+#cloudAuthGate h2{margin:0 0 8px;color:#f5e5bc;font-size:23px}
+#cloudAuthGate p{color:#c5d0c7;font-size:14px}
+#cloudAuthGate label{display:block;margin:16px 0 7px;color:#e8dfca}
+#cloudAuthGate input{width:100%;max-width:none;min-height:46px;padding:11px;border:1px solid #657b6d;border-radius:10px;background:#f8faf7;color:#172b25;font-size:16px}
+#cloudAuthGate button{width:100%;justify-content:center;margin-top:14px;min-height:46px}
+#cloudAuthMessage{min-height:24px;margin-top:12px;color:#f1d58e;font-size:13px}
+#cloudAccountBar{position:fixed;right:14px;top:12px;z-index:99990;display:flex;align-items:center;gap:9px;padding:7px 10px;border:1px solid #8f7547;border-radius:999px;background:#142b25ed;color:#f7efdf;font-size:12px;box-shadow:0 5px 18px #0004}
+#cloudAccountBar[hidden]{display:none!important}
+#cloudAccountBar button{padding:6px 9px;font-size:11px}
+@media(max-width:600px){#cloudAccountBar{top:auto;bottom:76px;right:9px;max-width:calc(100vw - 18px)}#cloudAccountEmail{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+</style>
+<section id="cloudAuthGate" aria-label="Đăng nhập đồng bộ riêng tư">
+ <div class="auth-card">
+  <div style="font-size:30px;margin-bottom:8px">🔐</div>
+  <h2>Fast Track SGN – Đồng bộ riêng tư</h2>
+  <p>Đăng nhập bằng email của bạn. Mã xác nhận sẽ được gửi qua email; dùng cùng email trên điện thoại và máy tính để truy cập chung dữ liệu.</p>
+  <form id="cloudAuthForm">
+   <label for="cloudAuthEmail">Email đăng nhập</label>
+   <input id="cloudAuthEmail" type="email" autocomplete="email" placeholder="Nhập email của bạn" required>
+   <button id="cloudAuthSubmit" type="submit">Gửi liên kết đăng nhập</button>
+  </form>
+  <div id="cloudAuthMessage" role="status" aria-live="polite">Dữ liệu chỉ được tải sau khi xác thực tài khoản.</div>
+  <p style="font-size:11px;margin-bottom:0">Không nhập mật khẩu hoặc mã xác thực vào nơi khác. Kết nối được bảo vệ bằng xác thực Supabase và chính sách RLS theo tài khoản.</p>
+ </div>
+</section>
+<div id="cloudAccountBar" hidden><span>☁️ <span id="cloudAccountEmail"></span></span><button type="button" id="cloudSignOut" class="secondary">Đăng xuất</button></div>
 <main id="bookingMain">
 <div class="archive-entry"><a class="linkbtn" href="soan-booking.html?view=archive">📚 Mở PHẦN RÀ SOÁT BOOKING – LỊCH SỬ ĐÃ LƯU</a></div>
 <section class="panel">
@@ -825,7 +855,7 @@ let savedReviewItems=[];
 function savedReviewKey(x){const names=Array.isArray(x.names)?x.names.join(","):(x.names||"");return [x.dir||"",x.date||"",x.order||"",x.flight||"",x.order?"":names].join("|");}
 function dedupeSavedReviews(items){const map=new Map();(Array.isArray(items)?items:[]).forEach(x=>{if(!x||!x.sub||!x.dir||!x.date)return;const key=savedReviewKey(x);map.set(key,{...x,key});});return [...map.values()].sort((a,b)=>dateToIso(b.date).localeCompare(dateToIso(a.date)));}
 function loadSavedReview(){try{const v=JSON.parse(localStorage.getItem(SAVED_REVIEW_KEY)||"[]");const source=Array.isArray(v)?v:[];savedReviewItems=dedupeSavedReviews(source);if(savedReviewItems.length!==source.length)persistSavedReview();}catch(e){savedReviewItems=[];}}
-function persistSavedReview(){try{localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));}catch(e){toast("Không thể lưu lịch sử: bộ nhớ trình duyệt có thể đã đầy hoặc bị chặn.",false);}}
+function persistSavedReview(){try{localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));if(typeof scheduleCloudSync==="function")scheduleCloudSync();}catch(e){toast("Không thể lưu lịch sử: bộ nhớ trình duyệt có thể đã đầy hoặc bị chặn.",false);}}
 function dateToIso(v){const m=String(v||"").match(/^(\d{2})\/(\d{2})\/(\d{4})$/);return m?m[3]+"-"+m[2]+"-"+m[1]:"";}
 function saveReviewItems(items){loadSavedReview();const map=new Map(savedReviewItems.map(x=>[savedReviewKey(x),{...x,key:savedReviewKey(x)}]));items.filter(x=>x.sub&&x.dir&&x.date).forEach(x=>{const key=savedReviewKey(x);map.set(key,{...x,key,savedAt:new Date().toISOString()});});savedReviewItems=dedupeSavedReviews([...map.values()]);persistSavedReview();renderSavedReviewArchive();}
 function renderSavedReviewArchive(){
@@ -989,6 +1019,7 @@ function saveBookingSession(){
   const snapshot={raw:$("raw")?.value||"",allBookings:!!$("allBookings")?.checked,staffProfile:$("staffProfile")?.value||"",staff:$("staff")?.value||"",phone:$("phone")?.value||"",hotline:$("hotline")?.value||"",savedAt:Date.now()};
   if(snapshot.raw.trim())sessionStorage.setItem(BOOKING_SESSION_KEY,JSON.stringify(snapshot));
   else sessionStorage.removeItem(BOOKING_SESSION_KEY);
+  if(typeof scheduleCloudSync==="function")scheduleCloudSync();
  }catch(e){}
 }
 if(!archiveView)["raw","allBookings","staffProfile","staff","phone","hotline"].forEach(id=>{
@@ -1012,8 +1043,129 @@ if(!archiveView){
   }
  }catch(e){console.warn("Không thể khôi phục phiên Soạn Booking:",e);}
 }
-</script>
 
+</script>
+<script type="module" id="private-cloud-sync">
+const SUPABASE_URL="https://xyhvgttywjleirsiabve.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
+const WORKSPACE_TABLE="private_booking_workspace";
+const gate=document.getElementById("cloudAuthGate");
+const message=document.getElementById("cloudAuthMessage");
+const form=document.getElementById("cloudAuthForm");
+const submit=document.getElementById("cloudAuthSubmit");
+const accountBar=document.getElementById("cloudAccountBar");
+const accountEmail=document.getElementById("cloudAccountEmail");
+let supabase=null,activeUser=null,cloudReady=false,syncTimer=null,syncInFlight=false,syncAgain=false;
+function authMessage(text,good=false){message.textContent=text;message.style.color=good?"#a9e8bd":"#f1d58e";}
+function showAuthenticated(user){activeUser=user;gate.hidden=true;accountBar.hidden=false;accountEmail.textContent=user.email||"Tài khoản đã đăng nhập";}
+function localSnapshot(){
+ let session=null;
+ try{session=JSON.parse(sessionStorage.getItem(BOOKING_SESSION_KEY)||"null");}catch(e){}
+ let reviews=[];
+ try{const parsed=JSON.parse(localStorage.getItem(SAVED_REVIEW_KEY)||"[]");reviews=Array.isArray(parsed)?parsed:[];}catch(e){}
+ return {bookingSession:session,reviewItems:reviews};
+}
+function mergeReviews(remote,local){
+ const map=new Map();
+ [...(Array.isArray(remote)?remote:[]),...(Array.isArray(local)?local:[])].forEach(item=>{
+  if(!item||!item.sub||!item.dir||!item.date)return;
+  const key=savedReviewKey(item),old=map.get(key);
+  if(!old||String(item.savedAt||"")>=String(old.savedAt||""))map.set(key,{...item,key});
+ });
+ return dedupeSavedReviews([...map.values()]);
+}
+async function writeCloudState(){
+ if(!cloudReady||!activeUser)return;
+ if(syncInFlight){syncAgain=true;return;}
+ syncInFlight=true;
+ try{
+  do{
+   syncAgain=false;
+   const state=localSnapshot();
+   const {error}=await supabase.from(WORKSPACE_TABLE).upsert({
+    user_id:activeUser.id,state,updated_at:new Date().toISOString()
+   },{onConflict:"user_id"});
+   if(error)throw error;
+  }while(syncAgain);
+ }catch(error){
+  console.error("Cloud sync failed:",error);
+  const status=document.getElementById("status");
+  if(status){status.textContent="Chưa đồng bộ được lên đám mây: "+(error.message||"Lỗi kết nối")+". Dữ liệu trên thiết bị vẫn được giữ.";status.className="status warn";}
+ }finally{syncInFlight=false;}
+}
+function scheduleCloudSync(){
+ if(!cloudReady||!activeUser)return;
+ clearTimeout(syncTimer);
+ syncTimer=setTimeout(()=>writeCloudState(),900);
+}
+async function restoreCloudState(user){
+ showAuthenticated(user);
+ authMessage("Đang tải dữ liệu riêng tư…");
+ const {data,error}=await supabase.from(WORKSPACE_TABLE).select("state,updated_at").eq("user_id",user.id).maybeSingle();
+ if(error)throw error;
+ const local=localSnapshot(),remote=data?.state||{};
+ const mergedReviews=mergeReviews(remote.reviewItems,local.reviewItems);
+ savedReviewItems=mergedReviews;
+ localStorage.setItem(SAVED_REVIEW_KEY,JSON.stringify(savedReviewItems));
+ let session=local.bookingSession;
+ const remoteSession=remote.bookingSession;
+ if(remoteSession&&(!session||Number(remoteSession.savedAt||0)>Number(session.savedAt||0)))session=remoteSession;
+ if(session)sessionStorage.setItem(BOOKING_SESSION_KEY,JSON.stringify(session));
+ cloudReady=true;
+ renderSavedReviewArchive();
+ if(!archiveView&&session&&session.raw&&$("raw")){
+  $("raw").value=session.raw;
+  $("allBookings").checked=!!session.allBookings;
+  if(session.staffProfile)$("staffProfile").value=session.staffProfile;
+  if(session.staff)$("staff").value=session.staff;
+  if(session.phone)$("phone").value=session.phone;
+  if(session.hotline)$("hotline").value=session.hotline;
+  run();
+  $("status").textContent="Đã khôi phục phiên Soạn Booking và đồng bộ lịch sử từ tài khoản cá nhân.";
+  $("status").className="status good";
+ }
+ authMessage("Đã đăng nhập và đồng bộ dữ liệu.",true);
+ if(!data||JSON.stringify(local)!==JSON.stringify(remote))scheduleCloudSync();
+}
+form.addEventListener("submit",async event=>{
+ event.preventDefault();
+ const email=document.getElementById("cloudAuthEmail").value.trim();
+ if(!email)return;
+ submit.disabled=true;submit.textContent="Đang gửi…";
+ try{
+  const {error}=await supabase.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname}});
+  if(error)throw error;
+  authMessage("Đã gửi liên kết đăng nhập đến "+email+". Mở email trên thiết bị này và bấm liên kết để xác thực.",true);
+  submit.textContent="Gửi lại liên kết";
+ }catch(error){authMessage("Không gửi được email: "+(error.message||"Vui lòng thử lại."));submit.textContent="Gửi liên kết đăng nhập";}
+ finally{submit.disabled=false;}
+});
+document.getElementById("cloudSignOut").addEventListener("click",async()=>{
+ cloudReady=false;activeUser=null;accountBar.hidden=true;gate.hidden=false;
+ await supabase.auth.signOut();
+ authMessage("Đã đăng xuất. Dữ liệu cục bộ trên thiết bị không bị xóa.");
+});
+(async()=>{
+ try{
+  const {createClient}=await import("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm");
+  supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  const {data:{session},error}=await supabase.auth.getSession();
+  if(error)throw error;
+  if(session?.user)await restoreCloudState(session.user);
+  else{gate.hidden=false;authMessage("Nhập email để nhận liên kết đăng nhập an toàn.");}
+  supabase.auth.onAuthStateChange(async(event,sessionNow)=>{
+   if(event==="SIGNED_IN"&&sessionNow?.user){
+    try{await restoreCloudState(sessionNow.user);}catch(error){cloudReady=false;authMessage("Đăng nhập thành công nhưng tải dữ liệu lỗi: "+(error.message||"Lỗi không xác định"));}
+   }
+   if(event==="SIGNED_OUT"){cloudReady=false;activeUser=null;gate.hidden=false;accountBar.hidden=true;}
+  });
+ }catch(error){
+  console.error("Supabase initialization failed:",error);
+  gate.hidden=false;
+  authMessage("Không khởi tạo được kết nối đồng bộ: "+(error.message||"Kiểm tra kết nối mạng/CDN."));
+ }
+})();
+</script>
 <style id="christmas-audio-player-style">
 #christmas-audio-player{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;align-items:stretch;gap:8px;width:min(270px,calc(100vw - 20px));padding:11px;border:1px solid rgba(255,215,120,.78);border-radius:18px;background:linear-gradient(145deg,#102c27f7,#7d1728f5);box-shadow:0 8px 26px #071b18bb;color:#fff;font:600 13px/1.25 system-ui,-apple-system,Segoe UI,sans-serif;backdrop-filter:blur(9px)}
 #christmas-audio-player .music-toolbar{display:flex;align-items:center;gap:7px}
