@@ -725,17 +725,13 @@ function buildOne(b,staff,phone,hotline){
 function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:`<span class="muted">Không tạo được – thiếu dữ liệu phù hợp</span>`}
 function block(title,content){return `<h3>${title}</h3><pre>${esc(content)}</pre>`}
 function cardHtml(b,i,cacheIndex){
- const badges=`<span class="pill">${b.dir||"CHƯA RÕ LOẠI"}</span><span class="pill">${esc(b.agency||"Chưa rõ agency")}</span><span class="pill ${b.confirmed&&b.unassigned?"good":"warn"}">${b.confirmed?(b.unassigned?"Đủ điều kiện":"Đã phân công"):"Chưa xác nhận"}</span>`;
  const links=`<div class="actions">${linkHtml(b.wa,"WhatsApp")}${linkHtml(b.gm,"Gmail")}${linkHtml(b.zalo,"Zalo")}</div>`;
  const internal=isDomestic(b)?internalHtml(b):"";
  const noteLines=[...(b.warnings||[])];
  if(b.skipReason)noteLines.push("Lý do ban đầu bị bỏ qua: "+b.skipReason);
  const notes=noteLines.length?`<div class="status warn"><b>Ghi chú:</b><br>${noteLines.map(esc).join("<br>")}</div>`:"";
  return `<article class="booking">
- <div class="topline"><h2>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.dir||"Không xác định")}</h2><div>${badges}</div></div>
- <div class="meta"><span class="pill">${esc(b.flight||"Thiếu flight")}</span><span class="pill">${esc(b.date)} ${esc(b.time)}</span><span class="pill">${b.pax} khách</span></div>
- <div class="grid"><div class="kv"><small>Khách</small><b>${esc(b.names.join(", ")||"Chưa có tên")}</b></div><div class="kv"><small>Nhân viên nhận việc</small><b>${esc(b.staffAssign||"Trống")}</b></div><div class="kv"><small>Liên hệ</small><b>${esc(b.phone||"Không có số điện thoại")} ${b.email?" · "+esc(b.email):""}</b></div></div>
- ${block("SUBJECT",b.sub||"Không đủ dữ liệu tạo Subject")}
+  <div class="topline"><h2>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.dir||"Không xác định")}</h2></div>
  ${b.en?block("BODY TIẾNG ANH",b.en):""}
  ${b.vi?block("BODY TIẾNG VIỆT",b.vi):""}
  <div class="actions">${copyButton(b.sub||"","Copy Subject")} ${copyButton(b.en||"","Copy Body EN","mini secondary")}${b.vi?` ${copyButton(b.vi,"Copy Body VI","mini secondary")}`:""}</div>
