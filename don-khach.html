@@ -290,12 +290,21 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 <link rel="stylesheet" href="assets/css/shared-ui.css?v=ui-refresh-20261127">
 <link rel="stylesheet" href="assets/css/complete-redesign.css?v=20261127d">
 <link rel="stylesheet" href="assets/css/christmas-village-theme.css?v=20261127c">
+
+<style id="sidebar-logout-style">
+.ft-sidebar-logout{width:calc(100% - 24px)!important;margin:8px 12px 14px!important;text-align:left!important;cursor:pointer!important;color:#e4c9a0!important;border:1px solid #574735!important;background:#211d17!important}
+.ft-sidebar-logout:hover{background:#38251f!important;border-color:#8a5947!important;color:#fff0dc!important}
+.ft-sidebar-logout .ft-nav-icon{color:#d5a078!important}
+.ft-app.ft-collapsed .ft-sidebar-logout{width:52px!important;justify-content:center!important;margin:8px 12px 14px!important;padding:9px 0!important}
+@media(max-width:680px){.ft-sidebar-logout{width:calc(100% - 24px)!important}.ft-app.ft-collapsed .ft-sidebar-logout{width:calc(100% - 24px)!important;justify-content:flex-start!important;padding:8px 11px!important}}
+</style>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
 <aside class="ft-sidebar" id="ftSidebar" aria-label="Điều hướng chính">
  <a class="ft-brand" href="index.html"><span class="ft-brand-mark">FT</span><span class="ft-brand-copy"><b>FAST TRACK SGN</b><small>EXECUTIVE OPERATIONS</small></span></a>
  <nav class="ft-nav"><span class="ft-nav-label">WORKSPACE</span><a class="ft-nav-link" href="index.html"><span class="ft-nav-icon">⌂</span><span>Tổng quan</span></a><span class="ft-nav-label">BOOKING MANAGEMENT</span><a class="ft-nav-link" href="soan-booking.html"><span class="ft-nav-icon">▤</span><span>Soạn Booking</span></a><span class="ft-nav-label">OPERATIONS</span><a class="ft-nav-link active" href="don-khach.html" aria-current="page"><span class="ft-nav-icon">↙</span><span>Đón khách</span></a><span class="ft-nav-label">PEOPLE & PLANNING</span><a class="ft-nav-link" href="xep-lich.html"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a></nav><div class="ft-sidebar-foot"><span class="ft-status-dot"></span><span>Fast Track SGN</span></div>
+ <button type="button" class="ft-nav-link ft-sidebar-logout" id="ftSidebarLogout" aria-label="Đăng xuất"><span class="ft-nav-icon" aria-hidden="true">↪</span><span>Đăng xuất</span></button>
 </aside><div class="ft-main" id="ftMain"><header class="ft-topbar"><button class="ft-menu-toggle" id="ftMenuToggle" type="button" aria-label="Mở hoặc thu gọn menu" aria-controls="ftSidebar" aria-expanded="true"><span></span><span></span><span></span></button><div class="ft-top-context"><small>FAST TRACK SGN / OPERATIONS</small><b>Đón khách</b></div><div class="ft-top-spacer"></div><a class="ft-account-link" href="#raw">Khu vực xử lý booking <span>↗</span></a></header><div class="ft-content">
 <main>
 <div style="margin-bottom:12px"><a class="back" href="index.html">← Trang chủ</a></div>
@@ -432,4 +441,10 @@ mobile.addEventListener("change",()=>{app.classList.remove("ft-mobile-open");syn
 
 
 
+
+<script id="sidebar-logout-action">
+(()=>{const button=document.getElementById("ftSidebarLogout");if(!button)return;
+button.addEventListener("click",()=>{const existing=document.getElementById("cloudSignOut")||document.querySelector("#globalStaffAuthBar button");if(existing){existing.click();return;}button.disabled=true;button.textContent="Đang đăng xuất…";});
+})();
+</script>
 </body></html>
