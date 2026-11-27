@@ -381,6 +381,23 @@ button.secondary,.ghost{background:#f5eddb!important;color:#284137!important;bor
 button.danger{background:#9c3942!important;color:#fff!important}
 #christmas-audio-player{color:#fff!important}
 </style>
+
+<style id="staff-home-auth-style">
+#staffAuthPanel{width:min(100% - 32px,760px);margin:0 auto 34px;padding:25px;border:1px solid #b89b60;border-top:4px solid #d2b66e;border-radius:20px;background:linear-gradient(145deg,#263b32,#172923);box-shadow:0 18px 42px #0005;color:#f6efdf}
+#staffAuthPanel h2{margin:0 0 8px;color:#f5dfaa!important;font-size:25px}
+#staffAuthPanel p{color:#d4ded5;line-height:1.6}
+#staffAuthPanel label{display:block;margin:13px 0 6px;color:#f0e4c9;font-weight:700}
+#staffAuthPanel input{width:100%;min-height:44px;padding:10px 12px;border:1px solid #9b987a;border-radius:10px;background:#fffaf0;color:#1d3028;font-size:16px}
+#staffAuthPanel .auth-mode{display:flex;gap:9px;margin:15px 0}
+#staffAuthPanel .auth-mode button{flex:1;margin:0;min-height:42px}
+#staffAuthPanel form>button,#staffAuthPanel .auth-actions a,#staffAuthPanel .auth-actions button{margin-top:15px;min-height:44px;padding:11px 16px;border:1px solid #d1b56d;border-radius:10px;background:linear-gradient(135deg,#b8944c,#dfc37e);color:#1d3028;font-weight:800;text-decoration:none;cursor:pointer}
+#staffAuthPanel .auth-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+#staffAuthPanel .auth-actions button{background:#f4ead4;border-color:#c7b78f}
+#staffAuthMessage{min-height:22px;margin:12px 0;color:#f3d98f;font-size:13px}
+#staffAuthPanel [hidden]{display:none!important}
+@media(max-width:700px){#staffAuthPanel{width:calc(100% - 24px);padding:19px;margin-bottom:24px;border-radius:16px}#staffAuthPanel h2{font-size:21px}}
+</style>
+
 </head>
 <body>
 <header></header><nav class="winter-nav" aria-label="Điều hướng chính"><a class="nav-brand" href="index.html">✦ FAST TRACK SGN</a><div class="nav-links"><a href="index.html">Trang chủ</a><a href="soan-booking.html">Soạn booking</a><a href="don-khach.html">Đón khách</a><a href="xep-lich.html">Xếp lịch</a></div></nav><main>
@@ -480,7 +497,39 @@ button.danger{background:#9c3942!important;color:#fff!important}
  <path d="M0 383Q150 364 300 384T600 382T900 380V430H0Z" fill="url(#snowRoof)"/>
  <path d="M0 397Q170 382 330 400T650 397T900 393" fill="none" stroke="#fff" stroke-width="9" opacity=".9"/>
 </g>
-</svg></div></section><section class="intro" id="workspace"><span class="hero-kicker">✦ OPERATIONS HUB · TAN SON NHAT ✦</span><h2>Không gian điều hành</h2><p>Chọn một công cụ để bắt đầu công việc của bạn.</p></section>
+</svg></div></section>
+<section id="staffAuthPanel" aria-label="Đăng nhập tài khoản nhân viên">
+ <div style="font-size:28px;margin-bottom:7px">🔐</div>
+ <h2>Khu vực cá nhân nhân viên</h2>
+ <p>Mỗi nhân viên sử dụng một tài khoản riêng với PIN 4 chữ số. Đăng nhập bằng cùng tên tài khoản và PIN trên máy tính hoặc điện thoại để đồng bộ không gian làm việc của chính mình.</p>
+ <div id="staffAuthFormArea">
+  <div class="auth-mode">
+   <button type="button" id="staffPinLoginMode" class="secondary">Đăng nhập</button>
+   <button type="button" id="staffPinRegisterMode" class="ghost">Tạo tài khoản</button>
+  </div>
+  <form id="staffPinAuthForm">
+   <label for="staffPinUsername">Tên đăng nhập</label>
+   <input id="staffPinUsername" type="text" autocomplete="username" minlength="3" maxlength="24" placeholder="Ví dụ: nhan, an, quang" required>
+   <label for="staffPinValue">PIN 4 chữ số</label>
+   <input id="staffPinValue" type="password" inputmode="numeric" autocomplete="current-password" pattern="[0-9]{4}" maxlength="4" placeholder="Nhập PIN 4 số" required>
+   <div id="staffPinConfirmWrap" hidden>
+    <label for="staffPinConfirm">Nhập lại PIN</label>
+    <input id="staffPinConfirm" type="password" inputmode="numeric" autocomplete="new-password" pattern="[0-9]{4}" maxlength="4" placeholder="Xác nhận PIN 4 số">
+   </div>
+   <button id="staffPinSubmit" type="submit">Đăng nhập</button>
+  </form>
+ </div>
+ <div id="staffSignedIn" hidden>
+  <p id="staffSignedInText" style="font-weight:750;color:#f5dfaa"></p>
+  <div class="auth-actions">
+   <a href="soan-booking.html">Vào Soạn Booking →</a>
+   <button type="button" id="staffHomeSignOut">Đăng xuất</button>
+  </div>
+ </div>
+ <div id="staffAuthMessage" role="status" aria-live="polite">Dữ liệu cá nhân chỉ được tải sau khi đăng nhập.</div>
+ <p style="font-size:11px;margin-bottom:0">Tên đăng nhập dài 3–24 ký tự, dùng chữ không dấu, số, dấu chấm, gạch ngang hoặc gạch dưới. PIN 4 số có độ bảo mật thấp hơn mật khẩu dài; hệ thống giới hạn 5 lần nhập sai và tạm khóa 15 phút. Không dùng PIN này cho ngân hàng hoặc dịch vụ khác.</p>
+</section>
+<section class="intro" id="workspace"><span class="hero-kicker">✦ OPERATIONS HUB · TAN SON NHAT ✦</span><h2>Không gian điều hành</h2><p>Chọn một công cụ để bắt đầu công việc của bạn.</p></section>
   <nav class="menu" aria-label="Các chức năng chính">
     <a class="item" href="soan-booking.html">
       <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></span>
@@ -503,6 +552,85 @@ button.danger{background:#9c3942!important;color:#fff!important}
   </nav>
 </main>
 <footer>✦ FAST TRACK SGN · MERRY CHRISTMAS · SAFE FLIGHTS ✦</footer>
+
+
+<script type="module" id="staff-home-pin-auth">
+const SUPABASE_URL="https://xyhvgttywjleirsiabve.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
+const PIN_API=SUPABASE_URL+"/functions/v1/staff-pin-auth";
+const TOKEN_KEY="fasttrack_staff_pin_session_v1";
+const BOOKING_SESSION_KEY="fasttrack_booking_session_v4";
+const SAVED_REVIEW_KEY="fasttrack_saved_review_archive_v3";
+const $=id=>document.getElementById(id);
+const formArea=$("staffAuthFormArea"),signedIn=$("staffSignedIn"),message=$("staffAuthMessage");
+const form=$("staffPinAuthForm"),submit=$("staffPinSubmit"),usernameInput=$("staffPinUsername");
+const pinInput=$("staffPinValue"),confirmInput=$("staffPinConfirm"),confirmWrap=$("staffPinConfirmWrap");
+let authMode="login";
+function say(text,good=false){message.textContent=text;message.style.color=good?"#bde8c8":"#f3d98f";}
+function getToken(){try{return JSON.parse(localStorage.getItem(TOKEN_KEY)||"null");}catch(e){return null;}}
+function saveToken(data){localStorage.setItem(TOKEN_KEY,JSON.stringify({token:data.token,expiresAt:data.expiresAt,username:data.username}));}
+function clearToken(){localStorage.removeItem(TOKEN_KEY);}
+async function api(action,payload={},token=null){
+ const headers={"Content-Type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY};
+ if(token)headers.Authorization="Bearer "+token;
+ const response=await fetch(PIN_API,{method:"POST",headers,body:JSON.stringify({action,...payload})});
+ let data={};try{data=await response.json();}catch(e){}
+ if(!response.ok)throw new Error(data.error||"Lỗi kết nối máy chủ.");
+ return data;
+}
+function snapshot(){
+ let bookingSession=null;try{bookingSession=JSON.parse(sessionStorage.getItem(BOOKING_SESSION_KEY)||"null");}catch(e){}
+ let reviewItems=[];try{const v=JSON.parse(localStorage.getItem(SAVED_REVIEW_KEY)||"[]");reviewItems=Array.isArray(v)?v:[];}catch(e){}
+ return {bookingSession,reviewItems};
+}
+function setMode(mode){
+ authMode=mode;const registering=mode==="register";
+ confirmWrap.hidden=!registering;confirmInput.required=registering;
+ submit.textContent=registering?"Tạo tài khoản":"Đăng nhập";
+ $("staffPinLoginMode").className=registering?"ghost":"secondary";
+ $("staffPinRegisterMode").className=registering?"secondary":"ghost";
+ pinInput.autocomplete=registering?"new-password":"current-password";
+ say(registering?"Tạo tên đăng nhập riêng và PIN 4 số. Tên đã có người dùng sẽ không đăng ký lại.":"Nhập tên đăng nhập và PIN để mở dữ liệu cá nhân.");
+}
+$("staffPinLoginMode").addEventListener("click",()=>setMode("login"));
+$("staffPinRegisterMode").addEventListener("click",()=>setMode("register"));
+[pinInput,confirmInput].forEach(input=>input.addEventListener("input",()=>input.value=input.value.replace(/\D/g,"").slice(0,4)));
+form.addEventListener("submit",async event=>{
+ event.preventDefault();
+ const username=usernameInput.value.trim().toLowerCase(),pin=pinInput.value;
+ if(!/^[a-z0-9][a-z0-9._-]{2,23}$/.test(username)){say("Tên đăng nhập phải dài 3–24 ký tự, dùng chữ không dấu, số, dấu chấm, gạch ngang hoặc gạch dưới.");return;}
+ if(!/^\d{4}$/.test(pin)){say("PIN phải gồm đúng 4 chữ số.");return;}
+ if(authMode==="register"&&pin!==confirmInput.value){say("Hai lần nhập PIN không khớp.");return;}
+ submit.disabled=true;submit.textContent=authMode==="register"?"Đang tạo tài khoản…":"Đang đăng nhập…";
+ try{
+  const result=authMode==="register"
+   ?await api("register",{username,pin,initialState:snapshot()})
+   :await api("login",{username,pin});
+  saveToken(result);
+  say("Đăng nhập thành công. Đang mở không gian làm việc…",true);
+  location.href="soan-booking.html";
+ }catch(error){say(error.message||"Không thể đăng nhập. Vui lòng thử lại.");}
+ finally{submit.disabled=false;submit.textContent=authMode==="register"?"Tạo tài khoản":"Đăng nhập";}
+});
+$("staffHomeSignOut").addEventListener("click",async()=>{
+ const stored=getToken();
+ try{if(stored?.token)await api("logout",{},stored.token);}catch(e){}
+ clearToken();sessionStorage.removeItem(BOOKING_SESSION_KEY);localStorage.removeItem(SAVED_REVIEW_KEY);
+ signedIn.hidden=true;formArea.hidden=false;setMode("login");
+ say("Đã đăng xuất. Dữ liệu đã đồng bộ vẫn được giữ trên tài khoản cá nhân.");
+});
+(async()=>{
+ const stored=getToken();
+ if(!stored?.token)return setMode("login");
+ if(!stored.expiresAt||new Date(stored.expiresAt).getTime()<=Date.now()){clearToken();return setMode("login");}
+ try{
+  const result=await api("load",{},stored.token);
+  formArea.hidden=true;signedIn.hidden=false;
+  $("staffSignedInText").textContent="Đang đăng nhập với tài khoản: "+(result.username||stored.username)+". Dữ liệu cá nhân đã sẵn sàng.";
+  say("Bạn có thể tiếp tục vào Soạn Booking trên thiết bị này.",true);
+ }catch(error){clearToken();setMode("login");say("Phiên đăng nhập không còn hợp lệ. Vui lòng đăng nhập lại.");}
+})();
+</script>
 
 <style id="christmas-audio-player-style">
 #christmas-audio-player{position:fixed;right:18px;bottom:18px;z-index:9999;display:flex;flex-direction:column;align-items:stretch;gap:8px;width:min(270px,calc(100vw - 20px));padding:11px;border:1px solid rgba(255,215,120,.78);border-radius:18px;background:linear-gradient(145deg,#102c27f7,#7d1728f5);box-shadow:0 8px 26px #071b18bb;color:#fff;font:600 13px/1.25 system-ui,-apple-system,Segoe UI,sans-serif;backdrop-filter:blur(9px)}
