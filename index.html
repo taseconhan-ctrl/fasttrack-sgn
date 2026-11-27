@@ -323,8 +323,9 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 .ft-content #staffAuthPanel label{color:#e0eee2!important}
 .ft-content #staffAuthPanel input{background:#fff!important;color:#183b2d!important;border:1px solid #9bbca3!important}
 .ft-content #staffAuthPanel form>button{width:100%!important;background:#237448!important;color:#fff!important;border-color:#4a9a68!important}
-.ft-content #staffAuthPanel .auth-mode{display:none!important}
-.ft-content #staffAuthPanel #staffPinRegisterMode{display:none!important}
+.ft-content #staffAuthPanel .auth-mode{display:flex!important;gap:8px!important;margin:0 0 14px!important}
+.ft-content #staffAuthPanel .auth-mode button{flex:1;min-height:40px;border:1px solid #4a9a68;border-radius:8px;background:#244b37;color:#eaf5ec;font:600 13px Arial,Tahoma,sans-serif;cursor:pointer}
+.ft-content #staffAuthPanel .auth-mode button.secondary{background:#2d8a52;color:#fff}
 .ft-content #staffAuthPanel>p:last-child{font-size:11px!important;color:#a9c1ad!important}
 @media(max-width:680px){
  .ft-content{padding:18px 14px!important}
@@ -369,11 +370,11 @@ body.staff-authenticated .ft-account-link{display:none!important}
 <section id="staffAuthPanel" aria-label="Đăng nhập tài khoản nhân viên">
  <div style="font-size:28px;margin-bottom:7px">🔐</div>
  <h2>Khu vực cá nhân nhân viên</h2>
- <p>Mỗi nhân viên sử dụng một tài khoản riêng với PIN 4 chữ số. Đăng nhập bằng cùng tên tài khoản và PIN trên máy tính hoặc điện thoại để đồng bộ không gian làm việc của chính mình.</p>
+ <p>Mỗi nhân viên có thể tự tạo tài khoản bằng tên đăng nhập riêng và PIN 4 chữ số. Đăng nhập trên máy tính hoặc điện thoại để đồng bộ không gian làm việc cá nhân.</p>
  <div id="staffAuthFormArea">
   <div class="auth-mode">
    <button type="button" id="staffPinLoginMode" class="secondary">Đăng nhập</button>
-   <button type="button" id="staffPinRegisterMode" class="ghost" hidden>Tạo tài khoản</button>
+   <button type="button" id="staffPinRegisterMode" class="ghost">Tạo tài khoản</button>
   </div>
   <form id="staffPinAuthForm">
    <label for="staffPinUsername">Tên đăng nhập</label>
