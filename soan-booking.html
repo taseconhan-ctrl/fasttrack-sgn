@@ -991,11 +991,11 @@ function saveBookingSession(){
   else sessionStorage.removeItem(BOOKING_SESSION_KEY);
  }catch(e){}
 }
-["raw","allBookings","staffProfile","staff","phone","hotline"].forEach(id=>{
+if(!archiveView)["raw","allBookings","staffProfile","staff","phone","hotline"].forEach(id=>{
  const el=$(id);
  if(el){el.addEventListener("input",saveBookingSession);el.addEventListener("change",saveBookingSession);}
 });
-window.addEventListener("pagehide",saveBookingSession);
+if(!archiveView)window.addEventListener("pagehide",saveBookingSession);
 if(!archiveView){
  try{
   const snapshot=JSON.parse(sessionStorage.getItem(BOOKING_SESSION_KEY)||"null");
