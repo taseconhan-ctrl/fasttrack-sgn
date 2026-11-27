@@ -536,3 +536,18 @@ $("staffHomeSignOut").addEventListener("click",async()=>{
 
 </body>
 </html>
+
+<style id="force-home-login-visible">
+/* Final safeguard: keep the login panel visible on the public homepage. */
+html body .ft-app .ft-main .ft-content > #staffAuthPanel{
+  display:block!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:relative!important;
+  z-index:2!important;
+}
+html body .ft-app .ft-main .ft-content{
+  display:flex!important;
+  visibility:visible!important;
+}
+</style>
