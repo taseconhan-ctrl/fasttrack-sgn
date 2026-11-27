@@ -435,7 +435,7 @@ $("clearAll").hidden=true;
 $("search").oninput=render;$("staffFilter").onchange=render;$("filterDate").onchange=render;$("statusFilter").onchange=render;$("clearDate").onclick=()=>{$("filterDate").value="";render();};
 $("copyArrival").onclick=()=>copy(rowsFor("Arrival"),"ARRIVAL");$("copyDeparture").onclick=()=>copy(rowsFor("Departure"),"DEPARTURE");$("copyAll").onclick=()=>copy([...rowsFor("Arrival"),...rowsFor("Departure")],"toàn bộ danh sách");
 $("exportArrival").onclick=()=>download(rowsFor("Arrival"),"arrival-fasttrack-sgn");$("exportDeparture").onclick=()=>download(rowsFor("Departure"),"departure-fasttrack-sgn");$("exportAll").onclick=()=>download([...rowsFor("Arrival"),...rowsFor("Departure")],"fasttrack-sgn");
-$("serviceDate").value=new Date().toLocaleDateString("en-CA");loadCloud().catch(e=>{$("status").textContent=e.message;});
+$("serviceDate").value=new Date().toLocaleDateString("en-CA");loadCloud().catch(e=>{$("status").textContent=e.message;});setInterval(()=>{if(document.visibilityState==="visible"&&!$("raw").value.trim()&&!document.querySelector("[data-staff]:focus"))loadCloud().catch(e=>{$("status").textContent=e.message;});},12000);
 </script>
 
 <script id="ft-shell-navigation">(()=>{const app=document.getElementById("ftApp"),toggle=document.getElementById("ftMenuToggle"),side=document.getElementById("ftSidebar");if(!app||!toggle||!side)return;
