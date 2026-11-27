@@ -117,3 +117,20 @@ body{background:radial-gradient(ellipse at 50% -12%,#28594d 0,#123b35 35%,#0b171
  .ft-content .item{min-height:130px!important}
 }
 @media(prefers-reduced-motion:reduce){.ft-content .item{transition:none!important}}
+
+
+/* FINAL TYPOGRAPHY LOCK — Vietnamese glyph coverage on every page.
+   Must remain last in this stylesheet to override older theme typography. */
+html,html body,html body *,
+html body .ft-app,html body .ft-app *,
+html body button,html body input,html body select,html body textarea,
+html body table,html body th,html body td,
+html body #globalStaffAuthBar,html body #globalStaffAuthBar * {
+  font-family: Arial, "Segoe UI", Tahoma, sans-serif !important;
+  font-synthesis: weight style !important;
+}
+html body { font-size:14px; line-height:1.5; }
+html body .ft-content .home-hero h2,
+html body .ft-content .intro h2 {
+  font-family: Arial, "Segoe UI", Tahoma, sans-serif !important;
+}
