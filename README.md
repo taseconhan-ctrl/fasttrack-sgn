@@ -37,7 +37,7 @@
 
 - Nhập danh sách Excel theo thứ tự cột: `Agency`, `Ống/Bãi`, `Giờ dự kiến đáp`, `Flight`, `Name`, `Type`, `Time`, `Order`, `NV thực hiện`.
 - `Giờ dự kiến đáp` và `Ống/Bãi` do nhân viên tự cập nhật để theo dõi.
-- Nhân viên nhận booking theo cơ chế khóa cạnh tranh; một booking không thể được hai nhân viên nhận cùng lúc.
+- Danh sách tự đồng bộ giữa các thiết bị khoảng mỗi 12 giây khi ứng dụng đang mở; nút Làm mới vẫn có thể dùng thủ công. Nhận booking dùng cập nhật có điều kiện ở máy chủ nên hai nhân viên không thể nhận trùng cùng một booking.
 - Nhân viên phụ trách đánh dấu đã đón hoặc không gặp khách; ảnh minh chứng được lưu trong private Storage bucket.
 - Mọi thay đổi booking có nhật ký người sửa và thời điểm; quản lý/quản trị viên xem được lịch sử.
 - Vai trò `manager` và `admin` có cùng quyền quản lý. Nhân viên thường không thể tự thay đổi trạng thái hoặc người phụ trách qua chức năng sửa thông tin.
