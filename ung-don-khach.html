@@ -36,13 +36,15 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 <div class="field"><label>Ngày phục vụ</label><input id="dateFilter" type="date"></div>
 <div class="field"><label>Tìm khách / chuyến bay / order</label><input id="search" placeholder="Nhập từ khóa…"></div>
 <div class="field"><label>Trạng thái</label><select id="statusFilter"><option value="">Tất cả trạng thái</option><option>Chưa phân công</option><option>Đã phân công</option><option>Đang đón</option><option>Đã đón</option><option>Không gặp khách</option></select></div>
-<div class="field"><label>Nhân viên phụ trách</label><select id="staffFilter"><option value="">Tất cả nhân viên</option></select></div>
+<div class="field"><label>NV trực tiếp đón</label><select id="staffFilter"><option value="">Tất cả nhân viên</option></select></div>
 </div><div id="message" role="status"></div>
 <div class="summary"><div class="stat"><b id="total">0</b><span>Tổng booking</span></div><div class="stat"><b id="pending">0</b><span>Chưa nhận</span></div><div class="stat"><b id="working">0</b><span>Đang đón</span></div><div class="stat"><b id="done">0</b><span>Đã hoàn tất</span></div></div>
 </section>
-<section class="panel" id="adminImport" hidden>
-<h3 style="margin:0 0 5px">Nhập danh sách Excel</h3><p class="sub">Hỗ trợ cột: Agency, Ống/Bãi, Giờ dự kiến đáp, Flight, Name, Type, Time, Order, NV thực hiện. Dữ liệu Ống/Bãi và Giờ dự kiến đáp được giữ nguyên.</p>
-<div class="toolbar"><div class="field" style="grid-column:span 2"><label>Chọn file Excel</label><input id="excelFile" type="file" accept=".xlsx,.xls,.csv"></div><div class="field"><label>Ngày phục vụ áp dụng</label><input id="importDate" type="date"></div><div class="field"><label>&nbsp;</label><button id="importBtn">Nhập booking</button></div></div>
+<section class="panel" id="adminImport">
+<h3 style="margin:0 0 5px">Nguồn booking: Mục Đón khách</h3>
+<p class="sub">Danh sách vận hành được đồng bộ trực tiếp từ mục Đón khách. Không cần nhập Excel lần thứ hai tại đây.</p>
+<a href="don-khach.html" class="secondary" style="display:inline-block;padding:10px 14px;border-radius:8px;text-decoration:none">Mở mục Đón khách để nhập / cập nhật booking ↗</a>
+<input id="excelFile" type="file" hidden><input id="importDate" type="date" hidden><button id="importBtn" hidden>Nhập booking</button>
 </section>
 <div id="cards" class="cards"></div>
 </div>
