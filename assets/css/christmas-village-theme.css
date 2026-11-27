@@ -191,3 +191,33 @@ html body #bookingMain .booking .contact-edit-panel .save-contact{
  background:#1b7047!important;border:1px solid #67a77a!important;color:#fff!important;
 }
 html body #bookingMain .booking .contact-edit-panel .save-contact:hover{background:#155b39!important}
+
+
+/* Contact editor copy — dark evergreen text on a light mint surface for legibility. */
+html body #bookingMain .booking .contact-edit-panel{
+  background:linear-gradient(145deg,#e8f2e8,#dcebdd)!important;
+  border:1px solid #8eb69a!important;
+  border-left:4px solid #1b7047!important;
+  color:#123f32!important;
+}
+html body #bookingMain .booking .contact-edit-panel > b,
+html body #bookingMain .booking .contact-edit-panel p,
+html body #bookingMain .booking .contact-edit-panel .hint,
+html body #bookingMain .booking .contact-edit-panel label,
+html body #bookingMain .booking .contact-edit-panel strong,
+html body #bookingMain .booking .contact-edit-panel small{
+  color:#123f32!important;
+  -webkit-text-fill-color:#123f32!important;
+  font-weight:750!important;
+}
+html body #bookingMain .booking .contact-edit-panel input{
+  background:#fffdf5!important;
+  color:#183b2d!important;
+  border:1px solid #82a98c!important;
+}
+html body #bookingMain .booking .contact-edit-panel .save-contact{
+  background:#1b7047!important;
+  border:1px solid #397e55!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
