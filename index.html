@@ -299,13 +299,45 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
  .ft-content .item,.ft-content .item:nth-child(2),.ft-content .item:nth-child(3){min-height:54px!important}
 }
 </style>
+
+<style id="login-only-homepage">
+/* Homepage is exclusively the staff login screen. */
+#ftSidebar,.ft-topbar,.ft-footer{display:none!important}
+#ftMain,.ft-app .ft-main{margin:0!important;min-height:100vh!important}
+.ft-content{
+  width:100%!important;max-width:none!important;min-height:100vh!important;
+  margin:0!important;padding:28px 18px!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+}
+.ft-content>*:not(#staffAuthPanel){display:none!important}
+.ft-content #staffAuthPanel{
+  display:block!important;width:min(100%,440px)!important;margin:0!important;
+  padding:28px!important;border:1px solid #356b4c!important;
+  border-top:4px solid #2d8a52!important;border-radius:16px!important;
+  background:#172923!important;color:#f5f0e6!important;
+  box-shadow:0 20px 55px #0008!important;
+}
+.ft-content #staffAuthPanel>div:first-child{display:block!important}
+.ft-content #staffAuthPanel h2{color:#c9e5ce!important;font-size:22px!important}
+.ft-content #staffAuthPanel p{color:#d0ddd2!important}
+.ft-content #staffAuthPanel label{color:#e0eee2!important}
+.ft-content #staffAuthPanel input{background:#fff!important;color:#183b2d!important;border:1px solid #9bbca3!important}
+.ft-content #staffAuthPanel form>button{width:100%!important;background:#237448!important;color:#fff!important;border-color:#4a9a68!important}
+.ft-content #staffAuthPanel .auth-mode{display:none!important}
+.ft-content #staffAuthPanel #staffPinRegisterMode{display:none!important}
+.ft-content #staffAuthPanel>p:last-child{font-size:11px!important;color:#a9c1ad!important}
+@media(max-width:680px){
+ .ft-content{padding:18px 14px!important}
+ .ft-content #staffAuthPanel{padding:22px!important}
+}
+</style>
 <style id="authenticated-home-ui">
 body.staff-authenticated #staffAuthPanel{display:none!important}
 body.staff-authenticated .ft-account-link{display:none!important}
 #staffHomeSignOut.ft-logout-compact{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 13px;border:1px solid #c9dfcf;border-radius:9px;background:#fff;color:#294b3b;font:600 13px Arial,Tahoma,sans-serif;cursor:pointer}
 #staffHomeSignOut.ft-logout-compact:hover{background:#f4f7fb}
 </style>
-<link rel="stylesheet" href="assets/css/christmas-village-theme.css?v=20261127c">
+<link rel="stylesheet" href="assets/css/christmas-village-theme.css?v=20261127d">
 </head>
 <body>
 <div class="ft-app" id="ftApp">
@@ -493,10 +525,7 @@ $("staffHomeSignOut").addEventListener("click",async()=>{
  if(!stored.expiresAt||new Date(stored.expiresAt).getTime()<=Date.now()){clearToken();return setMode("login");}
  try{
   const result=await api("load",{},stored.token);
-  formArea.hidden=true;signedIn.hidden=false;
-  $("staffSignedInText").textContent="Đang đăng nhập với tài khoản: "+(result.username||stored.username)+". Dữ liệu cá nhân đã sẵn sàng.";
-  setAuthenticatedUI(true);
-  say("Bạn có thể tiếp tục vào Soạn Booking trên thiết bị này.",true);
+  const requestedNext=new URLSearchParams(location.search).get("next");const allowedNext=new Set(["don-khach.html","ung-don-khach.html","soan-booking.html","xep-lich.html"]);location.replace(allowedNext.has(requestedNext)?requestedNext:"soan-booking.html");
  }catch(error){clearToken();setMode("login");say("Phiên đăng nhập không còn hợp lệ. Vui lòng đăng nhập lại.");}
 })();
 </script>
