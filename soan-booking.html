@@ -446,10 +446,10 @@ const STAFF_PROFILES = {
 };
 const STAFF_ALIASES = {
   "Nhan": { name: "Nhan", vnName: "Nhân", phone: "+84 867802129" },
-  "Hưng": { name: "Hung", phone: "+84 816226474" },
+  "Hưng": { name: "Hung", vnName: "Hưng", phone: "+84 816226474" },
   "Hung": { name: "Hung", vnName: "Hưng", phone: "+84 816226474" },
-  "An": { name: "An", phone: "+84 366404159" },
-  "khanh": { name: "Khanh", phone: "+84 869392539" },
+  "An": { name: "An", vnName: "An", phone: "+84 366404159" },
+  "khanh": { name: "Khanh", vnName: "Khanh", phone: "+84 869392539" },
   "nhatquang": { name: "Quang", vnName: "Nhật Quang", phone: "+84 366884210" }
 };
 function allStaffProfiles(){ return {...STAFF_PROFILES,...STAFF_ALIASES}; }
@@ -844,7 +844,7 @@ function internalHtml(b){
  if(dt){dt.setMinutes(dt.getMinutes()-90);eta=fmtDateTime(dt)}
  let terminal="";
  const f=b.flight.toUpperCase();
- if(/^VJ/.test(f))terminal="T1";else if(/^(VN|QH|BL|VU|0V)/.test(f))terminal="T3";
+ if(/^VJ/.test(f))terminal="T1";else if(f)terminal="T3";
  const f1=`Tên khách:\n\n${b.names.map((n,i)=>`${i+1}. ${n}`).join("\n")}\n\nChuyến bay: ${b.flight}\nGiờ bay: ${b.time}\nGiờ đến sân bay: ${eta}\nTerminal: ${terminal||"(chưa xác định)"}\n\nGhi chú: Em xin hỗ trợ ${b.pax} khách ngày mai ${b.date} ạ`;
  let f2="";
  if(/^VN/i.test(b.flight)){
@@ -933,7 +933,7 @@ function renderFilteredBookings(){
  $("results").innerHTML=dir==="ALL"
   ? renderGroup(arrival,"✈️ ĐÓN KHÁCH","arrival-group","#16866f")+renderGroup(departure,"🛫 TIỄN KHÁCH","departure-group","#1b7047")+(unknown.length?renderGroup(unknown,"CHƯA XÁC ĐỊNH LOẠI DỊCH VỤ","unknown-group","#c18a35"):"")
   : (dir==="ARRIVAL"?renderGroup(arrival,"✈️ ĐÓN KHÁCH","arrival-group","#16866f"):renderGroup(departure,"🛫 TIỄN KHÁCH","departure-group","#1b7047"))+(unknown.length?renderGroup(unknown,"CHƯA XÁC ĐỊNH LOẠI DỊCH VỤ","unknown-group","#c18a35"):"");
- $("reviews").innerHTML="";
+ renderReviewTables();
  const count=$("filterCount");
  if(count) count.textContent=`Đang hiển thị ${shown.length}/${processedBookings.length} booking · ĐÓN ${arrival.length} · TIỄN ${departure.length}`;
 }
