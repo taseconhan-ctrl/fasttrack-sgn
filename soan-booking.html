@@ -406,11 +406,11 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
   <label for="raw">Dán nguyên văn danh sách booking hoặc nội dung trang chi tiết booking</label>
   <textarea id="raw" placeholder="Dán dữ liệu booking Fast Track vào đây..."></textarea>
   <div class="controls">
-    <div class="field"><input id="allBookings" type="checkbox"><label for="allBookings">Xử lý cả booking chưa xác nhận và TIỄN đã có nhân viên nhận việc</label></div>
+    <div class="field"><input id="allBookings" type="checkbox"><label for="allBookings">Xử lý tất cả booking (kể cả chưa xác nhận và đã có nhân viên nhận việc)</label></div>
     <button id="run">Phân tích & tạo kết quả</button>
     <button class="secondary" id="clear">Xóa dữ liệu</button>
   </div>
-  <p class="hint">Chỉ xử lý booking có loại dịch vụ ĐÓN/TIỄN. Mục ĐÓN lấy tất cả booking ĐÓN đã xác nhận, không phân biệt đã có nhân viên nhận việc hay chưa. Mục TIỄN mặc định chỉ lấy booking đã xác nhận và chưa có nhân viên nhận việc; bật tùy chọn trên để xử lý cả TIỄN đã phân công hoặc chưa xác nhận. “SGN - Dịch vụ” là ghi chú dịch vụ, không phải nhân viên nhận việc.</p>
+  <p class="hint">Chỉ xử lý booking có loại dịch vụ ĐÓN/TIỄN. Mặc định: mục ĐÓN lấy tất cả booking ĐÓN đã xác nhận, không phân biệt đã có nhân viên nhận việc; mục TIỄN chỉ lấy booking đã xác nhận và chưa có nhân viên nhận việc. Bật tùy chọn trên để bỏ điều kiện trạng thái xác nhận và phân công, xử lý tất cả booking ĐÓN/TIỄN nhận diện được. “SGN - Dịch vụ” là ghi chú dịch vụ, không phải nhân viên nhận việc.</p>
   <div id="status" class="status">Chưa có dữ liệu được xử lý.</div>
 </section>
 <div id="summary" class="panel hidden"></div>
@@ -449,7 +449,17 @@ const STAFF_ALIASES = {
   "Hung": { name: "Hung", vnName: "Hưng", phone: "+84 816226474" },
   "An": { name: "An", vnName: "An", phone: "+84 366404159" },
   "khanh": { name: "Khanh", vnName: "Khanh", phone: "+84 869392539" },
-  "nhatquang": { name: "Nhat Quang", vnName: "Nhật Quang", phone: "+84 366884210" }
+  "nhatquang": { name: "Nhat Quang", vnName: "Nhật Quang", phone: "+84 366884210" },
+  "Tuấn Khanh": { name: "Khanh", vnName: "Tuấn Khanh", phone: "+84 869392539" },
+  "Minh Khoa": { name: "Khoa", vnName: "Minh Khoa", phone: "+84 964845177" },
+  "Văn Diệp": { name: "Diep", vnName: "Văn Diệp", phone: "+84 346122841" },
+  "Việt Quang": { name: "Quang", vnName: "Việt Quang", phone: "+84 989902101" },
+  "Đông Hưng": { name: "Hung", vnName: "Đông Hưng", phone: "+84 816226474" },
+  "Ngọc Dương": { name: "Duong", vnName: "Ngọc Dương", phone: "" },
+  "Ngọc Nhân": { name: "Nhan", vnName: "Ngọc Nhân", phone: "+84 867802129" },
+  "Thanh Hùng": { name: "Hung", vnName: "Thanh Hùng", phone: "" },
+  "Vũ Văn Bình": { name: "Binh", vnName: "Vũ Văn Bình", phone: "+84 915341007" },
+  "Trung An": { name: "An", vnName: "Trung An", phone: "+84 366404159" }
 };
 function allStaffProfiles(){ return {...STAFF_PROFILES,...STAFF_ALIASES}; }
 function renderStaffProfileOptions(){
