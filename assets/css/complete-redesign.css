@@ -209,3 +209,60 @@ td input,td select{min-width:100px!important;min-height:34px!important;padding:6
 @media(prefers-reduced-motion:reduce){
   *,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
+
+/* Final cascade lock: outrank legacy page-specific theme rules loaded earlier. */
+body .ft-app .ft-sidebar{background:#fff!important;border-right:1px solid var(--line)!important;box-shadow:none!important}
+body .ft-app .ft-brand{background:#fff!important;border-bottom:1px solid var(--line)!important;color:var(--ink)!important}
+body .ft-app .ft-brand-mark{background:var(--blue)!important;color:#fff!important;border:0!important}
+body .ft-app .ft-brand-copy b,body .ft-app .ft-top-context b{color:var(--ink)!important}
+body .ft-app .ft-nav-link{background:transparent!important;color:#53647b!important;border-color:transparent!important;box-shadow:none!important}
+body .ft-app .ft-nav-link.active{background:var(--blue-soft)!important;color:var(--blue)!important;border-color:transparent!important}
+body .ft-app .ft-topbar{background:rgba(255,255,255,.96)!important;border:0!important;border-bottom:1px solid var(--line)!important;box-shadow:none!important}
+body .ft-app .ft-account-link{background:#fff!important;border:1px solid var(--line)!important;color:#42536b!important;box-shadow:none!important}
+body .ft-app .ft-content{background:transparent!important;color:var(--ink)!important}
+body .ft-app .ft-content .home-hero{background:linear-gradient(115deg,#fff 0%,#f5f8ff 100%)!important;border:1px solid #dce7f7!important;border-left:4px solid var(--blue)!important;border-radius:var(--radius)!important;box-shadow:none!important;color:var(--ink)!important}
+body .ft-app .ft-content .home-hero h2,body .ft-app .ft-content .intro h2{color:var(--ink)!important}
+body .ft-app .ft-content .home-hero p,body .ft-app .ft-content .intro p{color:var(--muted)!important}
+body .ft-app .ft-content .panel,
+body .ft-app .ft-content .booking,
+body .ft-app .ft-content .review,
+body .ft-app .ft-content .staff,
+body .ft-app .ft-content .workspace-choice{background:#fff!important;border:1px solid var(--line)!important;border-radius:var(--radius)!important;box-shadow:var(--shadow)!important;color:var(--ink)!important}
+body .ft-app .ft-content .panel h2,
+body .ft-app .ft-content .booking h2,
+body .ft-app .ft-content .review h2,
+body .ft-app .ft-content .panel h3{color:var(--ink)!important;border:0!important}
+body .ft-app .ft-content input:not([type=checkbox]):not([type=radio]),
+body .ft-app .ft-content select,
+body .ft-app .ft-content textarea{background:#fff!important;border:1px solid var(--line-strong)!important;border-radius:9px!important;color:var(--ink)!important;box-shadow:none!important}
+body .ft-app .ft-content button:not(.secondary):not(.ghost):not(.danger):not(.back),
+body .ft-app .ft-content .btn:not(.secondary):not(.ghost):not(.danger),
+body .ft-app .ft-content .linkbtn:not(.secondary),
+body .ft-app .ft-content .hero-cta{background:var(--blue)!important;border:1px solid var(--blue)!important;color:#fff!important;box-shadow:none!important;text-shadow:none!important}
+body .ft-app .ft-content button.secondary,
+body .ft-app .ft-content button.ghost,
+body .ft-app .ft-content .btn.secondary,
+body .ft-app .ft-content .btn.ghost,
+body .ft-app .ft-content .linkbtn.secondary,
+body .ft-app .ft-content .back{background:#fff!important;border:1px solid var(--line-strong)!important;color:#42536b!important;box-shadow:none!important}
+body .ft-app .ft-content button.danger,
+body .ft-app .ft-content .btn.danger{background:#fff!important;border:1px solid #fecaca!important;color:var(--red)!important}
+body .ft-app .ft-content .tablewrap,
+body .ft-app .ft-content .table-wrapper,
+body .ft-app .ft-content .table-responsive{background:#fff!important;border:1px solid var(--line)!important;box-shadow:none!important}
+body .ft-app .ft-content th{background:#f4f7fb!important;color:#465a74!important}
+body .ft-app .ft-content td{color:#33465f!important}
+body .ft-app .ft-content .hint,
+body .ft-app .ft-content .muted,
+body .ft-app .ft-content small{color:var(--muted)!important}
+body .ft-app #staffAuthPanel{background:#fff!important;border:1px solid var(--line)!important;border-top:1px solid var(--line)!important;color:var(--ink)!important;box-shadow:var(--shadow)!important}
+body .ft-app #staffAuthPanel h2{color:var(--ink)!important}
+body .ft-app #staffAuthPanel p,
+body .ft-app #staffAuthPanel label{color:var(--muted)!important}
+@media(max-width:760px){
+  body .ft-app .ft-sidebar{background:#fff!important;box-shadow:12px 0 32px rgba(15,23,42,.12)!important}
+  body .ft-app .ft-content .panel,
+  body .ft-app .ft-content .booking,
+  body .ft-app .ft-content .review,
+  body .ft-app .ft-content .staff{border-radius:11px!important}
+}
