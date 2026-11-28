@@ -619,6 +619,7 @@ html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#ff
 @media(min-width:901px){html body .ft-main{width:calc(100% - 240px)!important;margin-left:240px!important}html body .ft-sidebar{width:240px!important}html body .ft-app:is(.sidebar-collapsed,.ft-sidebar-collapsed) .ft-main{width:100%!important;margin-left:0!important}}
 @media(max-width:900px){html body .ft-main{margin:0!important;width:100%!important}html body .ft-content{padding:12px!important}html body .ft-topbar{flex-wrap:wrap!important;gap:6px!important;padding:6px 10px!important}html body .ft-top-context{flex:1!important}html body .ft-top-context b{font-size:17px!important}html body .ft-topbar .ft-top-spacer{display:none!important}html body .ft-topbar :is(.ft-account-link,.who){font-size:12px!important}html body .ft-content .summary{gap:0!important}}
 </style>
+<script src="assets/js/feature-activity.js"></script>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
@@ -1292,16 +1293,17 @@ function run(){
  $("bookingSearch").addEventListener("input",renderFilteredBookings);
  $("status").textContent=`Đã phân tích ${made.length} booking; hiển thị ${kept.length} booking. Các link chỉ mở bản nháp, không tự gửi.`;
  $("status").className="status good";
+ if(made.length)window.FTActivity?.record("soan_booking",{kind:"phan_tich"});
 }
 $("run").addEventListener("click",run);
 $("includeAssigned").addEventListener("change",saveBookingSession);
-$("savedDateFilter").addEventListener("change",renderSavedReviewArchive);$("savedReviewTables").addEventListener("change",e=>{const input=e.target.closest(".saved-estimated-arrival");if(!input)return;const item=savedReviewItems.find(x=>(x.key||savedReviewKey(x))===input.dataset.savedKey);if(!item)return;item.estimatedArrival=input.value;persistSavedReview();toast("Đã lưu giờ dự kiến đến sân bay.");});
-$("savedPartnerFilter").addEventListener("change",renderSavedReviewArchive);$("savedDirectionFilter").addEventListener("change",renderSavedReviewArchive);
+$("savedDateFilter").addEventListener("change",()=>{renderSavedReviewArchive();window.FTActivity?.record("doi_soat",{kind:"tra_cuu",minIntervalMs:30000});});$("savedReviewTables").addEventListener("change",e=>{const input=e.target.closest(".saved-estimated-arrival");if(!input)return;const item=savedReviewItems.find(x=>(x.key||savedReviewKey(x))===input.dataset.savedKey);if(!item)return;item.estimatedArrival=input.value;persistSavedReview();window.FTActivity?.record("doi_soat",{kind:"gio_du_kien"});toast("Đã lưu giờ dự kiến đến sân bay.");});
+$("savedPartnerFilter").addEventListener("change",()=>{renderSavedReviewArchive();window.FTActivity?.record("doi_soat",{kind:"tra_cuu",minIntervalMs:30000});});$("savedDirectionFilter").addEventListener("change",()=>{renderSavedReviewArchive();window.FTActivity?.record("doi_soat",{kind:"tra_cuu",minIntervalMs:30000});});
 $("clearSavedDate").addEventListener("click",()=>{$("savedDateFilter").value="";renderSavedReviewArchive();});
-$("clearSavedArchive").addEventListener("click",()=>{if(!confirm("Xóa toàn bộ lịch sử đã lưu trên thiết bị này?"))return;savedReviewItems=[];persistSavedReview();renderSavedReviewArchive();toast("Đã xóa toàn bộ lịch sử.");});
+$("clearSavedArchive").addEventListener("click",()=>{if(!confirm("Xóa toàn bộ lịch sử đã lưu trên thiết bị này?"))return;savedReviewItems=[];persistSavedReview();renderSavedReviewArchive();window.FTActivity?.record("doi_soat",{kind:"xoa_tat_ca"});toast("Đã xóa toàn bộ lịch sử.");});
 $("clear").addEventListener("click",()=>{$("raw").value="";$("summary").classList.add("hidden");$("results").innerHTML="";$("reviews").innerHTML="";$("skippedBookings").innerHTML="";processedBookings=[];allBookingsCache=[];skippedBookingsCache=[];saveBookingSession();$("status").textContent="Đã xóa dữ liệu.";});
 document.addEventListener("click",e=>{
- const del=e.target.closest(".delete-saved-review");if(del){const key=del.dataset.savedKey;if(!confirm("Xóa booking này khỏi lịch sử?"))return;savedReviewItems=savedReviewItems.filter(x=>x.key!==key);persistSavedReview();renderSavedReviewArchive();toast("Đã xóa booking khỏi lịch sử.");return;}
+ const del=e.target.closest(".delete-saved-review");if(del){const key=del.dataset.savedKey;if(!confirm("Xóa booking này khỏi lịch sử?"))return;savedReviewItems=savedReviewItems.filter(x=>x.key!==key);persistSavedReview();renderSavedReviewArchive();window.FTActivity?.record("doi_soat",{kind:"xoa_booking"});toast("Đã xóa booking khỏi lịch sử.");return;}
  const saveContact=e.target.closest(".save-contact");
  if(saveContact){updateBookingContact(Number(saveContact.dataset.contactIndex));return;}
  const composeOne=e.target.closest(".compose-one-skipped");

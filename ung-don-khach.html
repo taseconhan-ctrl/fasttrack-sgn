@@ -340,6 +340,7 @@ html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#ff
   -webkit-text-fill-color: currentColor !important;
 }
 </style>
+<script src="assets/js/feature-activity.js"></script>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
@@ -418,15 +419,15 @@ async function load(silent=false){if(loadingBookings||(silent&&($("cards").conta
 async function uploadEvidence(id,file){const fd=new FormData();fd.append("action","upload_evidence");fd.append("id",id);fd.append("file",file);const r=await fetch(API,{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+token},body:fd});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||"Không tải được ảnh");return d}
 async function showEvidence(id){evidenceBookingId=id;$("evidenceContent").textContent="Đang tải ảnh…";$("evidenceFile").value="";$("evidenceLibrary").value="";$("evidenceFile").dataset.source="";$("evidenceSelected").textContent="Chưa chọn ảnh.";$("evidenceDialog").showModal();const d=await call("list_evidence",{id});$("evidenceContent").innerHTML=(d.evidence||[]).map(x=>'<div class="history-row"><a href="'+esc(x.signed_url)+'" target="_blank" rel="noopener"><img src="'+esc(x.signed_url)+'" alt="Ảnh minh chứng" style="display:block;max-width:100%;max-height:220px;object-fit:contain;border-radius:8px;margin-bottom:6px"></a><b>'+esc(x.staff_name)+'</b> · '+esc(new Date(x.created_at).toLocaleString("vi-VN"))+'<div class="sub">'+esc(x.original_filename)+'</div></div>').join("")||'<p class="sub">Chưa có ảnh minh chứng cho booking này.</p>'}
 function openEdit(b){editing=b;$("editArrival").value=b.estimated_arrival_time||"";$("editGate").value=b.parking_gate||"";$("editFlight").value=b.flight||"";$("editGuest").value=b.guest_name||"";$("editAgency").value=b.agency||"";$("editTime").value=b.service_time||"";$("editType").value=b.service_type||"";$("editOrder").value=b.order_id||"";$("editDialog").showModal()}
-$("cards").addEventListener("change",async e=>{const input=e.target.closest("input[data-eta]");if(!input)return;const value=input.value;if(value&&!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(value)){say("ETA phải đúng định dạng HH:MM.");return}input.disabled=true;try{await call("update",{id:input.dataset.eta,changes:{estimated_arrival_time:value}});const b=bookings.find(x=>x.id===input.dataset.eta);if(b)b.estimated_arrival_time=value;say("Đã lưu ETA "+(value||"trống")+".")}catch(err){say("Không lưu được ETA: "+err.message);await load()}finally{input.disabled=false}});
+$("cards").addEventListener("change",async e=>{const input=e.target.closest("input[data-eta]");if(!input)return;const value=input.value;if(value&&!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(value)){say("ETA phải đúng định dạng HH:MM.");return}input.disabled=true;try{await call("update",{id:input.dataset.eta,changes:{estimated_arrival_time:value}});const b=bookings.find(x=>x.id===input.dataset.eta);if(b)b.estimated_arrival_time=value;window.FTActivity?.record("ung_don_khach",{kind:"eta"});say("Đã lưu ETA "+(value||"trống")+".")}catch(err){say("Không lưu được ETA: "+err.message);await load()}finally{input.disabled=false}});
 $("cards").addEventListener("click",async e=>{const btn=e.target.closest("button");if(!btn)return;try{
 if(btn.dataset.tableZoom){if(btn.dataset.tableZoom==="reset")sheetWidths=sheetDefaults.slice();tableZoom=btn.dataset.tableZoom==="in"?Math.min(1.5,Math.round((tableZoom+0.1)*10)/10):btn.dataset.tableZoom==="out"?Math.max(0.6,Math.round((tableZoom-0.1)*10)/10):1;render();return}
-if(btn.dataset.finish){btn.disabled=true;await call("finish",{id:btn.dataset.finish,status:btn.dataset.status});await load()}if(btn.dataset.resolveSource){btn.disabled=true;await call("resolve_source_conflict",{id:btn.dataset.resolveSource});say("Đã xác nhận rà soát thông tin nguồn.");await load()}
+if(btn.dataset.finish){btn.disabled=true;await call("finish",{id:btn.dataset.finish,status:btn.dataset.status});window.FTActivity?.record("ung_don_khach",{kind:"hoan_tat"});await load()}if(btn.dataset.resolveSource){btn.disabled=true;await call("resolve_source_conflict",{id:btn.dataset.resolveSource});window.FTActivity?.record("ung_don_khach",{kind:"ra_soat_nguon"});say("Đã xác nhận rà soát thông tin nguồn.");await load()}
 if(btn.dataset.edit){const b=bookings.find(x=>x.id===btn.dataset.edit);if(b)openEdit(b)}if(btn.dataset.evidence){await showEvidence(btn.dataset.evidence)}
 if(btn.dataset.history){const d=await call("history",{id:btn.dataset.history});$("historyContent").innerHTML=(d.history||[]).map(h=>'<div class="history-row"><b>'+esc(h.actor_username||"system")+'</b> · '+esc(new Date(h.changed_at).toLocaleString("vi-VN"))+' · '+esc(h.action)+'<pre style="white-space:pre-wrap;color:#c2c5cb">'+esc(JSON.stringify(h.after_data||h.before_data||{},null,2))+'</pre></div>').join("")||"Chưa có lịch sử";$("historyDialog").showModal()}
 }catch(err){say(err.message);await load().catch(()=>{})}});
 $("editCancel").addEventListener("click",()=>$("editDialog").close());
-$("editForm").addEventListener("submit",async e=>{e.preventDefault();if(!editing)return;const changes={estimated_arrival_time:$("editArrival").value.trim(),parking_gate:$("editGate").value.trim(),flight:$("editFlight").value.trim(),guest_name:$("editGuest").value.trim(),agency:$("editAgency").value.trim(),service_time:$("editTime").value.trim(),service_type:$("editType").value.trim(),order_id:$("editOrder").value.trim()};try{await call("update",{id:editing.id,changes});$("editDialog").close();say("Đã lưu thay đổi.");await load()}catch(err){say(err.message)}});
+$("editForm").addEventListener("submit",async e=>{e.preventDefault();if(!editing)return;const changes={estimated_arrival_time:$("editArrival").value.trim(),parking_gate:$("editGate").value.trim(),flight:$("editFlight").value.trim(),guest_name:$("editGuest").value.trim(),agency:$("editAgency").value.trim(),service_time:$("editTime").value.trim(),service_type:$("editType").value.trim(),order_id:$("editOrder").value.trim()};try{await call("update",{id:editing.id,changes});window.FTActivity?.record("ung_don_khach",{kind:"sua_booking"});$("editDialog").close();say("Đã lưu thay đổi.");await load()}catch(err){say(err.message)}});
 $("historyClose").addEventListener("click",()=>$("historyDialog").close());
 $("evidenceClose").addEventListener("click",()=>$("evidenceDialog").close());
 let evidenceBusy=false;
@@ -454,7 +455,7 @@ async function saveSelectedEvidence(){
  const file=await compactEvidence(f);
  if(file.size>10*1024*1024)throw Error("Ảnh vượt quá 10 MB.");
  $("evidenceSelected").textContent="Đang tải ảnh lên…";
- await uploadEvidence(id,file);
+ await uploadEvidence(id,file);window.FTActivity?.record("ung_don_khach",{kind:"tai_anh"});
  const elapsed=((performance.now()-start)/1000).toFixed(1);
  $("evidenceFile").value="";$("evidenceLibrary").value="";
  $("evidenceSelected").textContent="Đã lưu ảnh ("+elapsed+" giây).";

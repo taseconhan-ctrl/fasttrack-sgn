@@ -49,3 +49,9 @@ GitHub Actions chạy kiểm tra cú pháp JavaScript của trang điều hành 
 ## Triển khai
 
 Trang tĩnh được triển khai từ nhánh `main` bằng GitHub Actions. Backend chạy trên Supabase project `xyhvgttywjleirsiabve` ở khu vực Singapore.
+
+## Theo dõi chức năng nhân viên đã sử dụng
+
+Các thao tác thành công của nhân viên ở Soạn Booking, Đối soát, Đón khách, Ứng dụng đón khách, Xếp lịch và Quản lý tài khoản được ghi nhận qua `assets/js/feature-activity.js`. Admin và Quản lý xem số lượt, lần dùng gần nhất và lịch sử chi tiết tại **Quản lý tài khoản**. Mở trang, tải lại và đồng bộ tự động không được tính.
+
+Phần backend (bảng, API trong `staff-admin`) cần được triển khai trên Supabase. Xem `docs/staff-feature-activity.md` và `supabase/migrations/20261128120000_staff_feature_activity.sql`. Chạy kiểm thử bằng `node scripts/test-feature-activity.mjs`.
