@@ -565,4 +565,13 @@ fetch(url,{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb
 html body #ftApp #ftMain #app .hero.pickup-list-header{background:#35539B!important;background-image:none!important;color:#fff!important;border-color:#35539B!important}
 html body #ftApp #ftMain #app .hero.pickup-list-header h1,html body #ftApp #ftMain #app .hero.pickup-list-header p{color:#fff!important}
 </style>
+<style id="ft-flight-transition">
+#ftFlightTransition{position:fixed;inset:0;z-index:2147483647;pointer-events:none;overflow:hidden;background:rgba(235,242,255,.35)}
+#ftFlightTransition .ft-flying-plane{position:absolute;top:45%;left:0;font-size:clamp(48px,9vw,96px);line-height:1;color:#35539b;animation:ftFlyAcross .6s ease-in-out both}
+#ftFlightTransition .ft-flying-plane:before{content:"";position:absolute;right:100%;top:50%;width:180px;height:14px;background:linear-gradient(90deg,transparent,#fff);border-radius:50%;filter:blur(3px)}
+@keyframes ftFlyAcross{from{transform:translateX(-220px)}to{transform:translateX(calc(100vw + 120px))}}
+</style>
+<script id="ft-flight-transition-script">
+(()=>{let busy=false;document.addEventListener("click",e=>{if(e.defaultPrevented||e.button!==0||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey||matchMedia("(prefers-reduced-motion: reduce)").matches)return;const a=e.target.closest("#ftSidebar a[href]");if(!a||a.hasAttribute("download")||(a.target&&a.target!=="_self"))return;const u=new URL(a.href,location.href);if(u.origin!==location.origin||u.pathname===location.pathname||!/(?:index|soan-booking|don-khach|ung-don-khach|xep-lich|quan-ly-tai-khoan)\.html$/.test(u.pathname))return;e.preventDefault();if(busy)return;busy=true;const layer=document.createElement("div");layer.id="ftFlightTransition";layer.setAttribute("aria-hidden","true");const plane=document.createElement("div");plane.className="ft-flying-plane";plane.innerHTML='<svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-1-1-2-3-2h-5L7 2H4l4 8H4l-2-2H0l2 4-2 4h2l2-2h4l-4 8h3l7-8h5c2 0 3-1 3-2z"/></svg>';layer.append(plane);document.body.append(layer);setTimeout(()=>location.assign(u.href),600);});window.addEventListener("pageshow",()=>{busy=false;document.getElementById("ftFlightTransition")?.remove()});})();
+</script>
 </body></html>
