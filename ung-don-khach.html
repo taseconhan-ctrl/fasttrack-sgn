@@ -100,6 +100,16 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
   #app>section.panel .stat{padding:12px!important}
 }
 </style>
+
+<style id="date-filter-fit-fix">
+/* Ô ngày phục vụ không tràn khỏi khung trên điện thoại */
+#app .toolbar .field{min-width:0!important;width:100%!important;max-width:100%!important}
+#app #dateFilter{display:block!important;width:100%!important;min-width:0!important;max-width:100%!important;box-sizing:border-box!important;padding:9px 10px!important;font-size:16px!important}
+@media(max-width:680px){
+  #app #dateFilter{width:100%!important;max-width:100%!important;min-width:0!important;height:46px!important;padding:8px 9px!important;font-size:15px!important}
+  #app .toolbar .field:first-child{overflow:hidden!important}
+}
+</style>
 </style>
 </head>
 <body>
