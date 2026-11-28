@@ -1134,7 +1134,7 @@ function buildOne(b,staff,phone,hotline,staffVN){
  if(b.order&&copySubject)copySubject=copySubject.replace(b.order,"").replace(/\s+–\s+–\s+/g," – ").replace(/^ – | – $/g,"").replace(/🛫 – /,"🛫 ");
  return {...b,dir,agency,sub,en,vi,wa,gm,zalo,calendar,intl,vn,confirmed,unassigned,warnings,refundMessage:refundEligible(b)?refundBody(b,staff,phone,hotline):"",reviewSubject:copySubject,reviewPhone:intl?("+"+intl):(b.phone||"Không có số điện thoại")};
 }
-function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:`<span class="muted">Không tạo được – thiếu dữ liệu phù hợp</span>`}
+function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:""}
 function block(title,content){return `<h3>${title}</h3><pre class="body-content"${title==="BODY TIẾNG ANH"?' data-body-lang="en"':""}>${esc(content)}</pre>`}
 function cardHtml(b,i,cacheIndex){
  const links=`<div class="actions">${linkHtml(b.wa,"WhatsApp")}${linkHtml(b.gm,"Gmail")}${linkHtml(b.zalo,"Zalo")}${b.calendar?linkHtml(b.calendar,"Google Calendar"):""}</div>`;
