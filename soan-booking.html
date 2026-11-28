@@ -1082,7 +1082,8 @@ function subject(b){
  const code=serviceCode(b);
  if(direction(b)==="DEPARTURE"&&isDomestic(b)&&!isPartner(b))
    return `Domestic Fast Track Service – ${b.order} – Cancellation and Refund Request`;
- const head=direction(b)==="ARRIVAL"?"":direction(b)==="DEPARTURE"?(isPriority(b)?"🛫 ƯTCK":"🛫"):"Fast Track Service";
+ const departureMark=isDomestic(b)&&isPartner(b)?"🛫(QN)":"🛫";
+ const head=direction(b)==="ARRIVAL"?"":direction(b)==="DEPARTURE"?(departureMark+(isPriority(b)?" ƯTCK":"")):"Fast Track Service";
  return [head,b.date?b.date.slice(0,5):"",agencyPart,b.order,name,(isPriority(b)?"":code),b.flight,b.time].filter(Boolean).join(" – ")||"Fast Track Service";
 }
 function phoneDisplay(raw,international){return international?("+"+international):clean(raw)||"Không có số điện thoại"}
