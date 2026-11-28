@@ -620,6 +620,32 @@ html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#ff
 @media(max-width:900px){html body .ft-main{margin:0!important;width:100%!important}html body .ft-content{padding:12px!important}html body .ft-topbar{flex-wrap:wrap!important;gap:6px!important;padding:6px 10px!important}html body .ft-top-context{flex:1!important}html body .ft-top-context b{font-size:17px!important}html body .ft-topbar .ft-top-spacer{display:none!important}html body .ft-topbar :is(.ft-account-link,.who){font-size:12px!important}html body .ft-content .summary{gap:0!important}}
 </style>
 <script src="assets/js/feature-activity.js"></script>
+<style id="booking-reference-layout">
+html body #ftApp #ftMain,html body #ftApp #ftMain .ft-content{background:#f3f6fb!important}
+html body #ftApp #ftMain .ft-topbar{background:#35539b!important;color:#fff!important;display:flex!important;align-items:center!important;gap:12px!important;padding:8px 12px!important;min-height:64px!important;box-shadow:none!important;border:0!important;flex-wrap:nowrap!important}
+html body #ftApp #ftMain .ft-topbar .ft-top-context{flex:1 1 auto!important;min-width:0!important}
+html body #ftApp #ftMain .ft-topbar .ft-top-context b{color:#fff!important;font-size:16px!important;font-weight:700!important;line-height:1.3!important;white-space:normal!important}
+html body #ftApp #ftMain .ft-topbar .ft-menu-toggle{background:transparent!important;border:0!important;box-shadow:none!important;flex:0 0 32px!important;padding:4px!important}
+html body #ftApp #ftMain .ft-topbar .ft-menu-toggle span{background:#fff!important}
+html body #ftApp #ftMain .ft-topbar a[href="#staffProfile"],html body #ftApp #ftMain .ft-top-spacer{display:none!important}
+html body #ftApp #ftMain .ft-topbar a[href*="settings=pin"]{flex:0 0 auto!important;max-width:110px!important;white-space:normal!important;color:#fff!important;background:transparent!important;border:1px solid #ffffff66!important;font-size:14px!important}
+html body #ftApp #ftMain #cloudAccountBar{display:none!important}
+html body #ftApp #ftMain .ft-content{padding:16px 12px!important}
+html body #ftApp #bookingMain .workspace-switcher{display:flex!important;justify-content:flex-start!important;gap:0!important;background:transparent!important;border-bottom:1px solid #d4dce9!important;margin:0 0 16px!important;padding:0!important}
+html body #ftApp #bookingMain .workspace-switcher .workspace-choice{flex:0 1 auto!important;min-height:44px!important;padding:12px!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+html body #ftApp #bookingMain .workspace-switcher .workspace-choice[aria-current="page"]{background:#eaf0fb!important;border-bottom:3px solid #35539b!important}
+html body #ftApp #bookingMain .workspace-switcher .workspace-choice strong{color:#294780!important;font-size:14px!important;font-weight:700!important;-webkit-text-fill-color:#294780!important}
+html body #ftApp #bookingMain :is(.panel,.booking,.review){background:#fff!important;border:1px solid #d4dce9!important;border-radius:8px!important;box-shadow:none!important;padding:14px!important;margin:0 0 16px!important}
+html body #ftApp #bookingMain :is(h2,h3,label,.kv b){color:#1e293b!important;-webkit-text-fill-color:#1e293b!important;background:transparent!important;text-shadow:none!important;box-shadow:none!important}
+html body #ftApp #bookingMain h2{font-size:20px!important;font-weight:700!important;margin:0 0 14px!important;padding:0!important;border:0!important}
+html body #ftApp #bookingMain :is(h2,h3,label)::before,html body #ftApp #bookingMain :is(h2,h3,label)::after{content:none!important;display:none!important}
+html body #ftApp #bookingMain label{font-size:15px!important;font-weight:600!important;padding:0!important;border:0!important;margin:0 0 7px!important}
+html body #ftApp #bookingMain :is(input:not([type=checkbox]),textarea,select){background:#fff!important;color:#1e293b!important;border:1px solid #a6b6d1!important;border-radius:6px!important;box-shadow:none!important;font-size:16px!important;padding:10px!important;min-height:44px!important}
+html body #ftApp #bookingMain input[readonly]{background:#f3f6fb!important}
+html body #ftApp #bookingMain .hint{color:#53647e!important;font-size:14px!important;line-height:1.5!important}
+html body #ftApp #bookingMain button#run{background:#35539b!important;color:#fff!important;border:0!important;border-radius:6px!important;min-height:44px!important}
+@media(max-width:680px){html body #ftApp #bookingMain .controls>div{flex:1 1 100%!important;min-width:0!important}html body #ftApp #bookingMain button#run{width:100%!important}html body #ftApp #bookingMain textarea#raw{min-height:66px!important}}
+</style>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
