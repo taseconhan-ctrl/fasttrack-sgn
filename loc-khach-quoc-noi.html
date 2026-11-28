@@ -105,7 +105,7 @@ function parseDomestic(raw){
  const time=(label)=>{const m=g.match(new RegExp(label+"\\s*:\\s*(\\d{1,2}):(\\d{2})","i"));return m&&+m[1]<24&&+m[2]<60?m[1].padStart(2,"0")+":"+m[2]:""};
  const fly=time("Giờ bay"),arr=time("Giờ đến sân bay");
  const names=g.split(/Chuyến bay\s*:/i)[0].split(/\r?\n/).map(n=>n.trim().replace(/^\d+\s*[.)-]\s*/,"")).filter(Boolean);
- const ga=flight.startsWith("VN")?"T3":flight.startsWith("VJ")?"T1":"";
+ const ga=flight? (flight.startsWith("VJ")?"T1":"T3") : "";
  const date=day?String(day.d).padStart(2,"0")+"/"+String(day.m).padStart(2,"0"):"";
  for(const name of names){rows.push({values:[date,name,flight,ga,fly,arr],sort:day?(day.y||sent?.y||0)*10000+day.m*100+day.d:99999999});if(!date||!flight||!fly||!arr||!ga)warnings.push("Thiếu thông tin hoặc chưa xác định ga: "+name);}
  }
