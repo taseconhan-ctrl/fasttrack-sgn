@@ -439,7 +439,7 @@ html body #ftApp.ft-collapsed #ftSidebar .ft-brand-mark{width:40px!important;hei
 </div><div class="dialog-actions"><button type="button" class="secondary" id="editCancel">Hủy</button><button type="submit">Lưu thay đổi</button></div></form></dialog>
 <dialog id="historyDialog"><h3 style="margin-top:0">Lịch sử chỉnh sửa</h3><div id="historyContent"></div><div class="dialog-actions"><button class="secondary" id="historyClose">Đóng</button></div></dialog>
 <dialog id="staffAdminDialog"><h3 style="margin-top:0">Quản lý nhân viên & tài khoản</h3><p class="sub">Cấp tài khoản, đặt lại PIN, phân vai trò và khóa/mở tài khoản. PIN chỉ được gửi qua kết nối bảo mật đến máy chủ.</p><div id="staffAdminContent"></div><div class="dialog-actions"><button type="button" class="secondary" id="staffAdminClose">Đóng</button></div></dialog>
-<dialog id="evidenceDialog"><h3 style="margin-top:0">Ảnh minh chứng</h3><div id="evidenceContent"></div><div class="field" style="margin-top:12px"><label>Chụp hoặc chọn ảnh để tự động tải lên</label><input id="evidenceFile" type="file" accept="image/*" capture="environment" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"><input id="evidenceLibrary" type="file" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"><div class="actions"><label class="btn" for="evidenceFile">📷 Chụp ảnh</label><label class="btn secondary" for="evidenceLibrary">Chọn từ thư viện</label></div><div id="evidenceSelected" class="sub" style="margin-top:8px">Chưa chọn ảnh.</div></div><div class="dialog-actions"><button type="button" class="secondary" id="evidenceClose">Đóng</button><button type="button" class="secondary" id="evidenceLocalSave">Lưu ảnh về máy</button><button type="button" id="evidenceUpload">Tải ảnh lên</button></div></dialog>
+<dialog id="evidenceDialog"><h3 style="margin-top:0">Ảnh minh chứng</h3><div id="evidenceContent"></div><div class="field" style="margin-top:12px"><label>Chụp ảnh để tự lưu về máy và tải lên hệ thống</label><input id="evidenceFile" type="file" accept="image/*" capture="environment" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"><input id="evidenceLibrary" type="file" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"><div class="actions"><label class="btn" for="evidenceFile">📷 Chụp ảnh</label><label class="btn secondary" for="evidenceLibrary">Chọn từ thư viện</label></div><div id="evidenceSelected" class="sub" style="margin-top:8px">Chưa chọn ảnh.</div></div><div class="dialog-actions"><button type="button" class="secondary" id="evidenceClose">Đóng</button><button type="button" class="secondary" id="evidenceLocalSave">Lưu ảnh về máy</button><button type="button" id="evidenceUpload" hidden>Thử tải lại</button></div></dialog>
 <script type="module">
 const URL="https://xyhvgttywjleirsiabve.supabase.co";
 const KEY="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
@@ -469,7 +469,7 @@ $("cards").innerHTML=list.length?'<div class="table-tools" aria-label="Điều c
 async function loadStaffAdmin(){const d=await adminCall("list");$("staffAdminContent").innerHTML=(d.staff||[]).map(st=>'<div class="booking" style="margin:10px 0"><div class="booking-top"><div><b>'+esc(st.full_name)+'</b><div class="sub">'+esc(st.username)+' · '+(st.account_id?"Đã có tài khoản":"Chưa có tài khoản")+'</div></div><span class="tag '+(st.active?"good":"bad")+'">'+(st.active?"Đang hoạt động":"Đã khóa")+'</span></div><div class="toolbar" style="grid-template-columns:1fr 1fr;margin-top:10px"><div class="field"><label>Vai trò</label><select data-role="'+st.id+'" '+(st.username===profile.username?"disabled":"")+'><option value="staff" '+(st.role==="staff"?"selected":"")+'>Nhân viên</option><option value="manager" '+(st.role==="manager"?"selected":"")+'>Quản lý</option><option value="admin" '+(st.role==="admin"?"selected":"")+'>Quản trị viên</option></select></div><div class="field"><label>PIN mới (4 số)</label><input data-pin="'+st.id+'" type="password" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" placeholder="Nhập PIN"></div></div><div class="card-actions"><button data-account="'+st.id+'">'+(st.account_id?"Đặt lại PIN":"Tạo tài khoản")+'</button><button class="secondary" data-active="'+st.id+'" data-value="'+(!st.active)+'" '+(st.username===profile.username&&!st.active?"disabled":"")+'>'+(st.active?"Khóa tài khoản":"Mở tài khoản")+'</button></div></div>').join("")}
 async function load(silent=false){if(loadingBookings||(silent&&($("cards").contains(document.activeElement)&&document.activeElement.matches("input,select,textarea"))))return;loadingBookings=true;try{if(!silent)say("Đang tải dữ liệu…");const d=await call("list");bookings=d.bookings||[];render();if(!silent)say("Đã đồng bộ "+bookings.length+" booking.");}finally{loadingBookings=false}}
 async function uploadEvidence(id,file){const fd=new FormData();fd.append("action","upload_evidence");fd.append("id",id);fd.append("file",file);const r=await fetch(API,{method:"POST",headers:{"apikey":KEY,"Authorization":"Bearer "+token},body:fd});let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||"Không tải được ảnh");return d}
-async function showEvidence(id){evidenceBookingId=id;$("evidenceContent").textContent="Đang tải ảnh…";$("evidenceFile").value="";$("evidenceLibrary").value="";$("evidenceFile").dataset.source="";$("evidenceSelected").textContent="Chưa chọn ảnh.";$("evidenceDialog").showModal();const d=await call("list_evidence",{id});$("evidenceContent").innerHTML=(d.evidence||[]).map(x=>'<div class="history-row"><a href="'+esc(x.signed_url)+'" target="_blank" rel="noopener"><img src="'+esc(x.signed_url)+'" alt="Ảnh minh chứng" style="display:block;max-width:100%;max-height:220px;object-fit:contain;border-radius:8px;margin-bottom:6px"></a><b>'+esc(x.staff_name)+'</b> · '+esc(new Date(x.created_at).toLocaleString("vi-VN"))+'<div class="sub">'+esc(x.original_filename)+'</div></div>').join("")||'<p class="sub">Chưa có ảnh minh chứng cho booking này.</p>'}
+async function showEvidence(id){evidenceBookingId=id;$("evidenceUpload").hidden=true;$("evidenceContent").textContent="Đang tải ảnh…";$("evidenceFile").value="";$("evidenceLibrary").value="";$("evidenceFile").dataset.source="";$("evidenceSelected").textContent="Chưa chọn ảnh.";$("evidenceDialog").showModal();const d=await call("list_evidence",{id});$("evidenceContent").innerHTML=(d.evidence||[]).map(x=>'<div class="history-row"><a href="'+esc(x.signed_url)+'" target="_blank" rel="noopener"><img src="'+esc(x.signed_url)+'" alt="Ảnh minh chứng" style="display:block;max-width:100%;max-height:220px;object-fit:contain;border-radius:8px;margin-bottom:6px"></a><b>'+esc(x.staff_name)+'</b> · '+esc(new Date(x.created_at).toLocaleString("vi-VN"))+'<div class="sub">'+esc(x.original_filename)+'</div></div>').join("")||'<p class="sub">Chưa có ảnh minh chứng cho booking này.</p>'}
 function openEdit(b){editing=b;$("editArrival").value=b.estimated_arrival_time||"";$("editGate").value=b.parking_gate||"";$("editFlight").value=b.flight||"";$("editGuest").value=b.guest_name||"";$("editAgency").value=b.agency||"";$("editTime").value=b.service_time||"";$("editType").value=b.service_type||"";$("editOrder").value=b.order_id||"";$("editDialog").showModal()}
 $("cards").addEventListener("change",async e=>{const input=e.target.closest("input[data-eta]");if(!input)return;const value=input.value;if(value&&!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(value)){say("ETA phải đúng định dạng HH:MM.");return}input.disabled=true;try{await call("update",{id:input.dataset.eta,changes:{estimated_arrival_time:value}});const b=bookings.find(x=>x.id===input.dataset.eta);if(b)b.estimated_arrival_time=value;window.FTActivity?.record("ung_don_khach",{kind:"eta"});say("Đã lưu ETA "+(value||"trống")+".")}catch(err){say("Không lưu được ETA: "+err.message);await load()}finally{input.disabled=false}});
 $("cards").addEventListener("click",async e=>{const btn=e.target.closest("button");if(!btn)return;try{
@@ -488,10 +488,10 @@ async function compactEvidence(f){
  const url=window.URL.createObjectURL(f);
  try{
  const img=new Image();img.src=url;await img.decode();
- const scale=Math.min(1,1800/Math.max(img.naturalWidth,img.naturalHeight));
+ const scale=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
  const c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.naturalWidth*scale));c.height=Math.max(1,Math.round(img.naturalHeight*scale));
  const ctx=c.getContext("2d",{alpha:false});ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);
- const blob=await new Promise(resolve=>c.toBlob(resolve,"image/jpeg",0.82));
+ const blob=await new Promise(resolve=>c.toBlob(resolve,"image/jpeg",0.76));
  if(!blob)throw Error("Không nén được ảnh.");
  if(/image\/(jpeg|png|webp)/.test(f.type)&&f.size<blob.size)return f;
  return new File([blob],f.name.replace(/\.[^.]+$/,"")+".jpg",{type:"image/jpeg"});
@@ -500,11 +500,12 @@ async function compactEvidence(f){
 async function saveSelectedEvidence(){
  const f=$("evidenceLibrary").files[0]||$("evidenceFile").files[0],id=evidenceBookingId;
  if(!f||!id||evidenceBusy)return;
+ const wasCamera=!!$("evidenceFile").files[0];
  evidenceBusy=true;const start=performance.now();
- const controls=["evidenceUpload","evidenceClose","evidenceFile","evidenceLibrary"];controls.forEach(k=>$(k).disabled=true);
+ const controls=["evidenceUpload","evidenceClose","evidenceFile","evidenceLibrary","evidenceLocalSave"];controls.forEach(k=>$(k).disabled=true);
  try{
  $("evidenceSelected").textContent="Đang tối ưu ảnh…";
- const file=await compactEvidence(f);
+ const file=/^image\/(jpeg|png|webp)$/.test(f.type)&&f.size<=450000?f:await compactEvidence(f);
  if(file.size>10*1024*1024)throw Error("Ảnh vượt quá 10 MB.");
  $("evidenceSelected").textContent="Đang tải ảnh lên…";
  await uploadEvidence(id,file);window.FTActivity?.record("ung_don_khach",{kind:"tai_anh"});
@@ -513,9 +514,9 @@ async function saveSelectedEvidence(){
  $("evidenceSelected").textContent="Đã lưu ảnh ("+elapsed+" giây).";
  $("evidenceDialog").close();
  say("Ảnh đã lưu trên hệ thống.");
- if(localTicketRequested===f){showTicketConfirmation(f);localTicketRequested=null;}
+ if(localTicketRequested===f||wasCamera){showTicketConfirmation(f);localTicketRequested=null;}
  load().catch(()=>{});
- }catch(err){$("evidenceSelected").textContent="Tải ảnh thất bại: "+err.message+". Bấm Tải ảnh lên để thử lại."}
+ }catch(err){$("evidenceUpload").hidden=false;$("evidenceSelected").textContent="Tải ảnh thất bại: "+err.message+". Bấm Thử tải lại."}
  finally{evidenceBusy=false;controls.forEach(k=>$(k).disabled=false)}
 }
 $("evidenceDialog").addEventListener("cancel",e=>{if(evidenceBusy)e.preventDefault()});
