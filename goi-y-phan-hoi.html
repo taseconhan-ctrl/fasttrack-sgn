@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#35539b">
+<title>Gợi ý phản hồi tin nhắn AI | Fast Track SGN</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#f3f6fb;color:#192b44;font:15px/1.6 Arial,"Segoe UI",sans-serif}body{min-height:100vh}
+.ft-app{display:flex;min-height:100vh}.ft-sidebar{position:fixed;z-index:50;left:0;top:0;bottom:0;width:242px;background:#fff;border-right:1px solid #dbe5f2;display:flex;flex-direction:column;overflow:auto;transition:transform .22s}
+.ft-brand{color:#1e293b;text-decoration:none;padding:20px 16px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;border-bottom:1px solid #e5eaf0;text-align:center}.ft-brand-mark{width:100px;height:100px;border-radius:50%;background:#35539b;color:#fff;font-size:32px;font-weight:700;display:grid;place-items:center}.ft-brand-copy b{display:block;font-size:18px;overflow-wrap:anywhere}.ft-brand-copy small{font-size:10px;letter-spacing:1px;color:#64748b}
+.ft-nav{display:flex;flex-direction:column;gap:2px;padding:10px 9px}.ft-nav-label{color:#708098;font-weight:700;font-size:10px;letter-spacing:1px;margin:12px 12px 4px}.ft-nav-link,.ft-operations-toggle{font:inherit;display:flex;align-items:center;gap:10px;width:100%;border:0;text-decoration:none;text-align:left;color:#293952;background:transparent;padding:12px 13px;border-radius:7px;cursor:pointer}.ft-nav-link.active{background:#e7edf9;color:#294780;font-weight:700}.ft-nav-link:hover,.ft-operations-toggle:hover{background:#f0f4fb}.ft-nav-icon{width:20px;text-align:center;color:#35539b;flex:none}.ft-operations-chevron{margin-left:auto}.ft-operations-children[hidden],[hidden]{display:none!important}.ft-operations-children .ft-nav-link{padding-left:27px}.ft-sidebar-foot{margin-top:auto;padding:12px 18px;color:#64748b;font-size:12px;border-top:1px solid #e9eff5}.ft-sidebar-logout{margin:0 9px 14px;width:calc(100% - 18px)}
+.ft-main{width:calc(100% - 242px);margin-left:242px;min-width:0}.ft-topbar{height:64px;background:#35539b;color:#fff;display:flex;align-items:center;gap:12px;padding:12px 24px;position:sticky;top:0;z-index:10}.ft-topbar b{font-size:18px}.ft-menu-toggle{background:transparent;border:1px solid #ffffff70;color:#fff;border-radius:6px;cursor:pointer;padding:8px 12px;font-size:20px}.ft-content{max-width:1000px;margin:auto;padding:24px 20px 50px}
+.ai-header{margin-bottom:18px}.ai-header h1{font-size:28px;margin:0 0 6px;color:#233f79}.ai-header p{color:#56667d;margin:0}
+.panel{border:1px solid #dbe5f2;background:white;border-radius:14px;padding:22px;box-shadow:0 4px 18px #243e6410;margin-bottom:16px}
+label{display:block;font-weight:700;margin:12px 0 6px}textarea{font:inherit;color:#1d3045;background:#fff;width:100%;border:1px solid #bccada;border-radius:8px;padding:12px;min-height:116px;resize:vertical}textarea:focus{outline:2px solid #99b0e5;outline-offset:1px}
+#customerMessage{min-height:180px}button{font:inherit;cursor:pointer}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#35539b;color:#fff;border:0;padding:12px 18px;border-radius:8px;font-weight:700}.btn:hover{background:#263f78}.btn:disabled{opacity:.55;cursor:not-allowed}.btn.secondary{background:#eef3fc;color:#294780;border:1px solid #b9ccec}.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:14px}.tip{font-size:13px;color:#627089}.status{margin:12px 0;padding:10px 13px;border-radius:7px;background:#eff4fc;color:#2f4e7f}.status.error{background:#fff0f0;color:#991b1b}.results[hidden]{display:none}
+.output{white-space:pre-wrap;overflow-wrap:anywhere;padding:16px;border:1px solid #c9dfcb;border-left:4px solid #4f9466;border-radius:8px;background:#f1f9f1;color:#193c26;min-height:70px}.output.vi{background:#f6f8fd;border-color:#c7d7ef;border-left-color:#35539b;color:#253d63}.result-title{font-size:17px;font-weight:700;margin:8px 0}.actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 22px}
+.overlay{display:none}
+@media(max-width:900px){.ft-sidebar{transform:translateX(-100%);width:min(78vw,300px);box-shadow:5px 0 22px #0002}.ft-mobile-open .ft-sidebar{transform:translateX(0)}.ft-main{width:100%;margin-left:0}.overlay{display:none;position:fixed;inset:0;background:#07162880;z-index:40}.ft-mobile-open .overlay{display:block}.ft-content{padding:16px 12px 40px}.panel{padding:16px}.ai-header h1{font-size:23px}.ft-topbar{padding:10px 13px}}
+@media(min-width:901px){.ft-app.ft-collapsed .ft-sidebar{transform:translateX(-100%)}.ft-app.ft-collapsed .ft-main{margin-left:0;width:100%}}
+@media(prefers-reduced-motion:reduce){.ft-sidebar{transition:none}}
+</style>
+</head>
+<body>
+<div id="ftApp" class="ft-app">
+<aside class="ft-sidebar" id="ftSidebar" aria-label="Điều hướng chính">
+<a class="ft-brand" href="index.html"><span class="ft-brand-mark">FT</span><span class="ft-brand-copy"><b id="staffName">FAST TRACK SGN</b><small>EXECUTIVE OPERATIONS</small></span></a>
+<nav class="ft-nav">
+<span class="ft-nav-label">WORKSPACE</span>
+<a class="ft-nav-link" href="index.html"><span class="ft-nav-icon">⌂</span>Tổng quan</a>
+<span class="ft-nav-label">BOOKING MANAGEMENT</span>
+<a class="ft-nav-link" href="soan-booking.html"><span class="ft-nav-icon">▤</span>Soạn Booking</a>
+<a class="ft-nav-link active" aria-current="page" href="goi-y-phan-hoi.html"><span class="ft-nav-icon">✦</span>Gợi ý phản hồi tin nhắn</a>
+<button type="button" class="ft-operations-toggle" id="ftOperationsToggle" aria-expanded="false"><span class="ft-nav-icon">▦</span>Vận hành<span class="ft-operations-chevron">⌄</span></button>
+<div class="ft-operations-children" id="ftOperationsChildren" hidden><a class="ft-nav-link" href="ung-don-khach.html"><span class="ft-nav-icon">↙</span>Ứng dụng đón khách</a><a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">↙</span>Đón khách</a></div>
+<span class="ft-nav-label">PEOPLE & PLANNING</span>
+<a class="ft-nav-link" href="xep-lich.html" id="scheduleLink" hidden><span class="ft-nav-icon">▦</span>Xếp lịch</a>
+<a class="ft-nav-link" href="quan-ly-tai-khoan.html" id="adminLink" hidden><span class="ft-nav-icon">⚙</span>Quản lý tài khoản</a>
+<a class="ft-nav-link" href="index.html?settings=pin"><span class="ft-nav-icon">⚿</span>Đổi mã PIN</a>
+</nav>
+<div class="ft-sidebar-foot">Fast Track SGN</div>
+<button type="button" id="logout" class="ft-nav-link ft-sidebar-logout"><span class="ft-nav-icon">↪</span>Đăng xuất</button>
+</aside>
+<div id="overlay" class="overlay" aria-hidden="true"></div>
+<div class="ft-main">
+<header class="ft-topbar"><button type="button" class="ft-menu-toggle" id="ftMenuToggle" aria-label="Mở hoặc đóng menu" aria-expanded="false">☰</button><b>Gợi ý phản hồi tin nhắn AI</b></header>
+<main class="ft-content" id="aiMain" hidden>
+<div class="ai-header"><h1>Gợi ý phản hồi tin nhắn</h1><p>Soạn câu trả lời tiếng Anh và bản dịch tiếng Việt theo SOP Fast Track SGN.</p></div>
+<section class="panel">
+<label for="customerMessage">Tin nhắn khách gửi</label>
+<textarea id="customerMessage" maxlength="4000" placeholder="Dán tin nhắn của khách vào đây..."></textarea>
+<label for="staffInstruction">Bạn muốn trả lời như thế nào? (không bắt buộc)</label>
+<textarea id="staffInstruction" maxlength="1200" placeholder="Ví dụ: Nhờ khách đến điểm H-10 sau khi đã check-in và gửi hành lý."></textarea>
+<div class="row"><span class="tip">Không dán số hộ chiếu, mã đặt chỗ, điện thoại hoặc thông tin nhạy cảm của khách. Hệ thống cố gắng ẩn email và số điện thoại trước khi gọi AI.</span><button class="btn" id="generate" type="button">✦ Tạo phản hồi AI</button></div>
+<div id="status" role="status" aria-live="polite" class="status">Đã sẵn sàng.</div>
+</section>
+<section class="panel results" id="results" hidden aria-live="polite">
+<p class="result-title">Phản hồi tiếng Anh</p><div id="english" class="output"></div><div class="actions"><button type="button" class="btn secondary" id="copyEnglish">Sao chép tiếng Anh</button></div>
+<p class="result-title">Bản dịch tiếng Việt</p><div id="vietnamese" class="output vi"></div><div class="actions"><button type="button" class="btn secondary" id="copyVietnamese">Sao chép tiếng Việt</button></div>
+<p class="tip">AI chỉ gợi ý; nhân viên kiểm tra thông tin thực tế trước khi gửi. Hệ thống không tự động nhắn khách.</p>
+</section>
+</main></div></div>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const apiBase="https://xyhvgttywjleirsiabve.supabase.co/functions/v1/";
+const publishable="sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP";
+const tokenKey="fasttrack_staff_pin_session_v1";
+const app=$("ftApp"),small=matchMedia("(max-width:900px)");
+function readSession(){try{const v=JSON.parse(localStorage.getItem(tokenKey)||"null");return v&&v.token&&Date.parse(v.expiresAt)>Date.now()?v:null}catch{return null}}
+function menu(open){app.classList.toggle("ft-mobile-open",Boolean(open));$("ftMenuToggle").setAttribute("aria-expanded",String(Boolean(open)));}
+$("ftMenuToggle").addEventListener("click",()=>small.matches?menu(!app.classList.contains("ft-mobile-open")):app.classList.toggle("ft-collapsed"));
+$("overlay").addEventListener("click",()=>menu(false));
+$("ftOperationsToggle").addEventListener("click",()=>{const b=$("ftOperationsToggle"),g=$("ftOperationsChildren"),open=g.hidden;g.hidden=!open;b.setAttribute("aria-expanded",String(open));});
+$("logout").addEventListener("click",()=>{localStorage.removeItem(tokenKey);location.href="index.html";});
+let touch=null;
+document.addEventListener("touchstart",e=>{if(!small.matches||e.touches.length!==1){touch=null;return;}const t=e.touches[0],opened=app.classList.contains("ft-mobile-open");touch=(!opened&&t.clientX<=25)||(opened&&$("ftSidebar").contains(e.target))?{x:t.clientX,y:t.clientY,opened}:null;},{passive:true});
+document.addEventListener("touchmove",e=>{if(!touch||!e.cancelable||e.touches.length!==1)return;const t=e.touches[0],dx=t.clientX-touch.x,dy=t.clientY-touch.y;if(Math.abs(dx)>12&&Math.abs(dx)>Math.abs(dy)*1.4)e.preventDefault();},{passive:false});
+document.addEventListener("touchend",e=>{const start=touch;touch=null;if(!start||e.changedTouches.length!==1)return;const t=e.changedTouches[0],dx=t.clientX-start.x,dy=t.clientY-start.y;if(Math.abs(dx)>65&&Math.abs(dx)>Math.abs(dy)*1.5){if(dx>0&&!start.opened)menu(true);if(dx<0&&start.opened)menu(false);}});
+async function request(name,body,signal){
+ const st=readSession();if(!st)throw Error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+ const response=await fetch(apiBase+name,{method:"POST",headers:{"Content-Type":"application/json","apikey":publishable,"Authorization":"Bearer "+st.token},body:JSON.stringify(body),signal:signal});
+ let data;try{data=await response.json()}catch{throw Error("Máy chủ chưa trả về dữ liệu hợp lệ.");}
+ if(!response.ok||!data.ok)throw Error(data.error||"Yêu cầu không thành công.");
+ return data;
+}
+const setStatus=(text,error)=>{$("status").textContent=text;$("status").classList.toggle("error",Boolean(error));};
+async function init(){
+ const st=readSession();
+ if(!st){location.replace("index.html");return;}
+ try{
+  const r=await request("staff-bookings",{action:"me"});
+  $("staffName").textContent=r.profile.full_name||st.username||"FAST TRACK SGN";
+  $("aiMain").hidden=false;
+  try{const m=await request("staff-admin",{action:"can_manage"});if(m.can_manage){$("scheduleLink").hidden=false;$("adminLink").hidden=false;}}catch{}
+ }catch(e){setStatus(e.message,true);if(/Phiên|đăng nhập|khóa|phân quyền/.test(e.message)){location.replace("index.html");}else $("aiMain").hidden=false;}
+}
+$("generate").addEventListener("click",async()=>{
+ const message=$("customerMessage").value.trim(),instruction=$("staffInstruction").value.trim();
+ if(!message){setStatus("Vui lòng nhập tin nhắn của khách.",true);$("customerMessage").focus();return;}
+ const b=$("generate");b.disabled=true;b.textContent="Đang tạo phản hồi...";
+ $("results").hidden=true;setStatus("Gemini đang tạo phản hồi...",false);
+ try{const result=await request("staff-ai-reply",{action:"suggest",message:message,instruction:instruction});
+ $("english").textContent=result.english;$("vietnamese").textContent=result.vietnamese;$("results").hidden=false;
+ setStatus("Đã tạo phản hồi. Vui lòng kiểm tra trước khi gửi. Còn tối đa "+result.remaining_hour+" lượt trong giờ.",false);
+ }catch(e){setStatus(e.message||"Không tạo được phản hồi.",true);}
+ finally{b.disabled=false;b.textContent="✦ Tạo phản hồi AI";}
+});
+async function copy(id){try{await navigator.clipboard.writeText($(id).textContent);setStatus("Đã sao chép vào bộ nhớ tạm.",false);}catch{setStatus("Không thể sao chép tự động. Hãy chọn và sao chép văn bản.",true);}}
+$("copyEnglish").addEventListener("click",()=>copy("english"));
+$("copyVietnamese").addEventListener("click",()=>copy("vietnamese"));
+init();
+})();
+</script>
+</body></html>
