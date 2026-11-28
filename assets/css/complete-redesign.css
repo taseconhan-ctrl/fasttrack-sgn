@@ -12,7 +12,7 @@
   --blue:#2457d6;
   --blue-hover:#1948bd;
   --blue-soft:#edf4ff;
-  --green:#15803d;
+  --green:#334780;
   --amber:#a16207;
   --red:#b42318;
   --radius:14px;
@@ -40,7 +40,7 @@ button{cursor:pointer}
 .ft-nav-link.active{background:var(--blue-soft)!important;color:var(--blue)!important}
 .ft-nav-link.active .ft-nav-icon,.ft-nav-link.active *{color:var(--blue)!important}
 .ft-sidebar-foot{display:flex!important;align-items:center!important;gap:9px!important;padding:14px 10px 3px!important;border-top:1px solid var(--line)!important;color:#8491a4!important;font-size:11px!important}
-.ft-status-dot{width:7px!important;height:7px!important;border-radius:50%!important;background:#16a34a!important;box-shadow:none!important}
+.ft-status-dot{width:7px!important;height:7px!important;border-radius:50%!important;background:#3d58a3!important;box-shadow:none!important}
 .ft-main{min-height:100vh!important;margin-left:var(--sidebar-width)!important;transition:margin-left .22s ease!important;background:var(--app-bg)!important}
 .ft-topbar{position:sticky!important;top:0!important;z-index:1000!important;height:66px!important;min-height:66px!important;display:flex!important;align-items:center!important;gap:13px!important;padding:0 clamp(16px,3vw,34px)!important;background:rgba(255,255,255,.94)!important;border:0!important;border-bottom:1px solid var(--line)!important;box-shadow:none!important;backdrop-filter:blur(12px)!important}
 .ft-menu-toggle{width:38px!important;height:38px!important;min-height:38px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:4px!important;padding:8px!important;border:1px solid var(--line)!important;border-radius:9px!important;background:#fff!important}
@@ -311,8 +311,8 @@ html body .ft-app .ft-content .btn:not(.secondary):not(.ghost):not(.danger),
 html body .ft-app .ft-content .linkbtn:not(.secondary),
 html body .ft-app .ft-content .hero-cta,
 html body .ft-app #staffAuthPanel .auth-actions a {
-  background: #176b4b !important;
-  border: 1px solid #176b4b !important;
+  background: #2f3e6b !important;
+  border: 1px solid #2f3e6b !important;
   color: #ffffff !important;
 }
 
@@ -328,7 +328,7 @@ html body .ft-app #staffAuthPanel .auth-actions button,
 html body #globalStaffAuthBar button {
   background: #fff4dc !important;
   border: 1px solid #d9bd83 !important;
-  color: #254b3b !important;
+  color: #30374b !important;
 }
 
 /* Destructive actions: solid red with white text, never white-on-white. */
