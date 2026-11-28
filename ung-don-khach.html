@@ -2,75 +2,75 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#14251f"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#191c25"><meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest"><title>Điều hành đón khách | Fast Track SGN</title>
 <style>
-:root{color-scheme:dark;--bg:#0d100e;--panel:#171c18;--panel2:#202820;--gold:#c6a968;--gold2:#e4ce98;--text:#f4f0e7;--muted:#a9b0a6;--line:#343c34;--green:#28533d;--red:#6b3030}
+:root{color-scheme:dark;--bg:#0d100e;--panel:#18191c;--panel2:#222428;--gold:#c6a968;--gold2:#e4ce98;--text:#f4f0e7;--muted:#a9abb0;--line:#36383c;--green:#343c53;--red:#6b3030}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Arial,Segoe UI,sans-serif}
-header{position:sticky;top:0;z-index:10;background:#101612ed;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+header{position:sticky;top:0;z-index:10;background:#121316ed;border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
 .top{max-width:1200px;margin:auto;padding:13px 18px;display:flex;align-items:center;gap:12px}.brand{font-weight:800;letter-spacing:.5px}.brand small{display:block;color:var(--gold);font-size:10px;letter-spacing:1.5px}.spacer{flex:1}.who{color:var(--muted);font-size:12px}
 main{max-width:1200px;margin:auto;padding:22px 18px 50px}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}.hero h1{font-size:25px;margin:0 0 4px}.hero p{margin:0;color:var(--muted)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:15px}
-.toolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.field label{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;min-height:42px;border:1px solid #465047;border-radius:8px;background:#0e130f;color:var(--text);padding:9px 10px;font:inherit}
+.toolbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.field label{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;min-height:42px;border:1px solid #494b50;border-radius:8px;background:#0f1013;color:var(--text);padding:9px 10px;font:inherit}
 button,.btn{border:1px solid var(--gold);background:linear-gradient(135deg,#c6a968,#a88b50);color:#17150f;font-weight:800;border-radius:9px;padding:10px 13px;min-height:40px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}
-button.secondary,.btn.secondary{background:#252c26;color:#e9dfc8;border-color:#4b554b}button.danger{background:#432323;color:#ffdede;border-color:#7d4949}button:disabled{opacity:.5;cursor:not-allowed}
+button.secondary,.btn.secondary{background:#27282c;color:#e9dfc8;border-color:#4e5055}button.danger{background:#432323;color:#ffdede;border-color:#7d4949}button:disabled{opacity:.5;cursor:not-allowed}
 .actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:14px 0}.stat{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px}.stat b{font-size:22px;display:block}.stat span{color:var(--muted);font-size:11px}
-.cards{display:block;width:100%;min-width:0}.booking{border:1px solid var(--line);background:var(--panel);border-radius:13px;padding:14px;min-width:0}.booking-top{display:flex;justify-content:space-between;gap:10px}.guest{font-size:16px;font-weight:800;overflow-wrap:anywhere}.sub{color:var(--muted);font-size:12px}.tag{border:1px solid #645538;color:var(--gold2);background:#2a251b;border-radius:30px;padding:3px 8px;font-size:10px;white-space:nowrap;height:max-content}.tag.good{border-color:#37664a;background:#183425;color:#a9e0ba}.tag.warn{border-color:#75603b;background:#332a19;color:#f1d69b}.tag.bad{border-color:#784343;background:#3b2020;color:#f0b8b8}
-.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.detail{padding:8px;border-radius:8px;background:#101511}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{font-size:13px;overflow-wrap:anywhere}
-.card-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.card-actions button{flex:1 1 auto}.empty{padding:35px;text-align:center;color:var(--muted);border:1px dashed #465047;border-radius:12px}
-dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1px solid var(--gold);border-radius:15px;background:#171c18;color:var(--text);padding:18px}dialog::backdrop{background:#000b}.dialog-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}.history-row{padding:10px 0;border-bottom:1px solid var(--line);font-size:12px}.history-row:last-child{border:0}
+.cards{display:block;width:100%;min-width:0}.booking{border:1px solid var(--line);background:var(--panel);border-radius:13px;padding:14px;min-width:0}.booking-top{display:flex;justify-content:space-between;gap:10px}.guest{font-size:16px;font-weight:800;overflow-wrap:anywhere}.sub{color:var(--muted);font-size:12px}.tag{border:1px solid #645538;color:var(--gold2);background:#2a251b;border-radius:30px;padding:3px 8px;font-size:10px;white-space:nowrap;height:max-content}.tag.good{border-color:#444d66;background:#202534;color:#b8c3e0}.tag.warn{border-color:#75603b;background:#332a19;color:#f1d69b}.tag.bad{border-color:#784343;background:#3b2020;color:#f0b8b8}
+.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}.detail{padding:8px;border-radius:8px;background:#111215}.detail small{display:block;color:var(--muted);font-size:10px}.detail b{font-size:13px;overflow-wrap:anywhere}
+.card-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.card-actions button{flex:1 1 auto}.empty{padding:35px;text-align:center;color:var(--muted);border:1px dashed #494b50;border-radius:12px}
+dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1px solid var(--gold);border-radius:15px;background:#18191c;color:var(--text);padding:18px}dialog::backdrop{background:#000b}.dialog-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:15px}.history-row{padding:10px 0;border-bottom:1px solid var(--line);font-size:12px}.history-row:last-child{border:0}
 #message{min-height:20px;color:var(--gold2);font-size:12px;margin:9px 0}#loginRequired{max-width:600px;margin:60px auto;text-align:center}
 @media(max-width:760px){.toolbar{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}.summary{grid-template-columns:1fr 1fr}.top{padding:11px 13px}main{padding:17px 12px 35px}.who{display:none}}
 @media(max-width:420px){.toolbar,.dialog-grid{grid-template-columns:1fr}.details{grid-template-columns:1fr 1fr}.card-actions button{flex:1 1 100%}}
 
-.tablewrap{width:100%;overflow:auto;border:1px solid #d5dfd5;border-radius:11px;background:#f7f8f4}
-.worktable{width:100%;border-collapse:separate;border-spacing:0;min-width:1120px;font-size:12px;color:#26362d}
-.worktable th{position:sticky;top:0;background:#dce8dc;color:#26362d;text-align:left;padding:10px 8px;white-space:nowrap;border-bottom:1px solid #c5d3c5;font-weight:800}
-.worktable td,.worktable td *,.worktable td a,.worktable td span,.worktable td strong,.worktable td b,.worktable td small,.worktable td label{color:#26362d!important}
-.worktable td{padding:8px;border-bottom:1px solid #e0e6de;vertical-align:middle;background:#ffffff!important}
-.worktable tbody tr:nth-child(even) td{background:#f0f4ed!important}
-.worktable tbody tr:hover td{background:#e4eee1!important}
+.tablewrap{width:100%;overflow:auto;border:1px solid #d8dadf;border-radius:11px;background:#f7f8f4}
+.worktable{width:100%;border-collapse:separate;border-spacing:0;min-width:1120px;font-size:12px;color:#2a2e36}
+.worktable th{position:sticky;top:0;background:#dfe2e8;color:#2a2e36;text-align:left;padding:10px 8px;white-space:nowrap;border-bottom:1px solid #c9ccd3;font-weight:800}
+.worktable td,.worktable td *,.worktable td a,.worktable td span,.worktable td strong,.worktable td b,.worktable td small,.worktable td label{color:#2a2e36!important}
+.worktable td{padding:8px;border-bottom:1px solid #e0e2e6;vertical-align:middle;background:#ffffff!important}
+.worktable tbody tr:nth-child(even) td{background:#eff0f4!important}
+.worktable tbody tr:hover td{background:#e5e7ee!important}
 .worktable .photo-cell{text-align:center;width:42px;min-width:42px}
 .worktable .eta-cell{min-width:92px;width:100px}
-.worktable .eta-input{width:82px;min-width:82px;min-height:32px;padding:4px 6px;border:1px solid #bdcbbd;border-radius:6px;background:#ffffff!important;color:#26362d!important;font:inherit;font-variant-numeric:tabular-nums}
-.worktable .eta-input:focus{outline:2px solid #8ba88d;outline-offset:1px}
+.worktable .eta-input{width:82px;min-width:82px;min-height:32px;padding:4px 6px;border:1px solid #c1c4cb;border-radius:6px;background:#ffffff!important;color:#2a2e36!important;font:inherit;font-variant-numeric:tabular-nums}
+.worktable .eta-input:focus{outline:2px solid #9399a8;outline-offset:1px}
 .worktable .eta-input:disabled{opacity:.55}
 .worktable .photo-mini{min-width:30px;min-height:29px;height:29px;padding:3px 6px;border-radius:7px;font-size:15px}
 .worktable .guest-cell{min-width:180px;max-width:260px;white-space:normal}
 .worktable .actions-cell{min-width:180px;white-space:normal}
 .worktable .actions-cell button{min-height:29px;padding:5px 7px;margin:2px;font-size:10px}
-.worktable td .tag.good{color:#246b3b!important}
+.worktable td .tag.good{color:#38456b!important}
 .worktable td .tag.warn{color:#815b12!important}
 .worktable td .tag.bad{color:#9b3030!important}
-.worktable td input,.worktable td select,.worktable td textarea{color:#26362d!important;background:#ffffff!important}
-.worktable td button:not(.photo-mini){color:#26362d!important}
+.worktable td input,.worktable td select,.worktable td textarea{color:#2a2e36!important;background:#ffffff!important}
+.worktable td button:not(.photo-mini){color:#2a2e36!important}
 .worktable td button.danger{color:#9b3030!important}
 @media(max-width:760px){.tablewrap{border-radius:8px}.worktable{font-size:11px}.worktable th,.worktable td{padding:7px 6px}}
 
 </style>
-<link rel="stylesheet" href="assets/css/shared-layout.css?v=ui-refresh-20261127">
-<link rel="stylesheet" href="assets/css/shared-visual.css?v=ui-refresh-20261127">
-<link rel="stylesheet" href="assets/css/shared-mobile-contrast.css?v=ui-refresh-20261127">
-<link rel="stylesheet" href="assets/css/shared-ui.css?v=ui-refresh-20261127">
-<link rel="stylesheet" href="assets/css/complete-redesign.css?v=20261127d">
+<link rel="stylesheet" href="assets/css/shared-layout.css?v=blue-20261128">
+<link rel="stylesheet" href="assets/css/shared-visual.css?v=blue-20261128">
+<link rel="stylesheet" href="assets/css/shared-mobile-contrast.css?v=blue-20261128">
+<link rel="stylesheet" href="assets/css/shared-ui.css?v=blue-20261128">
+<link rel="stylesheet" href="assets/css/complete-redesign.css?v=blue-20261128">
 <style id="booking-table-light-theme">
 /* Bảng booking: đặt sau toàn bộ stylesheet để không bị theme ghi đè */
-#app .tablewrap{background:#f7f8f4!important;border:1px solid #cbd8ca!important}
-#app table.worktable{background:#fff!important;color:#26362d!important;color-scheme:light!important}
-#app table.worktable thead th{background:#dce8dc!important;color:#26362d!important;border-color:#c5d3c5!important}
-#app table.worktable tbody tr td{background:#fff!important;color:#26362d!important;border-color:#e0e6de!important}
-#app table.worktable tbody tr:nth-child(even) td{background:#f0f4ed!important;color:#26362d!important}
-#app table.worktable tbody tr:hover td{background:#e4eee1!important;color:#26362d!important}
-#app table.worktable td,#app table.worktable td *{color:#26362d!important;text-shadow:none!important}
-#app table.worktable td .tag.good{color:#246b3b!important}
+#app .tablewrap{background:#f7f8f4!important;border:1px solid #ced1d8!important}
+#app table.worktable{background:#fff!important;color:#2a2e36!important;color-scheme:light!important}
+#app table.worktable thead th{background:#dfe2e8!important;color:#2a2e36!important;border-color:#c9ccd3!important}
+#app table.worktable tbody tr td{background:#fff!important;color:#2a2e36!important;border-color:#e0e2e6!important}
+#app table.worktable tbody tr:nth-child(even) td{background:#eff0f4!important;color:#2a2e36!important}
+#app table.worktable tbody tr:hover td{background:#e5e7ee!important;color:#2a2e36!important}
+#app table.worktable td,#app table.worktable td *{color:#2a2e36!important;text-shadow:none!important}
+#app table.worktable td .tag.good{color:#38456b!important}
 #app table.worktable td .tag.warn{color:#815b12!important}
 #app table.worktable td .tag.bad{color:#9b3030!important}
-#app table.worktable td input,#app table.worktable td select,#app table.worktable td textarea{background:#fff!important;color:#26362d!important;border-color:#bdcbbd!important;color-scheme:light!important}
-#app table.worktable td button:not(.photo-mini){color:#26362d!important}
+#app table.worktable td input,#app table.worktable td select,#app table.worktable td textarea{background:#fff!important;color:#2a2e36!important;border-color:#c1c4cb!important;color-scheme:light!important}
+#app table.worktable td button:not(.photo-mini){color:#2a2e36!important}
 #app table.worktable td button.danger{color:#9b3030!important}
-#app table.worktable td .photo-mini{color:#26362d!important}
+#app table.worktable td .photo-mini{color:#2a2e36!important}
 /* Bảng trên điện thoại: cột có độ rộng riêng, không co ép gây chồng chữ */
-#app .table-tools{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:0 0 9px;color:#294b3b;font-size:12px;font-weight:700}
+#app .table-tools{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:0 0 9px;color:#33394b;font-size:12px;font-weight:700}
 #app .table-tools button{min-width:38px;min-height:34px;padding:5px 10px}
 #app .table-tools .table-zoom-value{min-width:42px;text-align:center;font-variant-numeric:tabular-nums}
 #app .tablewrap{max-width:100%;overflow:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom}
@@ -118,12 +118,12 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 <style id="booking-mobile-contrast-fix">
 /* Tăng tương phản phần đầu trang và bộ lọc */
 #app .hero h1{color:#f5f3e9!important;text-shadow:none!important}
-#app .hero p{color:#d6e4dc!important}
-#app > section.panel .field label{color:#294b3b!important;font-weight:700}
-#app > section.panel #message{color:#365d46!important;font-weight:600}
-#app > section.panel .stat{background:#f7faf7!important;border-color:#dce5df!important}
+#app .hero p{color:#dadde4!important}
+#app > section.panel .field label{color:#33394b!important;font-weight:700}
+#app > section.panel #message{color:#41485d!important;font-weight:600}
+#app > section.panel .stat{background:#f7faf7!important;border-color:#dfe0e5!important}
 #app > section.panel .stat b{color:#1d3557!important}
-#app > section.panel .stat span{color:#536b5d!important}
+#app > section.panel .stat span{color:#5a5e6b!important}
 @media(max-width:680px){
   .ft-topbar{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:7px!important;padding:9px 10px!important}
   .ft-topbar .ft-menu-toggle{flex:0 0 52px!important;width:52px!important;min-width:52px!important;height:52px!important}
@@ -136,10 +136,10 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
   #app .hero p{font-size:14px!important}
   #app .hero .actions{width:100%!important;display:grid!important;grid-template-columns:1fr!important}
   #app .hero .actions button{width:100%!important;min-height:44px!important}
-  #app>section.panel{padding:13px!important;background:#fff!important;color:#26362d!important}
-  #app>section.panel .field label{font-size:13px!important;color:#294b3b!important}
-  #app>section.panel .field input,#app>section.panel .field select{background:#fff!important;color:#26362d!important;border-color:#cbd8cf!important;color-scheme:light!important}
-  #app>section.panel #message{color:#365d46!important}
+  #app>section.panel{padding:13px!important;background:#fff!important;color:#2a2e36!important}
+  #app>section.panel .field label{font-size:13px!important;color:#33394b!important}
+  #app>section.panel .field input,#app>section.panel .field select{background:#fff!important;color:#2a2e36!important;border-color:#cfd1d8!important;color-scheme:light!important}
+  #app>section.panel #message{color:#41485d!important}
   #app>section.panel .summary{gap:8px!important}
   #app>section.panel .stat{padding:12px!important}
 }
@@ -162,8 +162,8 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 #app .tablewrap{height:65vh!important;height:65dvh!important;max-height:none!important;overflow:scroll!important;contain:none!important;overscroll-behavior:auto!important;touch-action:pan-x pan-y pinch-zoom!important;-webkit-overflow-scrolling:touch!important}
 #app .table-scale{min-width:0!important;width:max-content!important}
 #app table.worktable{width:var(--sheet-width,1862px)!important;min-width:0!important}
-#app .worktable thead th{position:sticky!important;top:0!important;z-index:3;background:#dce8dc!important}
-#app .worktable th,#app .worktable td{border-right:1px solid #d5dfd5!important}
+#app .worktable thead th{position:sticky!important;top:0!important;z-index:3;background:#dfe2e8!important}
+#app .worktable th,#app .worktable td{border-right:1px solid #d8dadf!important}
 #app table.worktable th:nth-child(1),#app table.worktable td:nth-child(1){width:var(--col-0,150px)!important}
 #app table.worktable th:nth-child(2),#app table.worktable td:nth-child(2){width:var(--col-1,95px)!important}
 #app table.worktable th:nth-child(3),#app table.worktable td:nth-child(3){width:var(--col-2,112px)!important}
@@ -178,20 +178,20 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 #app table.worktable th:nth-child(12),#app table.worktable td:nth-child(12){width:var(--col-11,150px)!important}
 #app table.worktable th:nth-child(13),#app table.worktable td:nth-child(13){width:var(--col-12,145px)!important}
 #app table.worktable th:nth-child(14),#app table.worktable td:nth-child(14){width:var(--col-13,200px)!important}
-#app .sheet-resize{position:absolute;right:0;top:0;bottom:0;width:12px;cursor:col-resize;touch-action:none;border-right:2px solid #a2b5a5}
+#app .sheet-resize{position:absolute;right:0;top:0;bottom:0;width:12px;cursor:col-resize;touch-action:none;border-right:2px solid #a7abb5}
 #app,#app .cards{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important}
 #app table.worktable .eta-input{display:block!important;box-sizing:border-box!important;width:100%!important;min-width:0!important;max-width:100%!important;padding:4px!important}
 #app .table-tools,#app .table-tools .table-zoom-value{color:#f5f3e9!important}
-#app .worktable td:focus-within{outline:2px solid #16834e;outline-offset:-2px}
+#app .worktable td:focus-within{outline:2px solid #354983;outline-offset:-2px}
 </style>
 <style id="zoom-toolbar-contrast">
-#app #cards .table-tools{background:#f7f8f4!important;border:1px solid #cbd8ca!important;border-radius:10px;padding:8px!important;color:#173c2d!important}
-#app #cards .table-tools > span,#app #cards .table-tools > b.table-zoom-value{color:#173c2d!important;font-weight:800!important;opacity:1!important;text-shadow:none!important}
-#app #cards .table-tools > button{color:#173c2d!important;background:#fff8e7!important}
+#app #cards .table-tools{background:#f7f8f4!important;border:1px solid #ced1d8!important;border-radius:10px;padding:8px!important;color:#21283c!important}
+#app #cards .table-tools > span,#app #cards .table-tools > b.table-zoom-value{color:#21283c!important;font-weight:800!important;opacity:1!important;text-shadow:none!important}
+#app #cards .table-tools > button{color:#21283c!important;background:#fff8e7!important}
 </style>
 <style id="booking-status-contrast">
 #app #cards table.worktable tbody td .tag{background:#e9edf0!important;color:#344054!important;border:1px solid #b9c4cc!important;font-weight:800!important;text-shadow:none!important;opacity:1!important;white-space:normal!important}
-#app #cards table.worktable tbody td .tag.good{background:#d9f4df!important;color:#14532d!important;border-color:#91c9a0!important}
+#app #cards table.worktable tbody td .tag.good{background:#e1e6f4!important;color:#263253!important;border-color:#a1abc9!important}
 #app #cards table.worktable tbody td .tag.warn{background:#fff0c2!important;color:#754500!important;border-color:#d6b45c!important}
 #app #cards table.worktable tbody td .tag.bad{background:#ffe1e1!important;color:#991b1b!important;border-color:#e3a0a0!important}
 </style>
@@ -346,7 +346,7 @@ html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#ff
 <header class="ft-topbar"><button class="ft-menu-toggle" id="ftMenuToggle" type="button" aria-label="Mở hoặc thu gọn menu" aria-controls="ftSidebar" aria-expanded="true"><span></span><span></span><span></span></button><div class="ft-top-context"><small>FAST TRACK SGN / OPERATIONS</small><b>Ứng dụng đón khách</b></div><div class="ft-top-spacer"></div><span class="who" id="who"></span><button type="button" class="secondary" onclick="if(history.length>1){history.back()}else{location.href='index.html'}">← Quay lại</button><a class="btn secondary" href="index.html">Trang chủ</a><button class="secondary" id="logout">Đăng xuất</button></header>
 <div class="ft-content">
 <section id="loginRequired" class="panel" hidden><h2>Đăng nhập nhân viên</h2><p class="sub">Dùng tên đăng nhập và PIN được Quản lý/Quản trị viên cấp.</p><form id="loginForm"><div class="dialog-grid"><div class="field"><label>Tên đăng nhập</label><input id="loginUsername" autocomplete="username" required></div><div class="field"><label>PIN 4 chữ số</label><input id="loginPin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="current-password" required></div></div><div class="actions"><button id="loginBtn" type="submit">Đăng nhập</button></div><div id="loginMessage" role="status"></div></form></section>
-<section id="appLoading" class="panel" role="status" hidden style="color:#173c2d;background:#f7f8f4;padding:18px">Đang mở ứng dụng đón khách…</section><div id="app" hidden>
+<section id="appLoading" class="panel" role="status" hidden style="color:#21283c;background:#f7f8f4;padding:18px">Đang mở ứng dụng đón khách…</section><div id="app" hidden>
 <div class="hero"><div><h1>Danh sách đón khách</h1><p>Tự đồng bộ mỗi 12 giây · Tan Son Nhat (SGN)</p></div><div class="actions" style="margin:0"><button class="secondary" id="refresh">↻ Cập nhật danh sách làm việc</button></div></div>
 <section class="panel">
 <div class="toolbar">
@@ -410,7 +410,7 @@ $("cards").addEventListener("click",async e=>{const btn=e.target.closest("button
 if(btn.dataset.tableZoom){if(btn.dataset.tableZoom==="reset")sheetWidths=sheetDefaults.slice();tableZoom=btn.dataset.tableZoom==="in"?Math.min(1.5,Math.round((tableZoom+0.1)*10)/10):btn.dataset.tableZoom==="out"?Math.max(0.6,Math.round((tableZoom-0.1)*10)/10):1;render();return}
 if(btn.dataset.finish){btn.disabled=true;await call("finish",{id:btn.dataset.finish,status:btn.dataset.status});await load()}if(btn.dataset.resolveSource){btn.disabled=true;await call("resolve_source_conflict",{id:btn.dataset.resolveSource});say("Đã xác nhận rà soát thông tin nguồn.");await load()}
 if(btn.dataset.edit){const b=bookings.find(x=>x.id===btn.dataset.edit);if(b)openEdit(b)}if(btn.dataset.evidence){await showEvidence(btn.dataset.evidence)}
-if(btn.dataset.history){const d=await call("history",{id:btn.dataset.history});$("historyContent").innerHTML=(d.history||[]).map(h=>'<div class="history-row"><b>'+esc(h.actor_username||"system")+'</b> · '+esc(new Date(h.changed_at).toLocaleString("vi-VN"))+' · '+esc(h.action)+'<pre style="white-space:pre-wrap;color:#c5cbbf">'+esc(JSON.stringify(h.after_data||h.before_data||{},null,2))+'</pre></div>').join("")||"Chưa có lịch sử";$("historyDialog").showModal()}
+if(btn.dataset.history){const d=await call("history",{id:btn.dataset.history});$("historyContent").innerHTML=(d.history||[]).map(h=>'<div class="history-row"><b>'+esc(h.actor_username||"system")+'</b> · '+esc(new Date(h.changed_at).toLocaleString("vi-VN"))+' · '+esc(h.action)+'<pre style="white-space:pre-wrap;color:#c2c5cb">'+esc(JSON.stringify(h.after_data||h.before_data||{},null,2))+'</pre></div>').join("")||"Chưa có lịch sử";$("historyDialog").showModal()}
 }catch(err){say(err.message);await load().catch(()=>{})}});
 $("editCancel").addEventListener("click",()=>$("editDialog").close());
 $("editForm").addEventListener("submit",async e=>{e.preventDefault();if(!editing)return;const changes={estimated_arrival_time:$("editArrival").value.trim(),parking_gate:$("editGate").value.trim(),flight:$("editFlight").value.trim(),guest_name:$("editGuest").value.trim(),agency:$("editAgency").value.trim(),service_time:$("editTime").value.trim(),service_type:$("editType").value.trim(),order_id:$("editOrder").value.trim()};try{await call("update",{id:editing.id,changes});$("editDialog").close();say("Đã lưu thay đổi.");await load()}catch(err){say(err.message)}});
