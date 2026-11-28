@@ -312,7 +312,8 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 <div class="ft-app" id="ftApp">
 <aside class="ft-sidebar" id="ftSidebar" aria-label="Điều hướng chính">
  <a class="ft-brand" href="index.html"><span class="ft-brand-mark">FT</span><span class="ft-brand-copy"><b>FAST TRACK SGN</b><small>EXECUTIVE OPERATIONS</small></span></a>
- <nav class="ft-nav"><span class="ft-nav-label">WORKSPACE</span><a class="ft-nav-link" href="index.html"><span class="ft-nav-icon">⌂</span><span>Tổng quan</span></a><span class="ft-nav-label">BOOKING MANAGEMENT</span><a class="ft-nav-link" href="soan-booking.html"><span class="ft-nav-icon">▤</span><span>Soạn Booking</span></a><span class="ft-nav-label">OPERATIONS</span><a class="ft-nav-link" href="ung-don-khach.html"><span class="ft-nav-icon">↙</span><span>Ứng dụng đón khách</span></a><a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">↙</span><span>Đón khách</span></a><span class="ft-nav-label">PEOPLE & PLANNING</span><a class="ft-nav-link active" href="xep-lich.html" aria-current="page"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a></nav><div class="ft-sidebar-foot"><span class="ft-status-dot"></span><span>Fast Track SGN</span></div>
+ <nav class="ft-nav"><span class="ft-nav-label">WORKSPACE</span><a class="ft-nav-link" href="index.html"><span class="ft-nav-icon">⌂</span><span>Tổng quan</span></a><span class="ft-nav-label">BOOKING MANAGEMENT</span><a class="ft-nav-link" href="soan-booking.html"><span class="ft-nav-icon">▤</span><span>Soạn Booking</span></a><span class="ft-nav-label">OPERATIONS</span><a class="ft-nav-link" href="ung-don-khach.html"><span class="ft-nav-icon">↙</span><span>Ứng dụng đón khách</span></a><a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">↙</span><span>Đón khách</span></a><span class="ft-nav-label">PEOPLE & PLANNING</span><a class="ft-nav-link active" href="xep-lich.html" aria-current="page"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a><span class="ft-nav-label" id="staffManagementNavLabel" hidden>ADMINISTRATION</span><a class="ft-nav-link" id="staffManagementNav" href="quan-ly-tai-khoan.html" hidden><span class="ft-nav-icon">⚙</span><span>Quản lý tài khoản</span></a>
+ </nav><div class="ft-sidebar-foot"><span class="ft-status-dot"></span><span>Fast Track SGN</span></div>
  <button type="button" class="ft-nav-link ft-sidebar-logout" id="ftSidebarLogout" aria-label="Đăng xuất"><span class="ft-nav-icon" aria-hidden="true">↪</span><span>Đăng xuất</span></button>
 </aside><div class="ft-main" id="ftMain"><header class="ft-topbar"><button class="ft-menu-toggle" id="ftMenuToggle" type="button" aria-label="Mở hoặc thu gọn menu" aria-controls="ftSidebar" aria-expanded="true"><span></span><span></span><span></span></button><div class="ft-top-context"><small>FAST TRACK SGN / PEOPLE & PLANNING</small><b>Xếp lịch nhân sự</b></div><div class="ft-top-spacer"></div><a class="ft-account-link" href="#month">Thiết lập tháng làm việc <span>↗</span></a><a class="ft-account-link" href="index.html?settings=pin">Đổi mã PIN <span>↗</span></a></header><div class="ft-content">
 <main class="wrap">
@@ -546,6 +547,15 @@ mobile.addEventListener("change",()=>{app.classList.remove("ft-mobile-open");syn
 <script id="sidebar-logout-action">
 (()=>{const button=document.getElementById("ftSidebarLogout");if(!button)return;
 button.addEventListener("click",()=>{const existing=document.getElementById("cloudSignOut")||document.querySelector("#globalStaffAuthBar button");if(existing){existing.click();return;}button.disabled=true;button.textContent="Đang đăng xuất…";});
+})();
+</script>
+<script id="staff-management-nav-guard">
+(()=>{const link=document.getElementById("staffManagementNav"),label=document.getElementById("staffManagementNavLabel");if(!link)return;
+try{const saved=JSON.parse(localStorage.getItem("fasttrack_staff_pin_session_v1")||"null");if(!saved?.token)return;
+const url="https://xyhvgttywjleirsiabve.supabase.co/functions/v1/staff-admin";
+fetch(url,{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP","Authorization":"Bearer "+saved.token},body:JSON.stringify({action:"can_manage"})})
+.then(r=>r.ok?r.json():null).then(d=>{if(d?.can_manage){link.hidden=false;if(label)label.hidden=false;}}).catch(()=>{});
+}catch(e){}
 })();
 </script>
 </body></html>

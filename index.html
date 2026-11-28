@@ -354,6 +354,7 @@ body.staff-authenticated .ft-account-link{display:none!important}
   <a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">◷</span><span>Đón khách cũ</span></a>
   <span class="ft-nav-label">PEOPLE & PLANNING</span>
   <a class="ft-nav-link" href="xep-lich.html"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a>
+ <span class="ft-nav-label" id="staffManagementNavLabel" hidden>ADMINISTRATION</span><a class="ft-nav-link" id="staffManagementNav" href="quan-ly-tai-khoan.html" hidden><span class="ft-nav-icon">⚙</span><span>Quản lý tài khoản</span></a>
  </nav>
  <div class="ft-sidebar-foot"><span class="ft-status-dot"></span><span>Fast Track SGN</span></div>
 </aside>
@@ -570,6 +571,15 @@ $("staffHomeSignOut").addEventListener("click",async()=>{
 
 
 
+<script id="staff-management-nav-guard">
+(()=>{const link=document.getElementById("staffManagementNav"),label=document.getElementById("staffManagementNavLabel");if(!link)return;
+try{const saved=JSON.parse(localStorage.getItem("fasttrack_staff_pin_session_v1")||"null");if(!saved?.token)return;
+const url="https://xyhvgttywjleirsiabve.supabase.co/functions/v1/staff-admin";
+fetch(url,{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP","Authorization":"Bearer "+saved.token},body:JSON.stringify({action:"can_manage"})})
+.then(r=>r.ok?r.json():null).then(d=>{if(d?.can_manage){link.hidden=false;if(label)label.hidden=false;}}).catch(()=>{});
+}catch(e){}
+})();
+</script>
 </body>
 </html>
 
