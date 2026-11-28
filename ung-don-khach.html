@@ -38,6 +38,26 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 .worktable .guest-cell{min-width:180px;max-width:260px;white-space:normal}
 .worktable .actions-cell{min-width:180px;white-space:normal}
 .worktable .actions-cell button{min-height:29px;padding:5px 7px;margin:2px;font-size:10px}
+/* Force readable light text throughout every booking-table cell, including nested elements */
+.worktable td,
+.worktable td *,
+.worktable td a,
+.worktable td span,
+.worktable td strong,
+.worktable td b,
+.worktable td small,
+.worktable td label,
+.worktable td button,
+.worktable td .tag,
+.worktable td .sub{color:#f4f0e7!important}
+.worktable td .tag.good{color:#b8f0c8!important}
+.worktable td .tag.warn{color:#ffe1a3!important}
+.worktable td .tag.bad{color:#ffc2c2!important}
+.worktable td input,
+.worktable td select,
+.worktable td textarea{color:#fff4d8!important;background:#101612!important}
+.worktable td button:not(.photo-mini){color:#fff4d8!important}
+.worktable td button.danger{color:#ffdede!important}
 @media(max-width:760px){.tablewrap{border-radius:8px}.worktable{font-size:11px}.worktable th,.worktable td{padding:7px 6px}}
 
 </style>
