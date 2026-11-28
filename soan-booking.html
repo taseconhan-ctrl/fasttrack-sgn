@@ -1089,7 +1089,7 @@ function cardHtml(b,i,cacheIndex){
  if(b.skipReason)noteLines.push("Lý do ban đầu bị bỏ qua: "+b.skipReason);
  const notes=noteLines.length?`<div class="status warn"><b>Ghi chú:</b><br>${noteLines.map(esc).join("<br>")}</div>`:"";
  return `<article class="booking">
-  <div class="topline"><h2>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.dir||"Không xác định")}</h2></div>
+  <div class="topline"><h2>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.agency||"Chưa rõ đối tác")} – ${esc(b.dir||"Không xác định")}</h2></div>
  ${b.en?block("BODY TIẾNG ANH",b.en):""}
  ${b.vi?block("BODY TIẾNG VIỆT",b.vi):""}
  <div class="actions">${copyButton(b.sub||"","Copy Subject")} ${copyButton(b.en||"","Copy Body EN","mini secondary")}${b.vi?` ${copyButton(b.vi,"Copy Body VI","mini secondary")}`:""}</div>
