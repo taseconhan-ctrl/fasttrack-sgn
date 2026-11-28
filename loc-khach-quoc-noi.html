@@ -88,27 +88,29 @@ const cols=["Ngày","Tên khách","Chuyến bay","Ga","Giờ bay","Giờ đến 
 let output=[];
 function dateValue(v){const m=v.match(/(\d{1,2})[\/.-](\d{1,2})(?:[\/.-](\d{4}))?/);return m?{d:+m[1],m:+m[2],y:+(m[3]||0)}:null}
 function parseDomestic(raw){
- const rows=[],warnings=[];
- const chunks=raw.split(/(?=^\[\d{1,2}\/\d{1,2}\/\d{4}\s+\d{1,2}:\d{2}(?::\d{2})?\])/m).filter(x=>x.trim());
+ const rows=[],warnings=[],groups=[];let pending=[];
+ const norm=raw.normalize("NFC").replace(/\r/g,"");
+ const chunks=norm.split(/(?=^\[\d{1,2}\/\d{1,2}\/\d{4}\s+\d{1,2}:\d{2})/m);
+ const valid=v=>v&&v.m>=1&&v.m<=12&&v.d>=1&&v.d<=new Date(Date.UTC(v.y||2000,v.m,0)).getUTCDate()?v:null;
  for(const chunk of chunks){
- const sent=dateValue(chunk.match(/^\[([^\]]+)\]/)?.[1]||"");
- const note=chunk.match(/Ghi chú\s*:\s*([^\n]*)/i)?.[1]||"";
- const explicit=dateValue(note);
- let day=explicit;
- if(sent&&/ngày mai/i.test(note)){const next=new Date(Date.UTC(sent.y,sent.m-1,sent.d+1));const tomorrow={d:next.getUTCDate(),m:next.getUTCMonth()+1,y:next.getUTCFullYear()};if(explicit&&(explicit.d!==tomorrow.d||explicit.m!==tomorrow.m||(explicit.y&&explicit.y!==tomorrow.y)))warnings.push("Mâu thuẫn ngày mai và ngày ghi cụ thể: "+note);if(!day)day=tomorrow;}
- if(!day&&sent&&/hôm nay|ngày hôm nay/i.test(note))day=sent;
- const groups=chunk.split(/Tên khách\s*:/i).slice(1);
- if(!groups.length){warnings.push("Không tìm thấy mục Tên khách trong một tin nhắn.");continue}
- for(const g of groups){
- const flight=(g.match(/Chuyến bay\s*:\s*([A-Z0-9]{2})\s*(\d{1,5})/i)||[]).slice(1).join("").toUpperCase();
- const time=(label)=>{const m=g.match(new RegExp(label+"\\s*:\\s*(\\d{1,2}):(\\d{2})","i"));return m&&+m[1]<24&&+m[2]<60?m[1].padStart(2,"0")+":"+m[2]:""};
- const fly=time("Giờ bay"),arr=time("Giờ đến sân bay");
- const names=g.split(/Chuyến bay\s*:/i)[0].split(/\r?\n/).map(n=>n.trim().replace(/^\d+\s*[.)-]\s*/,"")).filter(Boolean);
- const ga=flight? (flight.startsWith("VJ")?"T1":"T3") : "";
- const date=day?String(day.d).padStart(2,"0")+"/"+String(day.m).padStart(2,"0"):"";
- for(const name of names){rows.push({values:[date,name,flight,ga,fly,arr],sort:day?(day.y||sent?.y||0)*10000+day.m*100+day.d:99999999});if(!date||!flight||!fly||!arr||!ga)warnings.push("Thiếu thông tin hoặc chưa xác định ga: "+name);}
- }
- }
+ const sent=valid(dateValue(chunk.match(/^\[([^\]]+)\]/)?.[1]||""));pending=[];
+ for(const g of chunk.split(/Tên\s+khách\s*[:：]/i).slice(1)){
+ const flight=(g.match(/Chuyến\s+bay\s*[:：]\s*([A-Z0-9]{2})\s*(\d{1,5})/i)||[]).slice(1).join("").toUpperCase();
+ const time=label=>{const m=g.match(new RegExp(label+"\\s*[:：]\\s*(\\d{1,2})(?:[:.hH]\\s*(\\d{2})|[hH](?!\\d))","i"));return m&&+m[1]<24&&+(m[2]||0)<60?m[1].padStart(2,"0")+":"+(m[2]||"00"):""};
+ const fly=time("Giờ bay"),arr=time("Giờ (?:đến(?: sân bay)?|có mặt tại sân bay)");
+ const names=g.split(/(?:Chuyến\s+bay|Giờ bay|Giờ đến|Giờ có mặt|Ghi chú|Terminal|Nhà ga)\s*[:：]/i)[0].split("\n").map(n=>n.trim().replace(/^\d+\s*[.)-]\s*/,"").replace(/,$/,"")).filter(n=>n&&!n.startsWith("@"));
+ const tail=g.slice(g.search(/(?:Chuyến\s+bay|Giờ bay)\s*[:：]/i)<0?g.length:g.search(/(?:Chuyến\s+bay|Giờ bay)\s*[:：]/i));
+ const dm=tail.match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{4}))?(?![\dA-Za-z/])/);
+ let day=valid(dm?{d:+dm[1],m:+dm[2],y:+(dm[3]||sent?.y||0)}:null);
+ if(!day&&sent&&/ngày mai/i.test(tail)){const d=new Date(Date.UTC(sent.y,sent.m-1,sent.d+1));day={d:d.getUTCDate(),m:d.getUTCMonth()+1,y:d.getUTCFullYear()};}
+ if(!day&&sent&&/hôm nay|hnay/i.test(tail))day=sent;
+ const group={names,flight,fly,arr,day};groups.push(group);
+ if(day&&pending.length){for(const p of pending)p.day=day;pending=[];}
+ if(!day&&!/Ghi chú|Yêu cầu|Em xin/i.test(tail))pending.push(group);else if(!day)pending=[];
+ const count=tail.match(/(?:hỗ trợ|xin)\s+(\d+)\s+khách/i);if(count&&+count[1]!==names.length)warnings.push("Kiểm tra số khách "+flight+": ghi "+count[1]+", có "+names.length+" tên (có thể là ghi chú chung).");
+ }}
+ const years=[...new Set(groups.map(g=>g.day?.y).filter(Boolean))];
+ for(const g of groups){if(g.day&&!g.day.y&&years.length===1)g.day.y=years[0];const d=g.day,date=d?String(d.d).padStart(2,"0")+"/"+String(d.m).padStart(2,"0"):"";for(const name of g.names){rows.push({values:[date,name,g.flight,g.flight?(g.flight.startsWith("VJ")?"T1":"T3"):"",g.fly,g.arr],sort:d?d.y*10000+d.m*100+d.d:99999999});if(!date||!g.flight||!g.fly||!g.arr)warnings.push("Thiếu thông tin: "+name);}}
  rows.sort((a,b)=>a.sort-b.sort||(a.values[4]||"99:99").localeCompare(b.values[4]||"99:99"));
  return {rows:rows.map(r=>r.values),keys:rows.map(r=>r.sort===99999999?"":String(r.sort).padStart(8,"0")),warnings};
 }
