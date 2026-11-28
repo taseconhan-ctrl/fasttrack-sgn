@@ -59,7 +59,7 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 </aside>
 <div class="ft-main" id="ftMain">
 <header class="ft-topbar"><button class="ft-menu-toggle" id="ftMenuToggle" type="button" aria-label="Mở hoặc thu gọn menu" aria-controls="ftSidebar" aria-expanded="true"><span></span><span></span><span></span></button><div class="ft-top-context"><small>FAST TRACK SGN / OPERATIONS</small><b>Ứng dụng đón khách</b></div><div class="ft-top-spacer"></div><span class="who" id="who"></span><button type="button" class="secondary" onclick="if(history.length>1){history.back()}else{location.href='index.html'}">← Quay lại</button><a class="btn secondary" href="index.html">Trang chủ</a><button class="secondary" id="logout">Đăng xuất</button></header>
-<div class="ft-content"><div class="top"><div class="brand">FAST TRACK SGN<small>GUEST OPERATIONS</small></div><div class="spacer"></div><span class="who" id="who"></span><button type="button" class="secondary" onclick="if(history.length>1){history.back()}else{location.href='index.html'}">← Quay lại</button><a class="btn secondary" href="index.html">Trang chủ</a><button class="secondary" id="logout">Đăng xuất</button></div></header>
+<div class="ft-content">
 <section id="loginRequired" class="panel" hidden><h2>Đăng nhập nhân viên</h2><p class="sub">Dùng tên đăng nhập và PIN được Quản lý/Quản trị viên cấp.</p><form id="loginForm"><div class="dialog-grid"><div class="field"><label>Tên đăng nhập</label><input id="loginUsername" autocomplete="username" required></div><div class="field"><label>PIN 4 chữ số</label><input id="loginPin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="current-password" required></div></div><div class="actions"><button id="loginBtn" type="submit">Đăng nhập</button></div><div id="loginMessage" role="status"></div></form></section>
 <div id="app" hidden>
 <div class="hero"><div><h1>Danh sách đón khách</h1><p>Tự đồng bộ mỗi 12 giây · Tan Son Nhat (SGN)</p></div><div class="actions" style="margin:0"><button class="secondary" id="manageStaff" hidden>Quản lý nhân viên</button><button class="secondary" id="refresh">↻ Cập nhật danh sách làm việc</button></div></div>
@@ -74,7 +74,8 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 </section>
 <div id="cards" class="cards"></div>
 </div>
-</main>
+</div>
+</div>
 <dialog id="editDialog"><form method="dialog" id="editForm"><h3 style="margin-top:0">Cập nhật thông tin booking</h3><div class="dialog-grid">
 <div class="field"><label>Giờ dự kiến đáp (HH:MM)</label><input id="editArrival" placeholder="Ví dụ 14:35"></div>
 <div class="field"><label>Ống/Bãi</label><input id="editGate" placeholder="Ví dụ 12 / 96 / Gọi"></div>
