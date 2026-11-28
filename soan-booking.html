@@ -1108,7 +1108,7 @@ function calendarLink(b){
 }
 function buildOne(b,staff,phone,hotline,staffVN){
  const dir=direction(b),agency=normalizeAgency(b.agency);
- const sub=subject(b),en=(dir&&b.flight&&b.date)?bodyEnglish(b,staff,phone,hotline):"",vi=(dir&&isPartner(b)&&b.flight&&b.date&&b.time)?bodyVietnamese(b,staffVN):"";
+ const sub=subject(b),en=bodyEnglish({...b,flight:b.flight||"[FLIGHT NUMBER]",date:b.date||"[FLIGHT DATE]"},staff,phone,hotline),vi=(dir&&isPartner(b)&&b.flight&&b.date&&b.time)?bodyVietnamese(b,staffVN):"";
  const intl=internationalPhone(b.phone,b.country),vn=localVNPhone(b.phone);
  const wa=intl&&en?"https://wa.me/"+intl+"?text="+encodeURIComponent(en):"";
  const validEmail=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email||"");
@@ -1132,7 +1132,7 @@ function buildOne(b,staff,phone,hotline,staffVN){
  if(!dir)warnings.push("Chưa xác định được loại dịch vụ ĐÓN/TIỄN");
  let copySubject=sub;
  if(b.order&&copySubject)copySubject=copySubject.replace(b.order,"").replace(/\s+–\s+–\s+/g," – ").replace(/^ – | – $/g,"").replace(/🛫 – /,"🛫 ");
- return {...b,dir,agency,sub,en,vi,wa,gm,zalo,calendar,intl,vn,confirmed,unassigned,warnings,refundMessage:refundEligible(b)?refundBody(b,staff,phone,hotline):"",reviewSubject:copySubject,reviewPhone:intl?("+"+intl):(b.phone||"Không có số điện thoại")};
+ return {...b,bodyProfile:[staff,phone,hotline,staffVN],dir,agency,sub,en,vi,wa,gm,zalo,calendar,intl,vn,confirmed,unassigned,warnings,refundMessage:refundEligible(b)?refundBody(b,staff,phone,hotline):"",reviewSubject:copySubject,reviewPhone:intl?("+"+intl):(b.phone||"Không có số điện thoại")};
 }
 function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:""}
 function block(title,content){return `<h3>${title}</h3><pre class="body-content"${title==="BODY TIẾNG ANH"?' data-body-lang="en"':""}>${esc(content)}</pre>`}
@@ -1145,18 +1145,18 @@ function cardHtml(b,i,cacheIndex){
  const notes=noteLines.length?`<div class="status warn"><b>Ghi chú:</b><br>${noteLines.map(esc).join("<br>")}</div>`:"";
  return `<article class="booking">
   <div class="topline"><h2>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.agency||"Chưa rõ đối tác")} – ${esc(b.dir||"Không xác định")}${b.names?.[0]?" - "+esc(b.names[0])+(Math.max(Number(b.pax)||0,b.names.length)>1?" + "+(Math.max(Number(b.pax)||0,b.names.length)-1):""):""}</h2></div>
- ${b.en?block("BODY TIẾNG ANH",b.en):""}
+ <h3>BODY TIẾNG ANH</h3><textarea class="body-content" data-body-lang="en" id="editBody-${cacheIndex}" style="width:100%;min-height:260px;background:#e0f2fe;color:#123b60">${esc(b.en)}</textarea>
  ${b.vi?block("BODY TIẾNG VIỆT",b.vi):""}
  <div class="actions">${copyButton(b.sub||"","Copy Subject")} ${copyButton(b.en||"","Copy Body EN","mini secondary")}${b.vi?` ${copyButton(b.vi,"Copy Body VI","mini secondary")}`:""}</div>
  ${refundEligible(b)&&b.refundMessage?`<details class="refund-message"><summary style="cursor:pointer;font-weight:700;padding:10px 12px;color:#a12626">Soạn tin nhắn bảo khách hoàn tiền</summary>${block("TIN NHẮN HOÀN TIỀN",b.refundMessage)}<div class="actions">${copyButton(b.refundMessage,"Copy tin nhắn hoàn tiền","mini secondary")}${b.intl?linkHtml("https://wa.me/"+b.intl+"?text="+encodeURIComponent(b.refundMessage),"WhatsApp hoàn tiền"):""}${/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email||"")&&b.order?linkHtml(gmailLink(b.email,"Domestic Fast Track Service – "+b.order+" – Cancellation and Refund Request",b.refundMessage),"Gmail hoàn tiền"):""}</div></details>`:""}
  <h3>LIÊN HỆ</h3>
  <div class="kv contact-edit-panel" style="margin:10px 0">
- <b>Bổ sung / chỉnh sửa thông tin liên hệ</b>
+ <b>Bổ sung / chỉnh sửa thông tin booking</b>
  
  <div class="controls">
- <div><label for="contactPhone-${cacheIndex}">Số điện thoại</label><input id="contactPhone-${cacheIndex}" type="tel" value="${esc(b.phone||"")}" placeholder="+84..." autocomplete="tel"></div>
+ <div><label>Chuyến bay</label><input id="editFlight-${cacheIndex}" value="${esc(b.flight||"")}" placeholder="OZ735"></div><div><label>Ngày bay (dd/mm/yyyy)</label><input id="editDate-${cacheIndex}" value="${esc(b.date||"")}"></div><div><label>Giờ bay (HH:mm)</label><input id="editTime-${cacheIndex}" value="${esc(b.time||"")}"></div><div><label>Tên khách (phân cách bằng dấu phẩy)</label><input id="editNames-${cacheIndex}" value="${esc(b.names.join(", "))}"></div><div><label>Mã order</label><input id="editOrder-${cacheIndex}" value="${esc(b.order||"")}"></div><div><label for="contactPhone-${cacheIndex}">Số điện thoại</label><input id="contactPhone-${cacheIndex}" type="tel" value="${esc(b.phone||"")}" placeholder="+84..." autocomplete="tel"></div>
  <div><label for="contactEmail-${cacheIndex}">Gmail / Email</label><input id="contactEmail-${cacheIndex}" type="email" value="${esc(b.email||"")}" placeholder="customer@gmail.com" autocomplete="email"></div>
- <button type="button" class="save-contact" data-contact-index="${cacheIndex}">Cập nhật & tạo link</button>
+ <button type="button" class="save-contact" data-contact-index="${cacheIndex}">Cập nhật Body & tạo link</button>
  </div>
  </div>
  <div class="contact-links">${links}</div>${internal}${notes}
@@ -1168,6 +1168,7 @@ function updateBookingContact(index){
  const email=$("contactEmail-"+index)?.value.trim()||"";
  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast("Email chưa đúng định dạng. Vui lòng kiểm tra lại.",false);return;}
  if(phone&&!/^[+\d][\d\s().-]{6,24}$/.test(phone)){toast("Số điện thoại chưa đúng định dạng. Hãy nhập cả mã quốc gia, ví dụ +84...",false);return;}
+ const edited=$("editBody-"+index)?.value||b.en;const manual=edited!==b.en;const flight=$("editFlight-"+index).value.trim().toUpperCase().replace(/\s/g,""),date=$("editDate-"+index).value.trim(),time=$("editTime-"+index).value.trim(),names=$("editNames-"+index).value.split(",").map(x=>x.trim()).filter(Boolean),order=$("editOrder-"+index).value.trim();if(date&&!/^\d{2}\/\d{2}\/\d{4}$/.test(date)||time&&!/^([01]\d|2[0-3]):[0-5]\d$/.test(time)){toast("Kiểm tra định dạng ngày và giờ.",false);return;}const oldFlight=b.flight,oldDate=b.date;const profile=b.bodyProfile;if(!profile){toast("Vui lòng phân tích lại booking trước khi cập nhật.",false);return;}const updated=buildOne({...b,flight,date,time,names,order,phone,email},...profile);if(manual){updated.en=edited.replaceAll("[FLIGHT NUMBER]",flight||"[FLIGHT NUMBER]").replaceAll("[FLIGHT DATE]",date||"[FLIGHT DATE]");}Object.assign(b,updated);
  b.phone=phone;b.email=email;b.intl=internationalPhone(phone,b.country);b.vn=localVNPhone(phone);b.reviewPhone=b.intl?("+"+b.intl):(phone||"Không có số điện thoại");
  b.wa=b.intl&&b.en?"https://wa.me/"+b.intl+"?text="+encodeURIComponent(b.en):"";
  const gmailSubject=b.order?"Fast Track Airport Pick-up Service – Tan Son Nhat Airport - "+b.order:b.sub;
