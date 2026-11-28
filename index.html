@@ -338,7 +338,55 @@ body.staff-authenticated .ft-account-link{display:none!important}
 #staffHomeSignOut.ft-logout-compact{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 13px;border:1px solid #c9dfcf;border-radius:9px;background:#fff;color:#294b3b;font:600 13px Arial,Tahoma,sans-serif;cursor:pointer}
 #staffHomeSignOut.ft-logout-compact:hover{background:#f4f7fb}
 </style>
-<link rel="stylesheet" href="assets/css/christmas-village-theme.css?v=20261127d">
+<style id="ft-simple-indigo-final">
+:root{color-scheme:light;--ft-navy:#434da0;--ft-green:#434da0;--ft-bg:#fff;--ft-ink:#222;--ft-muted:#666;--ft-line:#ddd;--ft-shadow:none;--ft-radius:6px;--app-bg:#fff;--surface:#fff;--ink:#222;--muted:#666;--line:#ddd;--blue:#434da0;--blue-soft:#eef0f9;--radius:6px;--shadow:none}
+html body,html body .ft-app,html body .ft-main,html body .ft-content{background:#fff!important;color:#222!important;font-family:Arial,sans-serif!important;text-shadow:none!important}
+html body .ft-sidebar{background:#fff!important;border-color:#ddd!important;box-shadow:none!important}
+html body .ft-topbar,html body header{background:#434da0!important;color:#fff!important;border:0!important;box-shadow:0 1px 3px #0002!important;backdrop-filter:none!important}
+html body .ft-topbar *,html body header h1,html body header p{color:#fff!important;text-shadow:none!important}
+html body .ft-topbar button,html body .ft-topbar a{background:transparent!important;border-color:#ffffff66!important;color:#fff!important;box-shadow:none!important}
+html body .ft-menu-toggle span{background:#fff!important}
+html body .ft-brand{background:#fff!important;border-color:#ddd!important}
+html body .ft-brand-mark{background:#434da0!important;color:#fff!important;border:0!important}
+html body .ft-brand-copy b,html body .ft-nav-link{color:#222!important}
+html body .ft-brand-copy small,html body .ft-nav-label,html body .ft-sidebar-foot,html body .ft-nav-icon{color:#666!important}
+html body .ft-nav-link{border-radius:0!important;background:transparent!important;box-shadow:none!important}
+html body .ft-nav-link.active,html body .ft-nav-link:hover{background:#eef0f9!important;color:#434da0!important}
+html body .ft-nav-link.active *{color:#434da0!important}
+html body :is(.panel,.booking,.review,.staff,.workspace-choice,.intro,.home-hero,.item,.hero,.kv,.stat,.metric,#staffAuthPanel,dialog){background:#fff!important;color:#222!important;border:1px solid #ddd!important;border-radius:6px!important;box-shadow:none!important;text-shadow:none!important}
+html body .home-hero{min-height:0!important;padding:20px!important;text-align:left!important}
+html body :is(.home-hero,.intro,.panel,.booking,.review,.item)::before,html body :is(.home-hero,.intro,.panel,.booking,.review,.item)::after{content:none!important;display:none!important}
+html body :is(h1,h2,h3,h4,label,.kv b,.stat b,.metric b,.hero h1,.hero p,.item h3){color:#222!important;text-shadow:none!important;-webkit-text-fill-color:currentColor!important}
+html body :is(p,.hint,.muted,small,.sub,.kv small,.stat span,.metric span){color:#666!important;text-shadow:none!important}
+html body .ft-topbar :is(b,small,span),html body header :is(h1,p){color:#fff!important}
+html body :is(input:not([type=checkbox]):not([type=radio]),select,textarea){background:#fff!important;color:#222!important;border:1px solid #bbb!important;border-radius:5px!important;box-shadow:none!important;color-scheme:light!important}
+html body :is(input,select,textarea):focus{outline:2px solid #434da0!important;outline-offset:0!important}
+html body :is(button,.btn,.linkbtn,.hero-cta,.back){background:#434da0!important;color:#fff!important;-webkit-text-fill-color:currentColor!important;border:1px solid #434da0!important;border-radius:5px!important;box-shadow:none!important;text-shadow:none!important;transform:none!important}
+html body :is(button,.btn,.linkbtn):is(.secondary,.ghost,.back){background:#fff!important;color:#434da0!important;border-color:#bbb!important}
+html body button.danger{background:#fff!important;color:#222!important;border-color:#999!important}
+html body .ft-topbar :is(button,a){background:transparent!important;color:#fff!important}
+html body :is(.icon,.go,.hero-kicker){color:#434da0!important;background:none!important;box-shadow:none!important}
+html body :is(.tablewrap,.table-wrapper,.table-responsive){background:#fff!important;border-color:#ddd!important;border-radius:5px!important;box-shadow:none!important}
+html body table{background:#fff!important;color:#222!important}
+html body table th{background:#eef0f9!important;color:#222!important;border-color:#ddd!important}
+html body table tbody td{background:#fff!important;color:#222!important;border-color:#ddd!important}
+html body table tbody tr:nth-child(even) td{background:#fafafa!important}
+html body table tbody tr:hover td{background:#eef0f9!important}
+html body :is(.status,.tag,.pill,.count,pre){background:#f5f5f5!important;color:#333!important;border-color:#ddd!important;text-shadow:none!important;box-shadow:none!important}
+html body :is(.tag,.pill,.status).good{background:#eef0f9!important;color:#434da0!important}
+html body :is(.tag,.pill,.status).bad{background:#eee!important;color:#222!important}
+html body :is(.tag,.pill,.status).warn{background:#f5f5f5!important;color:#333!important}
+html body :is(.ft-footer,footer){background:#fff!important;color:#666!important;border-top:1px solid #ddd!important}
+html body #app #cards .table-tools{background:#fff!important;border-color:#ddd!important}
+html body #app #cards .table-tools :is(span,b,button){color:#434da0!important;background:#fff!important}
+html body #app #cards table.worktable thead th{background:#eef0f9!important;color:#222!important}
+html body #app #cards table.worktable tbody td{background:#fff!important;color:#222!important}
+html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#fafafa!important}
+html body #app #cards table.worktable tbody td .tag{background:#eef0f9!important;color:#303878!important;border-color:#c8cce6!important}
+html body #app #cards table.worktable tbody td button{background:#fff!important;color:#434da0!important;border-color:#bbb!important}
+html body #bookingMain .contact-links a.linkbtn,html body #bookingMain .actions a.linkbtn{background:#434da0!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#434da0!important;box-shadow:none!important}
+@media(max-width:680px){html body .ft-content{padding:12px 10px 24px!important}html body .ft-sidebar{width:min(78vw,300px)!important}html body .ft-topbar{height:auto!important;min-height:56px!important}html body .ft-nav-link{min-height:48px!important;font-size:15px!important}html body .menu{grid-template-columns:1fr!important}html body .menu .item{min-height:0!important;padding:15px!important}}
+</style>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
