@@ -646,6 +646,7 @@ html body #ftApp #bookingMain .hint{color:#53647e!important;font-size:14px!impor
 html body #ftApp #bookingMain button#run{background:#35539b!important;color:#fff!important;border:0!important;border-radius:6px!important;min-height:44px!important}
 @media(max-width:680px){html body #ftApp #bookingMain .controls>div{flex:1 1 100%!important;min-width:0!important}html body #ftApp #bookingMain button#run{width:100%!important}html body #ftApp #bookingMain textarea#raw{min-height:66px!important}}
 </style>
+<style>[data-manager-schedule][hidden]{display:none!important}</style>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
@@ -655,7 +656,7 @@ html body #ftApp #bookingMain button#run{background:#35539b!important;color:#fff
   <span class="ft-nav-label">WORKSPACE</span><a class="ft-nav-link" href="index.html"><span class="ft-nav-icon">⌂</span><span>Tổng quan</span></a>
   <span class="ft-nav-label">BOOKING MANAGEMENT</span><a class="ft-nav-link active" href="soan-booking.html" aria-current="page"><span class="ft-nav-icon">▤</span><span>Soạn Booking</span></a>
   <span class="ft-nav-label">OPERATIONS</span><a class="ft-nav-link" href="ung-don-khach.html"><span class="ft-nav-icon">↙</span><span>Ứng dụng đón khách</span></a><a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">↙</span><span>Đón khách</span></a>
-  <span class="ft-nav-label">PEOPLE & PLANNING</span><a class="ft-nav-link" href="xep-lich.html"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a>
+  <span class="ft-nav-label">PEOPLE & PLANNING</span><a class="ft-nav-link" href="xep-lich.html" hidden data-manager-schedule><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a>
  <span class="ft-nav-label" id="staffManagementNavLabel" hidden>ADMINISTRATION</span><a class="ft-nav-link" id="staffManagementNav" href="quan-ly-tai-khoan.html" hidden><span class="ft-nav-icon">⚙</span><span>Quản lý tài khoản</span></a>
  <a class="ft-nav-link" href="index.html?settings=pin"><span class="ft-nav-icon" aria-hidden="true">⚿</span><span>Đổi mã PIN</span></a>
 </nav><div class="ft-sidebar-foot"><span class="ft-status-dot"></span><span>Fast Track SGN</span></div>
@@ -1531,7 +1532,7 @@ button.addEventListener("click",()=>{const existing=document.getElementById("clo
 try{const saved=JSON.parse(localStorage.getItem("fasttrack_staff_pin_session_v1")||"null");if(!saved?.token)return;
 const url="https://xyhvgttywjleirsiabve.supabase.co/functions/v1/staff-admin";
 fetch(url,{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP","Authorization":"Bearer "+saved.token},body:JSON.stringify({action:"can_manage"})})
-.then(r=>r.ok?r.json():null).then(d=>{if(d?.can_manage){link.hidden=false;if(label)label.hidden=false;}}).catch(()=>{});
+.then(r=>r.ok?r.json():null).then(d=>{if(d?.can_manage){link.hidden=false;if(label)label.hidden=false;document.querySelectorAll("[data-manager-schedule]").forEach(a=>a.hidden=false);}}).catch(()=>{});
 }catch(e){}
 })();
 </script>
