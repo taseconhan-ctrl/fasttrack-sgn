@@ -484,17 +484,23 @@ $("historyClose").addEventListener("click",()=>$("historyDialog").close());
 $("evidenceClose").addEventListener("click",()=>$("evidenceDialog").close());
 let evidenceBusy=false;
 async function compactEvidence(f){
- if(!/^image\//i.test(f.type)&&! /\.(heic|heif|jpg|jpeg|png|webp)$/i.test(f.name))throw Error("Vui lòng chọn ảnh.");
+ if(!/^image\//i.test(f.type)&&!/\.(heic|heif|jpg|jpeg|png|webp)$/i.test(f.name))throw Error("Vui lòng chọn ảnh.");
  const url=window.URL.createObjectURL(f);
  try{
  const img=new Image();img.src=url;await img.decode();
- const scale=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
- const c=document.createElement("canvas");c.width=Math.max(1,Math.round(img.naturalWidth*scale));c.height=Math.max(1,Math.round(img.naturalHeight*scale));
- const ctx=c.getContext("2d",{alpha:false});ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);
- const blob=await new Promise(resolve=>c.toBlob(resolve,"image/jpeg",0.76));
- if(!blob)throw Error("Không nén được ảnh.");
- if(/image\/(jpeg|png|webp)/.test(f.type)&&f.size<blob.size)return f;
- return new File([blob],f.name.replace(/\.[^.]+$/,"")+".jpg",{type:"image/jpeg"});
+ const c=document.createElement("canvas"),ctx=c.getContext("2d",{alpha:false});
+ let best=null;
+ for(const [limit,quality] of [[1600,.78],[1600,.65],[1400,.65],[1200,.62]]){
+ const scale=Math.min(1,limit/Math.max(img.naturalWidth,img.naturalHeight));
+ c.width=Math.max(1,Math.round(img.naturalWidth*scale));c.height=Math.max(1,Math.round(img.naturalHeight*scale));
+ ctx.fillStyle="#fff";ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(img,0,0,c.width,c.height);
+ const blob=await new Promise(resolve=>c.toBlob(resolve,"image/jpeg",quality));
+ if(blob&&(!best||blob.size<best.size))best=blob;
+ if(best&&best.size<=250000)break;
+ }
+ if(!best)throw Error("Không nén được ảnh.");
+ if(/^image\/(jpeg|png|webp)$/.test(f.type)&&f.size<=best.size)return f;
+ return new File([best],f.name.replace(/\.[^.]+$/,"")+".jpg",{type:"image/jpeg"});
  }catch(err){if(/^image\/(jpeg|png|webp)$/.test(f.type)&&f.size<=10*1024*1024)return f;throw err}finally{window.URL.revokeObjectURL(url)}
 }
 async function saveSelectedEvidence(){
@@ -505,7 +511,7 @@ async function saveSelectedEvidence(){
  const controls=["evidenceUpload","evidenceClose","evidenceFile","evidenceLibrary","evidenceLocalSave"];controls.forEach(k=>$(k).disabled=true);
  try{
  $("evidenceSelected").textContent="Đang tối ưu ảnh…";
- const file=/^image\/(jpeg|png|webp)$/.test(f.type)&&f.size<=450000?f:await compactEvidence(f);
+ const file=/^image\/(jpeg|png|webp)$/.test(f.type)&&f.size<=250000?f:await compactEvidence(f);
  if(file.size>10*1024*1024)throw Error("Ảnh vượt quá 10 MB.");
  $("evidenceSelected").textContent="Đang tải ảnh lên…";
  await uploadEvidence(id,file);window.FTActivity?.record("ung_don_khach",{kind:"tai_anh"});
