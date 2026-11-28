@@ -1239,16 +1239,16 @@ function renderSavedReviewArchive(){
   const ordered=x=>{const [name,service,flight,time]=fields(x);return [x.agency||"Chưa rõ agency",name,flight,service,time,x.order,x.reviewPhone];};
   const rows=list.map((x,i)=>{
    const base=ordered(x);
-   if(isDeparture)base.push(x.estimatedArrival||"");
+   if(isDeparture)base.splice(3,0,x.estimatedArrival||"");
 
    const line=base.join(" | ");
    const timeCell=isDeparture?'<td><input type="time" class="saved-estimated-arrival" data-saved-key="'+esc(x.key||savedReviewKey(x))+'" value="'+esc(x.estimatedArrival||"")+'" aria-label="Giờ dự kiến đến sân bay" style="min-width:112px;padding:7px;border:1px solid #c9cbd2;border-radius:7px"></td>':"";
-   return '<tr><td>'+(i+1)+'</td><td>'+esc(x.date)+'</td>'+ordered(x).map(v=>'<td>'+esc(v||'')+'</td>').join('')+timeCell+'<td>'+copyButton(line,"Copy dòng")+' <button type="button" class="mini ghost delete-saved-review" data-saved-key="'+esc(x.key||savedReviewKey(x))+'">Xóa</button></td></tr>';
+   return '<tr><td>'+(i+1)+'</td><td>'+esc(x.date)+'</td>'+ordered(x).map((v,j)=>'<td>'+esc(v||'')+'</td>'+(j===2?timeCell:'')).join('')+'<td>'+copyButton(line,"Copy dòng")+' <button type="button" class="mini ghost delete-saved-review" data-saved-key="'+esc(x.key||savedReviewKey(x))+'">Xóa</button></td></tr>';
   });
-  const all=list.map(x=>[...ordered(x),...(isDeparture?[x.estimatedArrival||""]:[])].join(" | ")).join("\\n");
-  const timeHead=isDeparture?"<th>Giờ dự kiến đến sân bay</th>":"";
+  const all=list.map(x=>(()=>{const v=ordered(x);if(isDeparture)v.splice(3,0,x.estimatedArrival||"");return v;})().join(" | ")).join("\\n");
+  const timeHead=isDeparture?"<th>GIỜ DỰ KIẾN ĐẾN SÂN BAY/ETA</th>":"";
   const colspan=isDeparture?11:10;
-  return '<section class="review"><div class="topline"><h3>'+title+'</h3>'+copyButton(all,"Copy tất cả","secondary")+'</div><div class="tablewrap"><table><thead><tr><th>#</th><th>Ngày bay</th><th>Agency</th><th>Tên khách</th><th>Flight</th><th>Loại dịch vụ</th><th>Time</th><th>Mã order</th><th>Số điện thoại</th>'+timeHead+'<th>Thao tác</th></tr></thead><tbody>'+(rows.join("")||'<tr><td colspan="'+colspan+'" class="muted">Không có booking.</td></tr>')+'</tbody></table></div></section>';
+  return '<section class="review"><div class="topline"><h3>'+title+'</h3>'+copyButton(all,"Copy tất cả","secondary")+'</div><div class="tablewrap"><table><thead><tr><th>#</th><th>Ngày bay</th><th>Agency</th><th>Tên khách</th><th>Flight</th>'+timeHead+'<th>Loại dịch vụ</th><th>Time</th><th>Mã order</th><th>Số điện thoại</th><th>Thao tác</th></tr></thead><tbody>'+(rows.join("")||'<tr><td colspan="'+colspan+'" class="muted">Không có booking.</td></tr>')+'</tbody></table></div></section>';
  }
  $("savedReviewTables").innerHTML=table("ARRIVAL","BẢNG COPY SUBJECT – ĐÓN")+table("DEPARTURE","BẢNG COPY SUBJECT – TIỄN");if(historyView)renderFullHistory(filtered);
 
