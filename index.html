@@ -519,6 +519,7 @@ html body.staff-authenticated #ftApp #ftMain #cards table.worktable input{min-he
 html body.staff-authenticated #ftApp #ftMain #cards table.worktable button{min-height:28px!important;font-size:inherit!important;padding:4px 8px!important}
 @media(max-width:680px){html body.staff-authenticated #ftApp #ftMain .ft-content .controls>div{flex:1 1 100%!important;min-width:0!important}html body.staff-authenticated #ftApp #ftMain .ft-content{padding:12px!important}}
 </style>
+<style>[data-manager-schedule][hidden]{display:none!important}</style>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
@@ -533,7 +534,7 @@ html body.staff-authenticated #ftApp #ftMain #cards table.worktable button{min-h
   <a class="ft-nav-link" href="ung-don-khach.html"><span class="ft-nav-icon">↙</span><span>Ứng dụng đón khách</span></a>
   <a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">◷</span><span>Đón khách cũ</span></a>
   <span class="ft-nav-label">PEOPLE & PLANNING</span>
-  <a class="ft-nav-link" href="xep-lich.html"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a>
+  <a class="ft-nav-link" href="xep-lich.html" hidden data-manager-schedule><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a>
  <span class="ft-nav-label" id="staffManagementNavLabel" hidden>ADMINISTRATION</span><a class="ft-nav-link" id="staffManagementNav" href="quan-ly-tai-khoan.html" hidden><span class="ft-nav-icon">⚙</span><span>Quản lý tài khoản</span></a>
  <a class="ft-nav-link" href="index.html?settings=pin"><span class="ft-nav-icon" aria-hidden="true">⚿</span><span>Đổi mã PIN</span></a>
 </nav>
@@ -573,7 +574,7 @@ html body.staff-authenticated #ftApp #ftMain #cards table.worktable button{min-h
  <div id="staffSignedIn" hidden>
   <p id="staffSignedInText" style="font-weight:750;color:#f5dfaa"></p>
   <div class="auth-actions">
-   <a href="soan-booking.html">Soạn Booking</a><a href="ung-don-khach.html">Điều hành đón khách</a><a href="don-khach.html">Đón khách cũ</a><a href="xep-lich.html">Xếp lịch</a>
+   <a href="soan-booking.html">Soạn Booking</a><a href="ung-don-khach.html">Điều hành đón khách</a><a href="don-khach.html">Đón khách cũ</a><a href="xep-lich.html" hidden data-manager-schedule>Xếp lịch</a>
    <a href="index.html?settings=pin">Đổi mã PIN</a>
    <button type="button" id="staffHomeSignOut">Đăng xuất</button>
   </div>
@@ -601,7 +602,7 @@ html body.staff-authenticated #ftApp #ftMain #cards table.worktable button{min-h
       <p>Phân tích booking, tạo Subject và nội dung tin nhắn, đồng thời tạo các liên kết liên hệ để xử lý nhanh.</p>
       <span class="go">Mở chức năng <span aria-hidden="true">→</span></span>
     </a>
-    <a class="item" href="xep-lich.html">
+    <a class="item" href="xep-lich.html" hidden data-manager-schedule>
       <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h3M8 17h7"/></svg></span>
       <h3>XẾP LỊCH NHÂN VIÊN</h3>
       <p>Tự động phân ca theo quy tắc Fast Track SGN, chỉnh sửa lịch từng ngày, kiểm tra điều kiện và xuất bảng phân ca.</p>
@@ -757,7 +758,7 @@ $("staffHomeSignOut").addEventListener("click",async()=>{
 try{const saved=JSON.parse(localStorage.getItem("fasttrack_staff_pin_session_v1")||"null");if(!saved?.token)return;
 const url="https://xyhvgttywjleirsiabve.supabase.co/functions/v1/staff-admin";
 fetch(url,{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP","Authorization":"Bearer "+saved.token},body:JSON.stringify({action:"can_manage"})})
-.then(r=>r.ok?r.json():null).then(d=>{if(d?.can_manage){link.hidden=false;if(label)label.hidden=false;}}).catch(()=>{});
+.then(r=>r.ok?r.json():null).then(d=>{if(d?.can_manage){link.hidden=false;if(label)label.hidden=false;document.querySelectorAll("[data-manager-schedule]").forEach(a=>a.hidden=false);}}).catch(()=>{});
 }catch(e){}
 })();
 </script>
