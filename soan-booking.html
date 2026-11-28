@@ -1281,6 +1281,7 @@ function applyState(state){
   if(session.staff)$("staff").value=session.staff;
   if(session.phone)$("phone").value=session.phone;
   if(session.hotline)$("hotline").value=session.hotline;
+  $("includeAssigned").checked=!!session.includeAssigned;
   run();
   $("status").textContent="Đã khôi phục phiên Soạn Booking và dữ liệu riêng của "+activeUser+".";
   $("status").className="status good";
