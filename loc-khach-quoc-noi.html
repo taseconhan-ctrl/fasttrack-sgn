@@ -32,7 +32,7 @@ label{display:block;font-weight:700;margin:12px 0 6px}textarea{font:inherit;colo
 <a class="ft-nav-link" href="index.html"><span class="ft-nav-icon">⌂</span>Tổng quan</a>
 <span class="ft-nav-label">BOOKING MANAGEMENT</span>
 <a class="ft-nav-link" href="soan-booking.html"><span class="ft-nav-icon">▤</span>Soạn Booking</a>
-<a class="ft-nav-link active" aria-current="page" href="loc-khach-quoc-noi.html"><span class="ft-nav-icon">≡</span><span>Lọc khách quốc nội</span></a>
+<a class="ft-nav-link" hidden style="display:none!important" data-domestic-manager aria-current="page" href="loc-khach-quoc-noi.html"><span class="ft-nav-icon">≡</span><span>Lọc khách quốc nội</span></a>
 <a class="ft-nav-link" href="goi-y-phan-hoi.html"><span class="ft-nav-icon">✦</span>Gợi ý phản hồi tin nhắn</a>
 <button type="button" class="ft-operations-toggle" id="ftOperationsToggle" aria-expanded="false"><span class="ft-nav-icon">▦</span>Vận hành<span class="ft-operations-chevron">⌄</span></button>
 <div class="ft-operations-children" id="ftOperationsChildren" hidden><a class="ft-nav-link" href="ung-don-khach.html"><span class="ft-nav-icon">↙</span>Ứng dụng đón khách</a><a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">↙</span>Đón khách</a></div>
@@ -80,9 +80,8 @@ async function init(){
  try{
   const r=await request("staff-bookings",{action:"me"});
   $("staffName").textContent=r.profile.full_name||st.username||"FAST TRACK SGN";
-  $("aiMain").hidden=false;
-  try{const m=await request("staff-admin",{action:"can_manage"});if(m.can_manage){$("scheduleLink").hidden=false;$("adminLink").hidden=false;}}catch{}
- }catch(e){setStatus(e.message,true);if(/Phiên|đăng nhập|khóa|phân quyền/.test(e.message)){location.replace("index.html");}else $("aiMain").hidden=false;}
+  const m=await request("staff-admin",{action:"can_manage"});if(!m.can_manage){location.replace("index.html");return;}$("aiMain").hidden=false;$("scheduleLink").hidden=false;$("adminLink").hidden=false;
+ }catch(e){setStatus(e.message,true);if(/Phiên|đăng nhập|khóa|phân quyền/.test(e.message)){location.replace("index.html");}else location.replace("index.html");}
 }
 
 const cols=["Ngày","Tên khách","Chuyến bay","Ga","Giờ bay","Giờ đến sân bay"];
@@ -120,4 +119,4 @@ $("copyDomestic").addEventListener("click",async()=>{try{await navigator.clipboa
 init();
 })();
 </script>
-</body></html>
+<script id="domestic-manager-nav">(()=>{async function check(){const links=document.querySelectorAll("[data-domestic-manager]");for(const a of links){a.hidden=true;a.style.setProperty("display","none","important")}try{const st=JSON.parse(localStorage.getItem("fasttrack_staff_pin_session_v1")||"null");if(!st?.token)return;const r=await fetch("https://xyhvgttywjleirsiabve.supabase.co/functions/v1/staff-admin",{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP","Authorization":"Bearer "+st.token},body:JSON.stringify({action:"can_manage"})});const v=await r.json();if(r.ok&&v.can_manage){for(const a of links){a.hidden=false;a.style.removeProperty("display")}}}catch{}}check();window.addEventListener("storage",check);window.addEventListener("focus",check)})();</script></body></html>
