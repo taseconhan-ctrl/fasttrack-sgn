@@ -531,10 +531,10 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
   <textarea id="raw" placeholder="Dán dữ liệu booking Fast Track vào đây..."></textarea>
   <div class="controls">
     <button id="run">Phân tích & tạo kết quả</button>
-    <button type="button" class="secondary" id="composeAssigned">Soạn booking đã có nhân viên nhận việc</button>
+    <label class="inline-check" for="includeAssigned"><input type="checkbox" id="includeAssigned"> Soạn tất cả booking được dán, kể cả booking đã có nhân viên nhận việc</label>
     <button class="secondary" id="clear">Xóa dữ liệu</button>
   </div>
-  <p class="hint">Chỉ xử lý booking “Đã xác nhận”. Mặc định: ĐÓN lấy tất cả booking ĐÓN đã xác nhận; TIỄN chỉ lấy booking chưa có nhân viên nhận việc (trống, _ hoặc chưa phân công). Bấm “Soạn booking đã có nhân viên nhận việc” để tạo kết quả cho cả booking ĐÓN và TIỄN đã có nhân viên nhận việc. “SGN - Dịch vụ” là ghi chú dịch vụ, không phải nhân viên nhận việc.</p>
+  <p class="hint">Không tích: chỉ soạn booking chưa có nhân viên nhận việc (trống, _ hoặc chưa phân công). Tích vào: soạn toàn bộ booking được dán, kể cả booking đã có nhân viên nhận việc. Áp dụng giống nhau cho cả ĐÓN và TIỄN; không lọc theo trạng thái xác nhận hay điều kiện khác. “SGN - Dịch vụ” là ghi chú dịch vụ, không phải nhân viên nhận việc.</p>
   <div id="status" class="status">Chưa có dữ liệu được xử lý.</div>
 </section>
 <div id="summary" class="panel hidden"></div>
@@ -1115,11 +1115,8 @@ async function copyText(s){
 }
 function toast(msg,good=true){const el=$("status");if(!el)return;el.textContent=msg;el.className="status "+(good?"good":"warn")}
 function skippedReasons(b,all){
- const reasons=[];
- if(b.dir==="DEPARTURE"&&!b.unassigned&&!all)reasons.push("Đã có nhân viên nhận việc: "+(b.staffAssign||"không rõ"));
- if(!b.confirmed)reasons.push("Trạng thái booking không phải “Đã xác nhận”");
- if(b.dir!=="ARRIVAL"&&b.dir!=="DEPARTURE")reasons.push("Chưa xác định được loại dịch vụ ĐÓN/TIỄN");
- return [...new Set(reasons)];
+ if(!all&&!b.unassigned)return ["Đã có nhân viên nhận việc: "+(b.staffAssign||"không rõ")];
+ return [];
 }
 function missingInfo(b){
  const missing=[];
@@ -1138,9 +1135,10 @@ function renderSkippedBookings(items,all){
   const alreadyComposed=processedBookings.some(x=>x.raw===b.raw);
   return `<article class="booking"><div class="topline"><h3>${i+1}. ${esc(b.order||"Không có mã order")} – ${esc(b.dir||"Chưa xác định loại")}</h3><span class="pill bad">ĐÃ BỎ QUA</span></div><div class="meta"><span class="pill">${esc(b.flight||"Chưa có flight")}</span><span class="pill">${esc(b.date||"")} ${esc(b.time||"")}</span><span class="pill">${b.pax||b.names.length||0} khách</span></div><div class="grid"><div class="kv"><small>Khách</small><b>${esc(b.names.join(", "))}</b></div><div class="kv"><small>Nhân viên nhận việc</small><b>${esc(b.staffAssign||"Trống")}</b></div><div class="kv"><small>Trạng thái</small><b>${esc(b.status||"")}</b></div></div><div class="status warn"><b>Lý do bỏ qua:</b><ul>${reason.map(x=>"<li>"+esc(x)+"</li>").join("")||"<li>Booking được đưa vào đây theo bộ lọc hiện tại.</li>"}</ul>${missing.length?`<p><b>Thông tin còn thiếu (nếu có):</b> ${missing.map(esc).join(", ")}. Các trường này sẽ để trống khi soạn.</p>`:""}</div><div class="controls"><button type="button" class="compose-one-skipped" data-skipped-index="${i}" ${alreadyComposed?"disabled":""}>${alreadyComposed?"Đã soạn tại đây":"Soạn booking này"}</button></div><div class="skipped-compose-output"></div></article>`;
  }).join("");
- return `<section class="panel"><div class="topline"><h2>BOOKING BỊ BỎ QUA (${items.length})</h2><span class="pill bad">Có lý do cho từng booking</span></div><p class="hint">Chỉ ghi lý do bỏ qua: booking chưa xác nhận, chưa xác định được ĐÓN/TIỄN, hoặc booking TIỄN đã có nhân viên nhận việc khi chưa bật tùy chọn xử lý. Mục ĐÓN không lọc theo nhân viên nhận việc. Bấm “Soạn booking này” nếu có chỉ đạo xử lý riêng booking đó.</p>${rows}</section>`;
+ return `<section class="panel"><div class="topline"><h2>BOOKING BỊ BỎ QUA (${items.length})</h2><span class="pill bad">Có lý do cho từng booking</span></div><p class="hint">Chỉ những booking đã có nhân viên nhận việc mới bị bỏ qua khi không tích tùy chọn. Bấm “Soạn booking này” nếu cần xử lý riêng.</p>${rows}</section>`;
 }
-function run(includeAssigned=false){
+function run(){
+ const includeAssigned=$("includeAssigned").checked;
  const raw=$("raw").value;
  if(!clean(raw)){ $("status").textContent="Bạn chưa dán dữ liệu.";return}
  const parsed=parseBlocks(raw);
@@ -1149,7 +1147,7 @@ function run(includeAssigned=false){
  const profileKey=Object.keys(profiles).find(k=>k.toLocaleLowerCase("vi").normalize("NFC")===selected.toLocaleLowerCase("vi").normalize("NFC"));
  const staffVN=profileKey?(profiles[profileKey].vnName||profileKey):(selected||"Nhân");
  const made=parsed.map(b=>buildOne(b,staff,phone,hotline,staffVN));
- const kept=made.filter(b=>b.confirmed&&(b.dir==="ARRIVAL"||(b.dir==="DEPARTURE"&&(includeAssigned||b.unassigned))));
+ const kept=made.filter(b=>includeAssigned||b.unassigned);
  const skipped=made.filter(b=>!kept.includes(b));
  $("summary").classList.remove("hidden");
  processedBookings=kept;
@@ -1160,14 +1158,14 @@ function run(includeAssigned=false){
  <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm tất cả booking</label><input id="bookingSearch" type="text" placeholder="Tìm mọi booking: mã order / tên / chuyến bay / SĐT / nhân viên..." style="width:min(340px,85vw);max-width:none"><p class="hint">Khi nhập từ khóa, hệ thống tìm trong toàn bộ booking đã dán, gồm cả booking đã có nhân viên nhận việc, chưa xác nhận và booking cũ. Không giới hạn theo điều kiện lọc mặc định.</p></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="staffAssignmentFilter">Nhân viên nhận việc</label><select id="staffAssignmentFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="DEFAULT">Theo điều kiện soạn mặc định</option><option value="ASSIGNED">Đã có nhân viên nhận</option><option value="UNASSIGNED">Chưa có nhân viên nhận</option><option value="ALL">Tất cả booking đã dán</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #c5d2c8;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="__ALL__">Tất cả (${made.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${made.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
  renderFilteredBookings();
  skippedBookingsCache=skipped;
- $("skippedBookings").innerHTML=renderSkippedBookings(skipped,false);
+ $("skippedBookings").innerHTML=renderSkippedBookings(skipped,includeAssigned);
  ["partnerFilter","directionFilter","dateFilter","staffAssignmentFilter"].forEach(id=>$(id).addEventListener("change",renderFilteredBookings));
  $("bookingSearch").addEventListener("input",renderFilteredBookings);
  $("status").textContent=`Đã phân tích ${made.length} booking; hiển thị ${kept.length} booking. Các link chỉ mở bản nháp, không tự gửi.`;
  $("status").className="status good";
 }
-$("run").addEventListener("click",()=>run(false));
-$("composeAssigned").addEventListener("click",()=>run(true));
+$("run").addEventListener("click",run);
+$("includeAssigned").addEventListener("change",saveBookingSession);
 $("savedDateFilter").addEventListener("change",renderSavedReviewArchive);$("savedReviewTables").addEventListener("change",e=>{const input=e.target.closest(".saved-estimated-arrival");if(!input)return;const item=savedReviewItems.find(x=>(x.key||savedReviewKey(x))===input.dataset.savedKey);if(!item)return;item.estimatedArrival=input.value;persistSavedReview();toast("Đã lưu giờ dự kiến đến sân bay.");});
 $("savedPartnerFilter").addEventListener("change",renderSavedReviewArchive);$("savedDirectionFilter").addEventListener("change",renderSavedReviewArchive);
 $("clearSavedDate").addEventListener("click",()=>{$("savedDateFilter").value="";renderSavedReviewArchive();});
@@ -1207,7 +1205,7 @@ window.copyText=copyText;
 const BOOKING_SESSION_KEY="fasttrack_sgn_booking_session_v1";
 function saveBookingSession(){
  try{
-  const snapshot={raw:$("raw")?.value||"",staffProfile:$("staffProfile")?.value||"",staff:$("staff")?.value||"",phone:$("phone")?.value||"",hotline:$("hotline")?.value||"",savedAt:Date.now()};
+  const snapshot={raw:$("raw")?.value||"",includeAssigned:!!$("includeAssigned")?.checked,staffProfile:$("staffProfile")?.value||"",staff:$("staff")?.value||"",phone:$("phone")?.value||"",hotline:$("hotline")?.value||"",savedAt:Date.now()};
   if(snapshot.raw.trim())sessionStorage.setItem(BOOKING_SESSION_KEY,JSON.stringify(snapshot));
   else{snapshot.cleared=true;sessionStorage.setItem(BOOKING_SESSION_KEY,JSON.stringify(snapshot));}
   if(typeof scheduleCloudSync==="function")scheduleCloudSync();
@@ -1227,6 +1225,7 @@ if(!archiveView){
    if(snapshot.staff)$("staff").value=snapshot.staff;
    if(snapshot.phone)$("phone").value=snapshot.phone;
    if(snapshot.hotline)$("hotline").value=snapshot.hotline;
+   $("includeAssigned").checked=!!snapshot.includeAssigned;
    run();
    $("status").textContent="Đã khôi phục phiên Soạn Booking trước đó; kết quả phân tích được tạo lại tự động.";
    $("status").className="status good";
@@ -1281,6 +1280,7 @@ function applyState(state){
   if(session.staff)$("staff").value=session.staff;
   if(session.phone)$("phone").value=session.phone;
   if(session.hotline)$("hotline").value=session.hotline;
+  $("includeAssigned").checked=!!session.includeAssigned;
   run();
   $("status").textContent="Đã khôi phục phiên Soạn Booking và dữ liệu riêng của "+activeUser+".";
   $("status").className="status good";
