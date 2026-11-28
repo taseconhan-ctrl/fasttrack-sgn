@@ -13,7 +13,56 @@ input,select{background:#10100f;color:var(--m-text);border:1px solid #575044;bor
 button{border:1px solid #a88b50;background:linear-gradient(135deg,#c5a96b,#a88a4e);color:#17140e;border-radius:8px;padding:9px 12px;font-weight:800;cursor:pointer}button.secondary{background:#24221d;color:#e4d8c0;border-color:#514a3b}button.danger{background:#3a2020;color:#f0caca;border-color:#8c4545}button:disabled{opacity:.5;cursor:not-allowed}
 .tablewrap{overflow:auto;border:1px solid var(--m-line);border-radius:10px}table{width:100%;border-collapse:collapse;min-width:900px}th,td{padding:11px 10px;text-align:left;border-bottom:1px solid var(--m-line);vertical-align:middle}th{background:#252219;color:#f0d99e;font-size:11px;white-space:nowrap}td{color:#eee8dc;font-size:12px}tbody tr:nth-child(even){background:#1d1c19}.state{display:inline-block;border-radius:20px;padding:4px 8px;font-size:10px;font-weight:bold}.on{background:#183126;color:#a8dfbd}.off{background:#392020;color:#f0b9b9}.pending{background:#352b18;color:#f0d18b}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{font-size:11px;padding:7px 9px}.notice{min-height:22px;color:#e5d4ae;margin:8px 0}.history-table{min-width:760px}.history-device{max-width:360px;overflow-wrap:anywhere;color:var(--m-muted)}.summary{display:flex;gap:9px;flex-wrap:wrap}.metric{padding:10px 14px;background:#211f1a;border:1px solid var(--m-line);border-radius:9px}.metric b{color:var(--m-gold);font-size:18px;display:block}.metric small{color:var(--m-muted)}
 @media(max-width:700px){.ft-sidebar{position:relative;width:100%;height:auto}.ft-brand{height:58px}.ft-nav{display:flex;overflow:auto;gap:4px;padding:8px}.ft-nav-label,.ft-sidebar-foot{display:none}.ft-nav-link{white-space:nowrap}.ft-main{margin-left:0}.ft-topbar{height:58px;padding:0 14px}.ft-content{width:calc(100% - 24px);padding:16px 0}.hero,.panel{padding:15px}h1{font-size:20px}}
-</style></head>
+</style><style id="ft-simple-indigo-final">
+:root{color-scheme:light;--ft-navy:#434da0;--ft-green:#434da0;--ft-bg:#fff;--ft-ink:#222;--ft-muted:#666;--ft-line:#ddd;--ft-shadow:none;--ft-radius:6px;--app-bg:#fff;--surface:#fff;--ink:#222;--muted:#666;--line:#ddd;--blue:#434da0;--blue-soft:#eef0f9;--radius:6px;--shadow:none}
+html body,html body .ft-app,html body .ft-main,html body .ft-content{background:#fff!important;color:#222!important;font-family:Arial,sans-serif!important;text-shadow:none!important}
+html body .ft-sidebar{background:#fff!important;border-color:#ddd!important;box-shadow:none!important}
+html body .ft-topbar,html body header{background:#434da0!important;color:#fff!important;border:0!important;box-shadow:0 1px 3px #0002!important;backdrop-filter:none!important}
+html body .ft-topbar *,html body header h1,html body header p{color:#fff!important;text-shadow:none!important}
+html body .ft-topbar button,html body .ft-topbar a{background:transparent!important;border-color:#ffffff66!important;color:#fff!important;box-shadow:none!important}
+html body .ft-menu-toggle span{background:#fff!important}
+html body .ft-brand{background:#fff!important;border-color:#ddd!important}
+html body .ft-brand-mark{background:#434da0!important;color:#fff!important;border:0!important}
+html body .ft-brand-copy b,html body .ft-nav-link{color:#222!important}
+html body .ft-brand-copy small,html body .ft-nav-label,html body .ft-sidebar-foot,html body .ft-nav-icon{color:#666!important}
+html body .ft-nav-link{border-radius:0!important;background:transparent!important;box-shadow:none!important}
+html body .ft-nav-link.active,html body .ft-nav-link:hover{background:#eef0f9!important;color:#434da0!important}
+html body .ft-nav-link.active *{color:#434da0!important}
+html body :is(.panel,.booking,.review,.staff,.workspace-choice,.intro,.home-hero,.item,.hero,.kv,.stat,.metric,#staffAuthPanel,dialog){background:#fff!important;color:#222!important;border:1px solid #ddd!important;border-radius:6px!important;box-shadow:none!important;text-shadow:none!important}
+html body .home-hero{min-height:0!important;padding:20px!important;text-align:left!important}
+html body :is(.home-hero,.intro,.panel,.booking,.review,.item)::before,html body :is(.home-hero,.intro,.panel,.booking,.review,.item)::after{content:none!important;display:none!important}
+html body :is(h1,h2,h3,h4,label,.kv b,.stat b,.metric b,.hero h1,.hero p,.item h3){color:#222!important;text-shadow:none!important;-webkit-text-fill-color:currentColor!important}
+html body :is(p,.hint,.muted,small,.sub,.kv small,.stat span,.metric span){color:#666!important;text-shadow:none!important}
+html body .ft-topbar :is(b,small,span),html body header :is(h1,p){color:#fff!important}
+html body :is(input:not([type=checkbox]):not([type=radio]),select,textarea){background:#fff!important;color:#222!important;border:1px solid #bbb!important;border-radius:5px!important;box-shadow:none!important;color-scheme:light!important}
+html body :is(input,select,textarea):focus{outline:2px solid #434da0!important;outline-offset:0!important}
+html body :is(button,.btn,.linkbtn,.hero-cta,.back){background:#434da0!important;color:#fff!important;-webkit-text-fill-color:currentColor!important;border:1px solid #434da0!important;border-radius:5px!important;box-shadow:none!important;text-shadow:none!important;transform:none!important}
+html body :is(button,.btn,.linkbtn):is(.secondary,.ghost,.back){background:#fff!important;color:#434da0!important;border-color:#bbb!important}
+html body button.danger{background:#fff!important;color:#222!important;border-color:#999!important}
+html body .ft-topbar :is(button,a){background:transparent!important;color:#fff!important}
+html body :is(.icon,.go,.hero-kicker){color:#434da0!important;background:none!important;box-shadow:none!important}
+html body :is(.tablewrap,.table-wrapper,.table-responsive){background:#fff!important;border-color:#ddd!important;border-radius:5px!important;box-shadow:none!important}
+html body table{background:#fff!important;color:#222!important}
+html body table th{background:#eef0f9!important;color:#222!important;border-color:#ddd!important}
+html body table tbody td{background:#fff!important;color:#222!important;border-color:#ddd!important}
+html body table tbody tr:nth-child(even) td{background:#fafafa!important}
+html body table tbody tr:hover td{background:#eef0f9!important}
+html body :is(.status,.tag,.pill,.count,pre){background:#f5f5f5!important;color:#333!important;border-color:#ddd!important;text-shadow:none!important;box-shadow:none!important}
+html body :is(.tag,.pill,.status).good{background:#eef0f9!important;color:#434da0!important}
+html body :is(.tag,.pill,.status).bad{background:#eee!important;color:#222!important}
+html body :is(.tag,.pill,.status).warn{background:#f5f5f5!important;color:#333!important}
+html body :is(.ft-footer,footer){background:#fff!important;color:#666!important;border-top:1px solid #ddd!important}
+html body #app #cards .table-tools{background:#fff!important;border-color:#ddd!important}
+html body #app #cards .table-tools :is(span,b,button){color:#434da0!important;background:#fff!important}
+html body #app #cards table.worktable thead th{background:#eef0f9!important;color:#222!important}
+html body #app #cards table.worktable tbody td{background:#fff!important;color:#222!important}
+html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#fafafa!important}
+html body #app #cards table.worktable tbody td .tag{background:#eef0f9!important;color:#303878!important;border-color:#c8cce6!important}
+html body #app #cards table.worktable tbody td button{background:#fff!important;color:#434da0!important;border-color:#bbb!important}
+html body #bookingMain .contact-links a.linkbtn,html body #bookingMain .actions a.linkbtn{background:#434da0!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#434da0!important;box-shadow:none!important}
+@media(max-width:680px){html body .ft-content{padding:12px 10px 24px!important}html body .ft-sidebar{width:min(78vw,300px)!important}html body .ft-topbar{height:auto!important;min-height:56px!important}html body .ft-nav-link{min-height:48px!important;font-size:15px!important}html body .menu{grid-template-columns:1fr!important}html body .menu .item{min-height:0!important;padding:15px!important}}
+</style>
+</head>
 <body><div class="ft-app"><aside class="ft-sidebar"><a class="ft-brand" href="index.html"><span class="ft-brand-mark">FT</span><span class="ft-brand-copy"><b>FAST TRACK SGN</b><small>EXECUTIVE OPERATIONS</small></span></a>
 <nav class="ft-nav" aria-label="Điều hướng"><span class="ft-nav-label">WORKSPACE</span><a class="ft-nav-link" href="index.html"><span class="ft-nav-icon">⌂</span><span>Tổng quan</span></a><span class="ft-nav-label">BOOKING MANAGEMENT</span><a class="ft-nav-link" href="soan-booking.html"><span class="ft-nav-icon">▤</span><span>Soạn Booking</span></a><span class="ft-nav-label">OPERATIONS</span><a class="ft-nav-link" href="ung-don-khach.html"><span class="ft-nav-icon">↙</span><span>Ứng dụng đón khách</span></a><a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">◷</span><span>Đón khách</span></a><span class="ft-nav-label">PEOPLE & PLANNING</span><a class="ft-nav-link" href="xep-lich.html"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a><span class="ft-nav-label">ADMINISTRATION</span><a class="ft-nav-link active" href="quan-ly-tai-khoan.html"><span class="ft-nav-icon">⚙</span><span>Quản lý tài khoản</span></a></nav><div class="ft-sidebar-foot">● Fast Track SGN · Khu vực quản trị</div></aside>
 <div class="ft-main"><header class="ft-topbar"><div class="ft-top-context"><small>FAST TRACK SGN / ADMINISTRATION</small><b>Quản lý tài khoản nhân viên</b></div><div class="ft-top-spacer"></div><a class="ft-nav-link" href="index.html">← Trang chủ</a></header><main class="ft-content">
