@@ -485,7 +485,7 @@ $("evidenceClose").addEventListener("click",()=>$("evidenceDialog").close());
 let evidenceBusy=false;
 async function compactEvidence(f){
  if(!/^image\//i.test(f.type)&&! /\.(heic|heif|jpg|jpeg|png|webp)$/i.test(f.name))throw Error("Vui lòng chọn ảnh.");
- const url=URL.createObjectURL(f);
+ const url=window.URL.createObjectURL(f);
  try{
  const img=new Image();img.src=url;await img.decode();
  const scale=Math.min(1,1800/Math.max(img.naturalWidth,img.naturalHeight));
@@ -495,7 +495,7 @@ async function compactEvidence(f){
  if(!blob)throw Error("Không nén được ảnh.");
  if(/image\/(jpeg|png|webp)/.test(f.type)&&f.size<blob.size)return f;
  return new File([blob],f.name.replace(/\.[^.]+$/,"")+".jpg",{type:"image/jpeg"});
- }catch(err){if(/^image\/(jpeg|png|webp)$/.test(f.type)&&f.size<=10*1024*1024)return f;throw err}finally{URL.revokeObjectURL(url)}
+ }catch(err){if(/^image\/(jpeg|png|webp)$/.test(f.type)&&f.size<=10*1024*1024)return f;throw err}finally{window.URL.revokeObjectURL(url)}
 }
 async function saveSelectedEvidence(){
  const f=$("evidenceLibrary").files[0]||$("evidenceFile").files[0],id=evidenceBookingId;
@@ -520,7 +520,7 @@ async function saveSelectedEvidence(){
 }
 $("evidenceDialog").addEventListener("cancel",e=>{if(evidenceBusy)e.preventDefault()});
 let localTicketRequested=null;
-function ticketDownload(file){const url=URL.createObjectURL(file);const a=document.createElement("a");a.href=url;a.download="SGN-ticket-"+new Date().toISOString().replace(/[:.]/g,"-")+"-"+(file.name||"photo").replace(/[^a-zA-Z0-9._-]/g,"_");document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
+function ticketDownload(file){const url=window.URL.createObjectURL(file);const a=document.createElement("a");a.href=url;a.download="SGN-ticket-"+new Date().toISOString().replace(/[:.]/g,"-")+"-"+(file.name||"photo").replace(/[^a-zA-Z0-9._-]/g,"_");document.body.append(a);a.click();a.remove();setTimeout(()=>window.URL.revokeObjectURL(url),60000)}
 function showTicketConfirmation(file){
  document.getElementById("ftTicketToast")?.remove();
  const box=document.createElement("div");box.id="ftTicketToast";box.setAttribute("role","status");box.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:2147483647;background:#fff;color:#14532d;border:1px solid #86efac;border-radius:12px;padding:12px 16px;box-shadow:0 4px 18px #0003;width:max-content;max-width:90vw;font-size:14px";
@@ -596,7 +596,7 @@ async function refresh(force=false){const s=session();if(!s){lastToken=null;pain
 mark.setAttribute("role","button");mark.tabIndex=0;mark.title="Thay ảnh đại diện";mark.setAttribute("aria-label","Thay ảnh đại diện");mark.style.cursor="pointer";
 function choose(e){e.preventDefault();e.stopPropagation();if(session()&&!uploading)picker.click()}
 mark.addEventListener("click",choose);mark.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" ")choose(e)});
-picker.addEventListener("change",async()=>{const f=picker.files[0],s=session();if(!f||!s||uploading)return;uploading=true;const url=URL.createObjectURL(f);try{const img=new Image();img.src=url;await img.decode();const c=document.createElement("canvas");c.width=c.height=256;const d=Math.min(img.naturalWidth,img.naturalHeight);c.getContext("2d").drawImage(img,(img.naturalWidth-d)/2,(img.naturalHeight-d)/2,d,d,0,0,256,256);const src=c.toDataURL("image/jpeg",.85);if(session()?.token!==s.token)return;await api(s,"set",src);if(session()?.token===s.token){store(s,src);paint(src)}}catch(e){alert("Không thể đồng bộ ảnh đại diện. Vui lòng thử lại khi có mạng.")}finally{URL.revokeObjectURL(url);picker.value="";uploading=false;lastCheck=0;refresh(true)}});
+picker.addEventListener("change",async()=>{const f=picker.files[0],s=session();if(!f||!s||uploading)return;uploading=true;const url=window.URL.createObjectURL(f);try{const img=new Image();img.src=url;await img.decode();const c=document.createElement("canvas");c.width=c.height=256;const d=Math.min(img.naturalWidth,img.naturalHeight);c.getContext("2d").drawImage(img,(img.naturalWidth-d)/2,(img.naturalHeight-d)/2,d,d,0,0,256,256);const src=c.toDataURL("image/jpeg",.85);if(session()?.token!==s.token)return;await api(s,"set",src);if(session()?.token===s.token){store(s,src);paint(src)}}catch(e){alert("Không thể đồng bộ ảnh đại diện. Vui lòng thử lại khi có mạng.")}finally{window.URL.revokeObjectURL(url);picker.value="";uploading=false;lastCheck=0;refresh(true)}});
 refresh(true);window.addEventListener("pageshow",()=>refresh(true));window.addEventListener("storage",()=>refresh(true));document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh(true)});document.getElementById("ftMenuToggle")?.addEventListener("click",()=>refresh());new MutationObserver(()=>refresh()).observe(document.body,{attributes:true,attributeFilter:["class"]});setInterval(()=>{if(!document.hidden)refresh()},30000);
 })();</script>
 <style id="pickup-header-blue-final">
