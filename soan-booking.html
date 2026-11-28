@@ -1067,7 +1067,7 @@ function renderFilteredBookings(){
  const date=$("dateFilter")?.value||"";
  const staffFilter=$("staffAssignmentFilter")?.value||"DEFAULT";
  // Chọn trạng thái nhân viên hoặc tìm kiếm sẽ mở rộng nguồn sang toàn bộ booking đã dán.
- // Chế độ mặc định vẫn giữ nguyên quy tắc soạn: ĐÓN đã xác nhận + TIỄN chưa phân công.
+ // Chế độ mặc định sử dụng danh sách đã xử lý theo tùy chọn nhân viên nhận việc.
  const showAll=!!search||staffFilter!=="DEFAULT";
  const source=showAll?allBookingsCache:processedBookings;
  const shown=source.filter(x=>{
@@ -1088,9 +1088,8 @@ function renderFilteredBookings(){
   </div>
   <div class="booking-direction-list">${items.map((b,i)=>cardHtml(b,i,allBookingsCache.indexOf(b))).join("")||'<p class="muted" style="padding:14px 4px">Không có booking trong mục này.</p>'}</div>
  </section>`;
- $("results").innerHTML=dir==="ALL"
-  ? renderGroup(arrival,"✈️ ĐÓN KHÁCH","arrival-group","#16866f")+renderGroup(departure,"🛫 TIỄN KHÁCH","departure-group","#1b7047")+(unknown.length?renderGroup(unknown,"CHƯA XÁC ĐỊNH LOẠI DỊCH VỤ","unknown-group","#c18a35"):"")
-  : (dir==="ARRIVAL"?renderGroup(arrival,"✈️ ĐÓN KHÁCH","arrival-group","#16866f"):renderGroup(departure,"🛫 TIỄN KHÁCH","departure-group","#1b7047"))+(unknown.length?renderGroup(unknown,"CHƯA XÁC ĐỊNH LOẠI DỊCH VỤ","unknown-group","#c18a35"):"");
+ const ordered=shown.slice().sort((a,b)=>allBookingsCache.indexOf(a)-allBookingsCache.indexOf(b));
+ $("results").innerHTML=renderGroup(ordered,"DANH SÁCH BOOKING ĐÃ SOẠN","ordered-group","#16866f");
  renderReviewTables();
  const count=$("filterCount");
  if(count) count.textContent=`Đang hiển thị ${shown.length}/${processedBookings.length} booking · ĐÓN ${arrival.length} · TIỄN ${departure.length}`;
