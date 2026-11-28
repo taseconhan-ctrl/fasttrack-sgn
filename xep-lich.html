@@ -17,7 +17,7 @@ async function call(action,token){const r=await fetch(API,{method:"POST",headers
   const bar=document.createElement("div");bar.id="globalStaffAuthBar";
   const label=document.createElement("span");label.textContent="Tài khoản: "+(data.username||s.username||"nhân viên");
   const btn=document.createElement("button");btn.type="button";btn.textContent="Đăng xuất";
-  btn.addEventListener("click",async()=>{btn.disabled=true;try{await call("logout",s.token)}catch{}localStorage.removeItem(KEY);sessionStorage.removeItem("fasttrack_sgn_booking_session_v1");localStorage.removeItem("fasttrack_sgn_saved_review_history_v1");location.replace("index.html")});
+  btn.addEventListener("click",async()=>{btn.disabled=true;try{await call("logout",s.token)}catch{}localStorage.removeItem(KEY);sessionStorage.removeItem("fasttrack_sgn_booking_session_v1");localStorage.removeItem("fasttrack_sgn_saved_review_history_v1");location.replace("index.html?loggedout=1&v=login-20261128b")});
   bar.append(label,btn);document.body.appendChild(bar);
   document.documentElement.classList.remove("staff-auth-pending");
  }catch(e){localStorage.removeItem(KEY);goLogin()}
