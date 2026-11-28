@@ -54,6 +54,23 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 <link rel="stylesheet" href="assets/css/shared-ui.css?v=ui-refresh-20261127">
 <link rel="stylesheet" href="assets/css/complete-redesign.css?v=20261127d">
 <link rel="stylesheet" href="assets/css/christmas-village-theme.css?v=20261127c">
+<style id="booking-table-light-theme">
+/* Bảng booking: đặt sau toàn bộ stylesheet để không bị theme ghi đè */
+#app .tablewrap{background:#f7f8f4!important;border:1px solid #cbd8ca!important}
+#app table.worktable{background:#fff!important;color:#26362d!important;color-scheme:light!important}
+#app table.worktable thead th{background:#dce8dc!important;color:#26362d!important;border-color:#c5d3c5!important}
+#app table.worktable tbody tr td{background:#fff!important;color:#26362d!important;border-color:#e0e6de!important}
+#app table.worktable tbody tr:nth-child(even) td{background:#f0f4ed!important;color:#26362d!important}
+#app table.worktable tbody tr:hover td{background:#e4eee1!important;color:#26362d!important}
+#app table.worktable td,#app table.worktable td *{color:#26362d!important;text-shadow:none!important}
+#app table.worktable td .tag.good{color:#246b3b!important}
+#app table.worktable td .tag.warn{color:#815b12!important}
+#app table.worktable td .tag.bad{color:#9b3030!important}
+#app table.worktable td input,#app table.worktable td select,#app table.worktable td textarea{background:#fff!important;color:#26362d!important;border-color:#bdcbbd!important;color-scheme:light!important}
+#app table.worktable td button:not(.photo-mini){color:#26362d!important}
+#app table.worktable td button.danger{color:#9b3030!important}
+#app table.worktable td .photo-mini{color:#26362d!important}
+</style>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
