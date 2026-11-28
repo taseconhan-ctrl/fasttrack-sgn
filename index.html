@@ -470,6 +470,27 @@ html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#ff
 @media(min-width:901px){html body .ft-main{width:calc(100% - 240px)!important;margin-left:240px!important}html body .ft-sidebar{width:240px!important}html body .ft-app:is(.sidebar-collapsed,.ft-sidebar-collapsed) .ft-main{width:100%!important;margin-left:0!important}}
 @media(max-width:900px){html body .ft-main{margin:0!important;width:100%!important}html body .ft-content{padding:12px!important}html body .ft-topbar{flex-wrap:wrap!important;gap:6px!important;padding:6px 10px!important}html body .ft-top-context{flex:1!important}html body .ft-top-context b{font-size:17px!important}html body .ft-topbar .ft-top-spacer{display:none!important}html body .ft-topbar :is(.ft-account-link,.who){font-size:12px!important}html body .ft-content .summary{gap:0!important}}
 </style>
+<style id="public-login-reference">
+html body:not(.staff-authenticated),html body:not(.staff-authenticated) .ft-app,html body:not(.staff-authenticated) #ftMain,html body:not(.staff-authenticated) #ftMain .ft-content{background:#f3f6fb!important;color:#1e293b!important}
+html body:not(.staff-authenticated) #ftMain{width:100%!important;margin:0!important}
+html body:not(.staff-authenticated) #ftMain .ft-topbar{display:flex!important;position:static!important;justify-content:center!important;align-items:center!important;min-height:76px!important;padding:20px 12px!important;background:#35539b!important;border:0!important;box-shadow:none!important}
+html body:not(.staff-authenticated) .ft-topbar>*{display:none!important}
+html body:not(.staff-authenticated) .ft-topbar::after{content:"Fast Track SGN";color:#fff;font-size:16px;font-weight:700}
+html body:not(.staff-authenticated) #ftMain .ft-content{display:flex!important;align-items:flex-start!important;justify-content:center!important;min-height:calc(100dvh - 76px)!important;padding:66px 12px 32px!important}
+html body:not(.staff-authenticated) #ftMain .ft-content>#staffAuthPanel{width:min(100%,440px)!important;max-width:440px!important;margin:0!important;padding:20px 18px!important;border:1px solid #d4dce9!important;border-radius:8px!important;background:#fff!important;box-shadow:none!important;color:#1e293b!important}
+html body:not(.staff-authenticated) #staffAuthPanel>div:first-child,html body:not(.staff-authenticated) #staffAuthPanel>p{display:none!important}
+html body:not(.staff-authenticated) #staffAuthPanel h2{font-size:24px!important;line-height:1.25!important;font-weight:700!important;color:#1e293b!important;margin:0 0 18px!important;padding:0!important;border:0!important}
+html body:not(.staff-authenticated) #staffAuthPanel .auth-mode{display:grid!important;grid-template-columns: 1fr 1.55fr!important;gap:9px!important;margin:0 0 16px!important}
+html body:not(.staff-authenticated) #staffAuthPanel .auth-mode button{width:100%!important;min-height:44px!important;padding:8px 5px!important;font-size:14px!important;color:#294780!important;background:#fff!important;border:1px solid #a6b6d1!important;border-radius:6px!important}
+html body:not(.staff-authenticated) #staffAuthPanel .auth-mode button.secondary{background:#eaf0fb!important;border-color:#9db4db!important}
+html body:not(.staff-authenticated) #staffAuthPanel #staffPinAuthForm{display:grid!important;gap:0!important}
+html body:not(.staff-authenticated) #staffAuthPanel label{font-size:15px!important;font-weight:600!important;color:#1e293b!important;margin:0 0 10px!important}
+html body:not(.staff-authenticated) #staffAuthPanel input{height:45px!important;font-size:16px!important;border:1px solid #a6b6d1!important;border-radius:6px!important;background:#fff!important;color:#1e293b!important;margin:0 0 14px!important;padding:10px!important}
+html body:not(.staff-authenticated) #staffAuthPanel input::placeholder{color:#53647e!important}
+html body:not(.staff-authenticated) #staffAuthPanel #staffPinSubmit{height:45px!important;background:#35539b!important;border:1px solid #35539b!important;border-radius:6px!important;color:#fff!important;font-size:15px!important;font-weight:700!important}
+html body:not(.staff-authenticated) #staffAuthPanel #staffAuthMessage{font-size:14px!important;line-height:1.5!important;color:#53647e!important;margin:12px 0 0!important;padding:0!important}
+@media(min-width:700px){html body:not(.staff-authenticated) #ftMain .ft-content{padding-top:70px!important}}
+</style>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
@@ -501,12 +522,12 @@ html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#ff
 
 <section id="staffAuthPanel" aria-label="Đăng nhập tài khoản nhân viên">
  <div style="font-size:28px;margin-bottom:7px">🔐</div>
- <h2>Khu vực cá nhân nhân viên</h2>
+ <h2>Đăng nhập nhân viên</h2>
  <p>Mỗi nhân viên có thể tự tạo tài khoản bằng tên đăng nhập riêng và PIN 4 chữ số. Đăng nhập trên máy tính hoặc điện thoại để đồng bộ không gian làm việc cá nhân.</p>
  <div id="staffAuthFormArea">
   <div class="auth-mode">
    <button type="button" id="staffPinLoginMode" class="secondary">Đăng nhập</button>
-   <button type="button" id="staffPinRegisterMode" class="ghost">Tạo tài khoản</button>
+   <button type="button" id="staffPinRegisterMode" class="ghost">Nhân viên tự đăng ký</button>
   </div>
   <form id="staffPinAuthForm">
    <label for="staffPinUsername">Tên đăng nhập</label>
