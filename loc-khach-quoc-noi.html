@@ -47,7 +47,7 @@ label{display:block;font-weight:700;margin:12px 0 6px}textarea{font:inherit;colo
 <div id="overlay" class="overlay" aria-hidden="true"></div>
 <div class="ft-main">
 <header class="ft-topbar"><button type="button" class="ft-menu-toggle" id="ftMenuToggle" aria-label="Mở hoặc đóng menu" aria-expanded="false">☰</button><b>Lọc khách quốc nội</b></header>
-<main class="ft-content" id="aiMain" hidden><div class="ai-header"><h1>Lọc khách quốc nội</h1><p>Dán tin nhắn nhóm để tạo danh sách Excel.</p></div><section class="panel"><label for="bookingInput">Dán danh sách booking</label><textarea id="bookingInput" placeholder="Dán danh sách booking vào đây..." style="min-height:220px"></textarea><div class="row"><button class="btn" id="parseDomestic">Lọc danh sách</button><button class="btn secondary" id="copyDomestic" disabled>Copy Excel</button></div><div id="status" class="status" role="status">Sẵn sàng lọc.</div></section><section class="panel" id="domesticResults" hidden><div style="overflow:auto"><table id="domesticTable" style="border-collapse:collapse;width:100%;white-space:nowrap"></table></div><div id="domesticWarnings" class="tip"></div></section></main></div></div>
+<main class="ft-content" id="aiMain" hidden><div class="ai-header"><h1>Lọc khách quốc nội</h1><p>Dán tin nhắn nhóm để tạo danh sách Excel.</p></div><section class="panel"><label for="zaloImages">Ảnh chụp màn hình Zalo</label><input id="zaloImages" type="file" accept="image/*" multiple><div class="row"><button class="btn secondary" id="readZalo" type="button">Đọc ảnh Zalo</button></div><p class="tip">Ảnh được nhận diện ngay trên thiết bị bằng OCR, không gửi ảnh lên Gemini. Kiểm tra văn bản trước khi lọc. Cần mạng để tải bộ nhận diện lần đầu.</p><label for="bookingInput">Dán danh sách booking</label><textarea id="bookingInput" placeholder="Dán danh sách booking vào đây..." style="min-height:220px"></textarea><div class="row"><button class="btn" id="parseDomestic">Lọc danh sách</button><button class="btn secondary" id="copyDomestic" disabled>Copy Excel</button></div><div id="status" class="status" role="status">Sẵn sàng lọc.</div></section><section class="panel" id="domesticResults" hidden><div style="overflow:auto"><table id="domesticTable" style="border-collapse:collapse;width:100%;white-space:nowrap"></table></div><div id="domesticWarnings" class="tip"></div></section></main></div></div>
 <script>
 (function(){
 "use strict";
@@ -113,7 +113,20 @@ function parseDomestic(raw){
  return {rows:rows.map(r=>r.values),warnings};
 }
 $("parseDomestic").addEventListener("click",()=>{const r=parseDomestic($("bookingInput").value);output=r.rows;const table=$("domesticTable");table.replaceChildren();for(const [i,row] of [cols,...output].entries()){const tr=table.insertRow();for(const v of row){const cell=document.createElement(i?"td":"th");cell.textContent=v;cell.style.cssText="padding:9px 12px;border:1px solid #dbe5f2;text-align:left;"+(i?"":"background:#e7edf9");tr.append(cell);}}$("domesticWarnings").textContent=r.warnings.join(" • ");$("domesticResults").hidden=false;$("copyDomestic").disabled=!output.length;setStatus("Đã lọc "+output.length+" khách.",false);});
-$("copyDomestic").addEventListener("click",async()=>{try{await navigator.clipboard.writeText([cols,...output].map(r=>r.map(v=>v.replace(/[\t\r\n]/g," ").replace(/^[=+\-@]/,"'init();
+$("copyDomestic").addEventListener("click",async()=>{try{await navigator.clipboard.writeText([cols,...output].map(r=>r.map(v=>v.replace(/[\t\r\n]/g," ").replace(/^[=+\-@]/,"'let ocrWorker=null;
+$("readZalo").addEventListener("click",async()=>{
+ const files=Array.from($("zaloImages").files);if(!files.length){setStatus("Vui lòng chọn ảnh Zalo.",true);return;}
+ const btn=$("readZalo");btn.disabled=true;
+ try{
+ if(!window.Tesseract){await new Promise((resolve,reject)=>{const script=document.createElement("script");script.src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";script.onload=resolve;script.onerror=()=>reject(Error("Không tải được bộ nhận diện ảnh."));document.head.append(script);});}
+ if(!ocrWorker)ocrWorker=await Tesseract.createWorker("vie+eng",1,{workerPath:"https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js",corePath:"https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1",logger:m=>{if(m.status==="recognizing text")setStatus("Đang đọc ảnh: "+Math.round(m.progress*100)+"%",false);}});
+ for(let i=0;i<files.length;i++){setStatus("Đang đọc ảnh "+(i+1)+"/"+files.length,false);const r=await ocrWorker.recognize(files[i]);const t=r.data.text.trim();if(t)$("bookingInput").value+=($("bookingInput").value?"\n\n":"")+t;else setStatus("Ảnh "+(i+1)+" không có chữ nhận diện được.",true);}
+ setStatus("Đã đọc ảnh. Kiểm tra tên, ngày và giờ trong văn bản rồi bấm Lọc danh sách.",false);
+ }catch(e){setStatus("Lỗi đọc ảnh: "+e.message,true);if(ocrWorker){try{await ocrWorker.terminate()}catch{}ocrWorker=null;}}
+ finally{btn.disabled=false;}
+});
+
+init();
 })();")).join("\t")).join("\n"));setStatus("Đã sao chép "+output.length+" khách để dán vào Excel.",false)}catch{setStatus("Không sao chép được. Hãy chọn bảng và sao chép thủ công.",true)}});
 
 init();
