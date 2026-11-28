@@ -698,12 +698,12 @@ $("staffHomeSignOut").addEventListener("click",async()=>{
  clearToken();sessionStorage.removeItem(BOOKING_SESSION_KEY);localStorage.removeItem(SAVED_REVIEW_KEY);
  setAuthenticatedUI(false);
  signedIn.hidden=true;formArea.hidden=false;setMode("login");
- say("Đã đăng xuất. Dữ liệu đã đồng bộ vẫn được giữ trên tài khoản cá nhân.");
+ location.replace("index.html?loggedout=1&v=login-20261128b");
 });
 (async()=>{
  const stored=getToken();
  const pinSettingsMode=new URLSearchParams(location.search).get("settings")==="pin";
- if(!stored?.token)return setMode("login");
+ if(!stored?.token){setMode("login");if(new URLSearchParams(location.search).has("loggedout"))say("Đã đăng xuất. Dữ liệu đã đồng bộ vẫn được giữ trên tài khoản cá nhân.");return;}
  if(!stored.expiresAt||new Date(stored.expiresAt).getTime()<=Date.now()){clearToken();return setMode("login");}
  try{
   const result=await api("load",{},stored.token);
