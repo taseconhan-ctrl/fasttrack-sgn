@@ -369,6 +369,7 @@ html body #ftApp #ftMain #cards table.worktable input{min-height:28px!important;
 html body #ftApp #ftMain #cards table.worktable button{min-height:28px!important;font-size:inherit!important;padding:4px 8px!important}
 @media(max-width:680px){html body #ftApp #ftMain .ft-content .controls>div{flex:1 1 100%!important;min-width:0!important}html body #ftApp #ftMain .ft-content{padding:12px!important}}
 </style>
+<style>[data-manager-schedule][hidden]{display:none!important}</style>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
@@ -378,7 +379,7 @@ html body #ftApp #ftMain #cards table.worktable button{min-height:28px!important
   <span class="ft-nav-label">WORKSPACE</span><a class="ft-nav-link" href="index.html"><span class="ft-nav-icon">⌂</span><span>Tổng quan</span></a>
   <span class="ft-nav-label">BOOKING MANAGEMENT</span><a class="ft-nav-link" href="soan-booking.html"><span class="ft-nav-icon">▤</span><span>Soạn Booking</span></a>
   <span class="ft-nav-label">OPERATIONS</span><a class="ft-nav-link active" href="ung-don-khach.html" aria-current="page"><span class="ft-nav-icon">↙</span><span>Ứng dụng đón khách</span></a><a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">◷</span><span>Đón khách</span></a>
-  <span class="ft-nav-label">PEOPLE & PLANNING</span><a class="ft-nav-link" href="xep-lich.html"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a>
+  <span class="ft-nav-label">PEOPLE & PLANNING</span><a class="ft-nav-link" href="xep-lich.html" hidden data-manager-schedule><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a>
  <span class="ft-nav-label" id="staffManagementNavLabel" hidden>ADMINISTRATION</span><a class="ft-nav-link" id="staffManagementNav" href="quan-ly-tai-khoan.html" hidden><span class="ft-nav-icon">⚙</span><span>Quản lý tài khoản</span></a>
  <a class="ft-nav-link" href="index.html?settings=pin"><span class="ft-nav-icon" aria-hidden="true">⚿</span><span>Đổi mã PIN</span></a>
 </nav>
@@ -517,7 +518,7 @@ if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.ser
 try{const saved=JSON.parse(localStorage.getItem("fasttrack_staff_pin_session_v1")||"null");if(!saved?.token)return;
 const url="https://xyhvgttywjleirsiabve.supabase.co/functions/v1/staff-admin";
 fetch(url,{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb_publishable_mM4JKOVatzvH8dfNHA92lw_s1Z-OMrP","Authorization":"Bearer "+saved.token},body:JSON.stringify({action:"can_manage"})})
-.then(r=>r.ok?r.json():null).then(d=>{if(d?.can_manage){link.hidden=false;if(label)label.hidden=false;}}).catch(()=>{});
+.then(r=>r.ok?r.json():null).then(d=>{if(d?.can_manage){link.hidden=false;if(label)label.hidden=false;document.querySelectorAll("[data-manager-schedule]").forEach(a=>a.hidden=false);}}).catch(()=>{});
 }catch(e){}
 })();
 </script>
