@@ -714,7 +714,7 @@ html body #ftApp.ft-collapsed #ftSidebar .ft-brand-mark{width:40px!important;hei
     <label class="inline-check" for="includeAssigned"><input type="checkbox" id="includeAssigned"> Soạn tất cả booking được dán, kể cả booking đã có nhân viên nhận việc</label>
     <button class="secondary" id="clear">Xóa dữ liệu</button>
   </div>
-  <p class="hint">Không tích: chỉ soạn booking chưa có nhân viên nhận việc (trống, _ hoặc chưa phân công). Tích vào: soạn toàn bộ booking được dán, kể cả booking đã có nhân viên nhận việc. Áp dụng giống nhau cho cả ĐÓN và TIỄN; không lọc theo trạng thái xác nhận hay điều kiện khác. “SGN - Dịch vụ” là ghi chú dịch vụ, không phải nhân viên nhận việc.</p>
+  
   <div id="status" class="status">Chưa có dữ liệu được xử lý.</div>
 </section>
 <div id="summary" class="panel hidden"></div>
@@ -1145,7 +1145,7 @@ function cardHtml(b,i,cacheIndex){
  <h3>LIÊN HỆ</h3>
  <div class="kv contact-edit-panel" style="margin:10px 0">
  <b>Bổ sung / chỉnh sửa thông tin liên hệ</b>
- <p class="hint">Nhập số điện thoại có mã quốc gia (ví dụ +84...) và/hoặc email hợp lệ. Link WhatsApp, Gmail và lịch nhắc (nếu thuộc booking TIỄN đối tác) sẽ được cập nhật theo dữ liệu mới.</p>
+ 
  <div class="controls">
  <div><label for="contactPhone-${cacheIndex}">Số điện thoại</label><input id="contactPhone-${cacheIndex}" type="tel" value="${esc(b.phone||"")}" placeholder="+84..." autocomplete="tel"></div>
  <div><label for="contactEmail-${cacheIndex}">Gmail / Email</label><input id="contactEmail-${cacheIndex}" type="email" value="${esc(b.email||"")}" placeholder="customer@gmail.com" autocomplete="email"></div>
@@ -1603,5 +1603,6 @@ html body .ft-nav .ft-operations-children .ft-nav-link{padding-left:26px!importa
 <script id="ft-operations-group-script">
 (()=>{const b=document.getElementById("ftOperationsToggle"),g=document.getElementById("ftOperationsChildren");if(!b||!g)return;b.addEventListener("click",()=>{const open=b.getAttribute("aria-expanded")!=="true";b.setAttribute("aria-expanded",String(open));g.hidden=!open;});})();
 </script>
+<style id="ft-booking-input-double">html body #ftApp #bookingMain textarea#raw{height:320px!important;min-height:320px!important;resize:vertical!important}@media(max-width:680px){html body #ftApp #bookingMain textarea#raw{height:132px!important;min-height:132px!important}}</style>
 </body>
 </html>
