@@ -23,41 +23,28 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 @media(max-width:760px){.toolbar{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}.summary{grid-template-columns:1fr 1fr}.top{padding:11px 13px}main{padding:17px 12px 35px}.who{display:none}}
 @media(max-width:420px){.toolbar,.dialog-grid{grid-template-columns:1fr}.details{grid-template-columns:1fr 1fr}.card-actions button{flex:1 1 100%}}
 
-.tablewrap{width:100%;overflow:auto;border:1px solid #465449;border-radius:11px;background:#171c18}
-.worktable{width:100%;border-collapse:separate;border-spacing:0;min-width:1120px;font-size:12px;color:#f4f0e7}
-.worktable th{position:sticky;top:0;background:#294638;color:#fff4d8;text-align:left;padding:10px 8px;white-space:nowrap;border-bottom:1px solid #526c5a;font-weight:800}
-.worktable td{padding:8px;border-bottom:1px solid #39463c;vertical-align:middle;background:#202820!important;color:#f4f0e7!important}
-.worktable tbody tr:nth-child(even) td{background:#171f19!important;color:#f4f0e7!important}
-.worktable tbody tr:hover td{background:#304536!important;color:#ffffff!important}
+.tablewrap{width:100%;overflow:auto;border:1px solid #d5dfd5;border-radius:11px;background:#f7f8f4}
+.worktable{width:100%;border-collapse:separate;border-spacing:0;min-width:1120px;font-size:12px;color:#26362d}
+.worktable th{position:sticky;top:0;background:#dce8dc;color:#26362d;text-align:left;padding:10px 8px;white-space:nowrap;border-bottom:1px solid #c5d3c5;font-weight:800}
+.worktable td,.worktable td *,.worktable td a,.worktable td span,.worktable td strong,.worktable td b,.worktable td small,.worktable td label{color:#26362d!important}
+.worktable td{padding:8px;border-bottom:1px solid #e0e6de;vertical-align:middle;background:#ffffff!important}
+.worktable tbody tr:nth-child(even) td{background:#f0f4ed!important}
+.worktable tbody tr:hover td{background:#e4eee1!important}
 .worktable .photo-cell{text-align:center;width:42px;min-width:42px}
 .worktable .eta-cell{min-width:92px;width:100px}
-.worktable .eta-input{width:82px;min-width:82px;min-height:32px;padding:4px 6px;border:1px solid #667568;border-radius:6px;background:#101612;color:#fff4d8;font:inherit;font-variant-numeric:tabular-nums}
-.worktable .eta-input:focus{outline:2px solid #c6a968;outline-offset:1px}
+.worktable .eta-input{width:82px;min-width:82px;min-height:32px;padding:4px 6px;border:1px solid #bdcbbd;border-radius:6px;background:#ffffff!important;color:#26362d!important;font:inherit;font-variant-numeric:tabular-nums}
+.worktable .eta-input:focus{outline:2px solid #8ba88d;outline-offset:1px}
 .worktable .eta-input:disabled{opacity:.55}
 .worktable .photo-mini{min-width:30px;min-height:29px;height:29px;padding:3px 6px;border-radius:7px;font-size:15px}
 .worktable .guest-cell{min-width:180px;max-width:260px;white-space:normal}
 .worktable .actions-cell{min-width:180px;white-space:normal}
 .worktable .actions-cell button{min-height:29px;padding:5px 7px;margin:2px;font-size:10px}
-/* Force readable light text throughout every booking-table cell, including nested elements */
-.worktable td,
-.worktable td *,
-.worktable td a,
-.worktable td span,
-.worktable td strong,
-.worktable td b,
-.worktable td small,
-.worktable td label,
-.worktable td button,
-.worktable td .tag,
-.worktable td .sub{color:#f4f0e7!important}
-.worktable td .tag.good{color:#b8f0c8!important}
-.worktable td .tag.warn{color:#ffe1a3!important}
-.worktable td .tag.bad{color:#ffc2c2!important}
-.worktable td input,
-.worktable td select,
-.worktable td textarea{color:#fff4d8!important;background:#101612!important}
-.worktable td button:not(.photo-mini){color:#fff4d8!important}
-.worktable td button.danger{color:#ffdede!important}
+.worktable td .tag.good{color:#246b3b!important}
+.worktable td .tag.warn{color:#815b12!important}
+.worktable td .tag.bad{color:#9b3030!important}
+.worktable td input,.worktable td select,.worktable td textarea{color:#26362d!important;background:#ffffff!important}
+.worktable td button:not(.photo-mini){color:#26362d!important}
+.worktable td button.danger{color:#9b3030!important}
 @media(max-width:760px){.tablewrap{border-radius:8px}.worktable{font-size:11px}.worktable th,.worktable td{padding:7px 6px}}
 
 </style>
