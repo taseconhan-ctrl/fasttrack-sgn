@@ -118,7 +118,8 @@ function days(){const month=$("domesticMonth").value;options("domesticDay",[...n
 function renderDomestic(){const month=$("domesticMonth").value,day=$("domesticDay").value;output=allDomestic.filter((r,i)=>(!month||allKeys[i].slice(0,6)===month)&&(!day||allKeys[i]===day));const table=$("domesticTable");table.replaceChildren();for(const [i,row] of [cols,...output].entries()){const tr=table.insertRow();for(const v of row){const cell=document.createElement(i?"td":"th");cell.textContent=v;cell.style.cssText="padding:9px 12px;border:1px solid #dbe5f2;text-align:left;"+(i?"":"background:#e7edf9");tr.append(cell);}}$("copyDomestic").disabled=!output.length;setStatus("Hiển thị "+output.length+"/"+allDomestic.length+" khách.",false);}
 $("parseDomestic").addEventListener("click",()=>{const r=parseDomestic($("bookingInput").value);allDomestic=r.rows;allKeys=r.keys;const months=[...new Set(allKeys.filter(Boolean).map(k=>k.slice(0,6)))].sort();options("domesticMonth",months,"Tất cả tháng",k=>k.slice(4)+(k.startsWith("0000")?"":"/"+k.slice(0,4)));days();$("domesticFilters").hidden=new Set(allKeys.filter(Boolean)).size<2;$("domesticWarnings").textContent=r.warnings.join(" • ");$("domesticResults").hidden=false;renderDomestic();});
 $("domesticMonth").addEventListener("change",()=>{days();renderDomestic()});$("domesticDay").addEventListener("change",renderDomestic);$("domesticReset").addEventListener("click",()=>{$("domesticMonth").value="";days();renderDomestic()});
-$("copyDomestic").addEventListener("click",async()=>{try{await navigator.clipboard.writeText([cols,...output].map(r=>r.map(v=>v.replace(/[\t\r\n]/g," ").replace(/^[=+\-@]/,"'let ocrWorker=null;
+$("copyDomestic").addEventListener("click",async()=>{try{await navigator.clipboard.writeText([cols,...output].map(r=>r.map(v=>v.replace(/[\t\r\n]/g," ").replace(/^[=+\-@]/,m=>"'"+m)).join("\t")).join("\n"));setStatus("Đã sao chép "+output.length+" khách.",false)}catch{setStatus("Không sao chép được.",true)}});
+let ocrWorker=null;
 $("readZalo").addEventListener("click",async()=>{
  const files=Array.from($("zaloImages").files);if(!files.length){setStatus("Vui lòng chọn ảnh Zalo.",true);return;}
  const btn=$("readZalo");btn.disabled=true;
@@ -130,9 +131,6 @@ $("readZalo").addEventListener("click",async()=>{
  }catch(e){setStatus("Lỗi đọc ảnh: "+e.message,true);if(ocrWorker){try{await ocrWorker.terminate()}catch{}ocrWorker=null;}}
  finally{btn.disabled=false;}
 });
-
-init();
-})();")).join("\t")).join("\n"));setStatus("Đã sao chép "+output.length+" khách để dán vào Excel.",false)}catch{setStatus("Không sao chép được. Hãy chọn bảng và sao chép thủ công.",true)}});
 
 init();
 })();
