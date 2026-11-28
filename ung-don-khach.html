@@ -70,6 +70,36 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 #app table.worktable td button:not(.photo-mini){color:#26362d!important}
 #app table.worktable td button.danger{color:#9b3030!important}
 #app table.worktable td .photo-mini{color:#26362d!important}
+
+<style id="booking-mobile-contrast-fix">
+/* Tăng tương phản phần đầu trang và bộ lọc */
+#app .hero h1{color:#f5f3e9!important;text-shadow:none!important}
+#app .hero p{color:#d6e4dc!important}
+#app > section.panel .field label{color:#294b3b!important;font-weight:700}
+#app > section.panel #message{color:#365d46!important;font-weight:600}
+#app > section.panel .stat{background:#f7faf7!important;border-color:#dce5df!important}
+#app > section.panel .stat b{color:#1d3557!important}
+#app > section.panel .stat span{color:#536b5d!important}
+@media(max-width:680px){
+  .ft-topbar{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:7px!important;padding:9px 10px!important}
+  .ft-topbar .ft-menu-toggle{flex:0 0 52px!important;width:52px!important;min-width:52px!important;height:52px!important}
+  .ft-topbar .ft-top-context{flex:1 1 calc(100% - 70px)!important;min-width:0!important}
+  .ft-topbar .ft-top-context small{font-size:9px!important;letter-spacing:1px!important}
+  .ft-topbar .ft-top-context b{font-size:15px!important;line-height:1.2!important}
+  .ft-topbar .ft-top-spacer,.ft-topbar .who{display:none!important}
+  .ft-topbar>button:not(#ftMenuToggle),.ft-topbar>a.btn{flex:1 1 calc(33.333% - 7px)!important;min-width:0!important;min-height:42px!important;padding:7px 5px!important;font-size:12px!important;line-height:1.2!important;white-space:normal!important;text-align:center!important}
+  #app .hero h1{font-size:23px!important}
+  #app .hero p{font-size:14px!important}
+  #app .hero .actions{width:100%!important;display:grid!important;grid-template-columns:1fr!important}
+  #app .hero .actions button{width:100%!important;min-height:44px!important}
+  #app>section.panel{padding:13px!important;background:#fff!important;color:#26362d!important}
+  #app>section.panel .field label{font-size:13px!important;color:#294b3b!important}
+  #app>section.panel .field input,#app>section.panel .field select{background:#fff!important;color:#26362d!important;border-color:#cbd8cf!important;color-scheme:light!important}
+  #app>section.panel #message{color:#365d46!important}
+  #app>section.panel .summary{gap:8px!important}
+  #app>section.panel .stat{padding:12px!important}
+}
+</style>
 </style>
 </head>
 <body>
