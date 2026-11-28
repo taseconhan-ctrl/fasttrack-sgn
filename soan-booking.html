@@ -1538,6 +1538,22 @@ toggle.addEventListener("click",()=>{if(mobile.matches)app.classList.toggle("ft-
 document.addEventListener("click",e=>{if(app.classList.contains("ft-mobile-open")&&!e.target.closest("#ftSidebar")&&!e.target.closest("#ftMenuToggle")){app.classList.remove("ft-mobile-open");sync();}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&app.classList.contains("ft-mobile-open")){app.classList.remove("ft-mobile-open");sync();toggle.focus();}});
 mobile.addEventListener("change",()=>{app.classList.remove("ft-mobile-open");sync();});
+// Mobile edge swipe: preserve vertical scrolling and table gestures.
+let swipe=null;
+document.addEventListener("touchstart",e=>{
+ if(!mobile.matches||e.touches.length!==1){swipe=null;return;}
+ const t=e.touches[0],open=app.classList.contains("ft-mobile-open");
+ if(side.getClientRects().length===0||(!open&&t.clientX>28)||(open&&!side.contains(e.target))||e.target.closest("input,textarea,select,[contenteditable=true]")){swipe=null;return;}
+ swipe={x:t.clientX,y:t.clientY,open};
+},{passive:true});
+document.addEventListener("touchcancel",()=>{swipe=null;},{passive:true});
+document.addEventListener("touchend",e=>{
+ const start=swipe;swipe=null;if(!start||!mobile.matches||e.changedTouches.length!==1)return;
+ const t=e.changedTouches[0],dx=t.clientX-start.x,dy=t.clientY-start.y;
+ if(Math.abs(dx)<65||Math.abs(dx)<Math.abs(dy)*1.5)return;
+ if((!start.open&&dx>0)||(start.open&&dx<0)){app.classList.toggle("ft-mobile-open",!start.open);sync();}
+},{passive:true});
+
 })();</script>
 
 
