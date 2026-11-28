@@ -1076,14 +1076,18 @@ function renderFilteredBookings(){
  const search=($("bookingSearch")?.value||"").trim().toLocaleLowerCase("vi");
  const dir=$("directionFilter")?.value||"ALL";
  const date=$("dateFilter")?.value||"";
- // Khi tìm kiếm, vẫn tìm trên toàn bộ booking đã dán; mặc định chỉ hiển thị booking đủ điều kiện.
- const source=search?allBookingsCache:processedBookings;
+ const staffFilter=$("staffAssignmentFilter")?.value||"DEFAULT";
+ // Chọn trạng thái nhân viên hoặc tìm kiếm sẽ mở rộng nguồn sang toàn bộ booking đã dán.
+ // Chế độ mặc định vẫn giữ nguyên quy tắc soạn: ĐÓN đã xác nhận + TIỄN chưa phân công.
+ const showAll=!!search||staffFilter!=="DEFAULT";
+ const source=showAll?allBookingsCache:processedBookings;
  const shown=source.filter(x=>{
   const partnerOk=partner==="__ALL__"||(x.agency||"Chưa rõ đối tác")===partner;
   const dirOk=dir==="ALL"||x.dir===dir;
   const dateOk=!date||x.date===date.split("-").reverse().join("/");
+  const assignmentOk=staffFilter==="ASSIGNED"?!x.unassigned:staffFilter==="UNASSIGNED"?!!x.unassigned:true;
   const hay=[x.order,x.names.join(" "),x.flight,x.phone,x.email,x.agency,x.staffAssign].join(" ").toLocaleLowerCase("vi");
-  return partnerOk&&dirOk&&dateOk&&(!search||hay.includes(search));
+  return partnerOk&&dirOk&&dateOk&&assignmentOk&&(!search||hay.includes(search));
  });
  const arrival=shown.filter(x=>x.dir==="ARRIVAL");
  const departure=shown.filter(x=>x.dir==="DEPARTURE");
@@ -1165,11 +1169,11 @@ function run(){
  saveReviewItems(kept);
  const partners=[...new Set(made.map(x=>x.agency||"Chưa rõ đối tác"))].sort((a,b)=>a.localeCompare(b,"vi"));
  $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?'<p class="hint">Có '+skipped.length+' booking bị loại khỏi kết quả chính; xem bảng BOOKING BỊ BỎ QUA bên dưới để biết lý do từng booking.</p>':""}
- <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm tất cả booking</label><input id="bookingSearch" type="text" placeholder="Tìm mọi booking: mã order / tên / chuyến bay / SĐT / nhân viên..." style="width:min(340px,85vw);max-width:none"><p class="hint">Khi nhập từ khóa, hệ thống tìm trong toàn bộ booking đã dán, gồm cả booking đã có nhân viên nhận việc, chưa xác nhận và booking cũ. Không giới hạn theo điều kiện lọc mặc định.</p></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #c5d2c8;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="__ALL__">Tất cả (${made.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${made.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
+ <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm tất cả booking</label><input id="bookingSearch" type="text" placeholder="Tìm mọi booking: mã order / tên / chuyến bay / SĐT / nhân viên..." style="width:min(340px,85vw);max-width:none"><p class="hint">Khi nhập từ khóa, hệ thống tìm trong toàn bộ booking đã dán, gồm cả booking đã có nhân viên nhận việc, chưa xác nhận và booking cũ. Không giới hạn theo điều kiện lọc mặc định.</p></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="staffAssignmentFilter">Nhân viên nhận việc</label><select id="staffAssignmentFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="DEFAULT">Theo điều kiện soạn mặc định</option><option value="ASSIGNED">Đã có nhân viên nhận</option><option value="UNASSIGNED">Chưa có nhân viên nhận</option><option value="ALL">Tất cả booking đã dán</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #c5d2c8;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="__ALL__">Tất cả (${made.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${made.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
  renderFilteredBookings();
  skippedBookingsCache=skipped;
  $("skippedBookings").innerHTML=renderSkippedBookings(skipped,all);
- ["partnerFilter","directionFilter","dateFilter"].forEach(id=>$(id).addEventListener("change",renderFilteredBookings));
+ ["partnerFilter","directionFilter","dateFilter","staffAssignmentFilter"].forEach(id=>$(id).addEventListener("change",renderFilteredBookings));
  $("bookingSearch").addEventListener("input",renderFilteredBookings);
  $("status").textContent=`Đã phân tích ${made.length} booking; hiển thị ${kept.length} booking. Các link chỉ mở bản nháp, không tự gửi.`;
  $("status").className="status good";
