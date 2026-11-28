@@ -733,4 +733,5 @@ fetch(url,{method:"POST",headers:{"Content-Type":"application/json","apikey":"sb
 }catch(e){}
 })();
 </script>
+<script id="sidebar-account-name">(()=>{function refresh(){let name="";try{const s=JSON.parse(localStorage.getItem("fasttrack_staff_pin_session_v1")||"null");if(s?.token&&s.username&&new Date(s.expiresAt).getTime()>Date.now())name=s.username}catch{}const b=document.querySelector("#ftSidebar .ft-brand-copy b");if(b)b.textContent=name||"FAST TRACK SGN";}refresh();window.addEventListener("storage",refresh);window.addEventListener("pageshow",refresh);new MutationObserver(refresh).observe(document.body,{attributes:true,attributeFilter:["class"]});document.getElementById("ftMenuToggle")?.addEventListener("click",refresh);})();</script>
 </body></html>
