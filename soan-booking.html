@@ -17,25 +17,25 @@ input,select,textarea,button{font-family:Arial,"Segoe UI",Tahoma,sans-serif!impo
 
 
 
-<link rel="stylesheet" href="assets/css/shared-layout.css?v=ui-refresh-20261127">
+<link rel="stylesheet" href="assets/css/shared-layout.css?v=blue-20261128">
 <style id="booking-workspace-switcher">
 .workspace-switcher{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:14px!important;margin:0 0 20px!important}
 .workspace-choice{display:flex!important;align-items:center!important;gap:13px!important;min-height:94px!important;padding:17px 19px!important;border:1px solid var(--ft-line,#d8e0e8)!important;border-radius:15px!important;background:#fff!important;color:var(--ft-navy,#14233f)!important;text-decoration:none!important;box-shadow:0 5px 16px #14233f0c!important;transition:transform .18s ease,box-shadow .18s ease!important}
 .workspace-choice:hover{transform:translateY(-2px)!important;box-shadow:0 9px 22px #14233f18!important}
-.workspace-choice.composer-choice{border-left:5px solid var(--ft-blue,#1b7047)!important}
-.workspace-choice.archive-choice{border-left:5px solid var(--ft-green,#16835d)!important}
+.workspace-choice.composer-choice{border-left:5px solid var(--ft-blue,#334370)!important}
+.workspace-choice.archive-choice{border-left:5px solid var(--ft-green,#354983)!important}
 .workspace-icon{display:grid;place-items:center;flex:0 0 46px;width:46px;height:46px;border-radius:12px;background:#edf3fa;font-size:23px}
-.archive-choice .workspace-icon{background:#eaf5ef}
+.archive-choice .workspace-icon{background:#edeff5}
 .workspace-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:5px}
 .workspace-copy strong{font-size:15px;line-height:1.35;font-weight:800}
-.workspace-copy small{font-size:12px;line-height:1.45;color:#6b7b70}
-.workspace-arrow{font-size:12px;font-weight:800;white-space:nowrap;color:#397e55}
-.archive-choice .workspace-arrow{color:#18734f}
+.workspace-copy small{font-size:12px;line-height:1.45;color:#6f737b}
+.workspace-arrow{font-size:12px;font-weight:800;white-space:nowrap;color:#4c597e}
+.archive-choice .workspace-arrow{color:#314373}
 body.archive-only #bookingMain>*:not(#savedReviewArchive){display:none!important}
 body.archive-only #savedReviewArchive{display:block!important}
 @media(max-width:700px){.workspace-switcher{grid-template-columns:1fr!important;gap:10px!important}.workspace-choice{min-height:82px!important;padding:14px!important}.workspace-copy strong{font-size:14px}.workspace-arrow{font-size:11px}}
 </style>
-<link rel="stylesheet" href="assets/css/shared-visual.css?v=ui-refresh-20261127">
+<link rel="stylesheet" href="assets/css/shared-visual.css?v=blue-20261128">
 
 
 <style id="ft-black-gold-application-shell">
@@ -55,7 +55,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 .ft-nav-link.active{background:#292318!important;border-color:#57492d!important;color:var(--ft-gold-hi)!important}
 .ft-nav-icon{width:19px!important;text-align:center!important;color:var(--ft-gold)!important;font-size:18px!important}
 .ft-sidebar-foot{display:flex!important;align-items:center!important;gap:9px!important;padding:17px 21px!important;border-top:1px solid var(--ft-line)!important;color:var(--ft-muted)!important;font-size:10px!important}
-.ft-status-dot{width:7px!important;height:7px!important;border-radius:50%!important;background:#3d9b70!important;box-shadow:0 0 9px #3d9b7066!important}
+.ft-status-dot{width:7px!important;height:7px!important;border-radius:50%!important;background:#57699b!important;box-shadow:0 0 9px #57699b66!important}
 .ft-main{min-height:100vh!important;margin-left:var(--ft-side)!important;transition:margin-left .2s ease!important}
 .ft-topbar{position:sticky!important;top:0!important;z-index:1000!important;height:70px!important;display:flex!important;align-items:center!important;gap:14px!important;padding:0 28px!important;background:#0d0d0cf2!important;border:0!important;border-bottom:1px solid var(--ft-line)!important;box-shadow:none!important;backdrop-filter:blur(14px)!important}
 .ft-menu-toggle{width:36px!important;height:36px!important;min-height:36px!important;display:flex!important;flex-direction:column!important;justify-content:center!important;gap:4px!important;padding:8px!important;border:1px solid transparent!important;border-radius:9px!important;background:transparent!important}
@@ -178,7 +178,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
   border:1px solid #514a3b!important
 }
 .ft-content .status.good,.ft-content .pill.good{
-  background:#183126!important;color:#a8dfbd!important;border-color:#356c4d!important
+  background:#1f2431!important;color:#b7c2df!important;border-color:#444f6c!important
 }
 .ft-content .status.warn,.ft-content .pill.warn{
   background:#352b18!important;color:#f0d18b!important;border-color:#806637!important
@@ -230,7 +230,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 .ft-content th:first-child,.ft-content td:first-child{background:#211f1a!important;color:#eee5d4!important}
 .ft-content pre,.ft-content code{background:#111!important;color:#e8dfce!important;border-color:#403a2e!important}
 /* Christmas body panels: warm ivory background with dark evergreen text for contrast. */
-.ft-content .booking pre.body-content{background:#fff4e5!important;color:#234b38!important;border:1px solid #d8bd83!important;border-left:4px solid #a83232!important;border-radius:9px!important;padding:14px 16px!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important;line-height:1.65!important;box-shadow:inset 0 0 0 1px #ffffff80!important}
+.ft-content .booking pre.body-content{background:#fff4e5!important;color:#2e364b!important;border:1px solid #d8bd83!important;border-left:4px solid #a83232!important;border-radius:9px!important;padding:14px 16px!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important;line-height:1.65!important;box-shadow:inset 0 0 0 1px #ffffff80!important}
 .ft-content .workspace-choice{color:#f5f0e6!important}
 .ft-content .workspace-choice strong,.ft-content .workspace-choice .workspace-copy strong{color:#dcc58a!important}
 .ft-content .workspace-choice small,.ft-content .workspace-arrow{color:#aaa49a!important}
@@ -247,10 +247,10 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 }
 </style>
 
-<link rel="stylesheet" href="assets/css/shared-mobile-contrast.css?v=ui-refresh-20261127">
+<link rel="stylesheet" href="assets/css/shared-mobile-contrast.css?v=blue-20261128">
 
 <style id="cloud-account-style">
-#cloudAccountBar{position:fixed;right:14px;top:12px;z-index:99990;display:flex;align-items:center;gap:9px;padding:7px 10px;border:1px solid #8f7547;border-radius:999px;background:#142b25ed;color:#f7efdf;font-size:12px;box-shadow:0 5px 18px #0004}
+#cloudAccountBar{position:fixed;right:14px;top:12px;z-index:99990;display:flex;align-items:center;gap:9px;padding:7px 10px;border:1px solid #8f7547;border-radius:999px;background:#1a1f2bed;color:#f7efdf;font-size:12px;box-shadow:0 5px 18px #0004}
 #cloudAccountBar[hidden]{display:none!important}
 #cloudAccountBar button{padding:6px 9px;font-size:11px}
 @media(max-width:600px){#cloudAccountBar{top:auto;bottom:76px;right:9px;max-width:calc(100vw - 18px)}#cloudAccountEmail{max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
@@ -291,8 +291,8 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 }
 
 </style>
-<link rel="stylesheet" href="assets/css/shared-ui.css?v=ui-refresh-20261127">
-<link rel="stylesheet" href="assets/css/complete-redesign.css?v=20261127d">
+<link rel="stylesheet" href="assets/css/shared-ui.css?v=blue-20261128">
+<link rel="stylesheet" href="assets/css/complete-redesign.css?v=blue-20261128">
 <style id="sidebar-logout-style">
 .ft-sidebar-logout{width:calc(100% - 24px)!important;margin:8px 12px 14px!important;text-align:left!important;cursor:pointer!important;color:#e4c9a0!important;border:1px solid #574735!important;background:#211d17!important}
 .ft-sidebar-logout:hover{background:#38251f!important;border-color:#8a5947!important;color:#fff0dc!important}
@@ -305,37 +305,37 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 /* TỔNG HỢP KẾT QUẢ: dark-green typography on the existing white surface. */
 .ft-content #summary{
   background:#fff!important;
-  color:#174b35!important;
-  border:1px solid #cbded2!important;
+  color:#262f4b!important;
+  border:1px solid #d0d4de!important;
 }
 .ft-content #summary h2{
-  color:#123f2d!important;
-  border-color:#d5e5da!important;
+  color:#1f273f!important;
+  border-color:#d9dde5!important;
 }
 .ft-content #summary .kv{
-  background:#f5faf6!important;
-  border:1px solid #d7e6dc!important;
+  background:#f6f7fa!important;
+  border:1px solid #dbdee6!important;
 }
 .ft-content #summary .kv small,
 .ft-content #summary .hint,
 .ft-content #summary label,
 .ft-content #summary #filterCount{
-  color:#315d45!important;
+  color:#3d465d!important;
 }
 .ft-content #summary .kv b{
-  color:#123f2d!important;
+  color:#1f273f!important;
 }
 .ft-content #summary input,
 .ft-content #summary select{
   background:#fff!important;
-  color:#174b35!important;
-  border:1px solid #a9c7b4!important;
+  color:#262f4b!important;
+  border:1px solid #b1b7c7!important;
 }
-.ft-content #summary input::placeholder{color:#718b79!important}
+.ft-content #summary input::placeholder{color:#787d8b!important}
 .ft-content #summary input:focus,
 .ft-content #summary select:focus{
-  border-color:#24734d!important;
-  box-shadow:0 0 0 3px #24734d20!important;
+  border-color:#3a4973!important;
+  box-shadow:0 0 0 3px #3a497320!important;
 }
 </style>
 
@@ -401,7 +401,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 .ft-content #reviews .review .muted{color:#64748b!important}
 .ft-content #savedReviewTables .review button,
 .ft-content #reviews .review button{
-  background:#fff4df!important;color:#315344!important;
+  background:#fff4df!important;color:#3b4153!important;
   border:1px solid #dfbd78!important
 }
 .ft-content #savedReviewTables .review input[type="time"]{
@@ -430,7 +430,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 }
 .ft-content #savedReviewArchive #savedDailySummary .kv{
   background:#f7f9fc!important;border:1px solid #cbd7e4!important;
-  border-left:4px solid #247b61!important;border-radius:12px!important;
+  border-left:4px solid #3c4d7b!important;border-radius:12px!important;
   padding:14px 16px!important;color:#344b68!important
 }
 .ft-content #savedReviewArchive #savedDailySummary .kv b{
@@ -447,7 +447,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 #ftApp .ft-content #bookingMain #reviews section.review,
 #ftApp .ft-content #bookingMain #savedReviewTables section.review{
   background:#fff!important;color:#172b45!important;border:1px solid #cbd5e1!important;
-  border-left:5px solid #28745d!important;box-shadow:0 4px 16px rgba(15,23,42,.09)!important;
+  border-left:5px solid #3d4c74!important;box-shadow:0 4px 16px rgba(15,23,42,.09)!important;
 }
 #ftApp .ft-content #bookingMain #reviews section.review h2,
 #ftApp .ft-content #bookingMain #savedReviewTables section.review h2{
@@ -478,7 +478,7 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 }
 #ftApp .ft-content #bookingMain #reviews section.review button,
 #ftApp .ft-content #bookingMain #savedReviewTables section.review button{
-  background:#e9f3ee!important;color:#164b39!important;border:1px solid #78a992!important;
+  background:#eceef3!important;color:#252f4b!important;border:1px solid #868fa9!important;
   font-weight:800!important;opacity:1!important;box-shadow:none!important;
 }
 #ftApp .ft-content #bookingMain #reviews section.review .topline,
@@ -671,7 +671,7 @@ html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#ff
 <div id="results"></div>
 <div id="skippedBookings"></div>
 <div id="reviews"></div>
-<section id="savedReviewArchive" class="panel" hidden><div class="topline archive-nav"><h2>ĐỐI SOÁT</h2><a class="linkbtn secondary" href="soan-booking.html">← Quay lại Soạn Booking</a></div><p class="hint">Lịch sử được đồng bộ riêng tư theo tài khoản; dùng cùng tên đăng nhập trên điện thoại và máy tính. Xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
+<section id="savedReviewArchive" class="panel" hidden><div class="topline archive-nav"><h2>ĐỐI SOÁT</h2><a class="linkbtn secondary" href="soan-booking.html">← Quay lại Soạn Booking</a></div><p class="hint">Lịch sử được đồng bộ riêng tư theo tài khoản; dùng cùng tên đăng nhập trên điện thoại và máy tính. Xóa dữ liệu nhập không ảnh hưởng lịch sử.</p><div class="controls saved-archive-filters"><div><label for="savedDateFilter">Lọc theo ngày bay</label><input id="savedDateFilter" type="date" style="padding:9px;border:1px solid #c9cbd2;border-radius:8px"></div><div><label for="savedPartnerFilter">Lọc theo đối tác</label><select id="savedPartnerFilter" style="padding:9px;border:1px solid #c9cbd2;border-radius:8px;min-width:170px"><option value="__ALL__">Tất cả đối tác</option></select></div><div><label for="savedDirectionFilter">Lọc theo loại dịch vụ</label><select id="savedDirectionFilter" style="padding:9px;border:1px solid #c9cbd2;border-radius:8px;min-width:150px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><button type="button" class="secondary" id="clearSavedDate">Bỏ lọc ngày</button><button type="button" class="ghost" id="clearSavedArchive">Xóa toàn bộ lịch sử</button></div><div id="savedDailySummary"></div><div id="savedReviewTables"></div></section>
 </main>
 </div></div></div>
 
@@ -1177,7 +1177,7 @@ function renderSavedReviewArchive(){
    if(isDeparture)base.push(x.estimatedArrival||"");
    base.push(archiveSubject(x));
    const line=base.join(" | ");
-   const timeCell=isDeparture?'<td><input type="time" class="saved-estimated-arrival" data-saved-key="'+esc(x.key||savedReviewKey(x))+'" value="'+esc(x.estimatedArrival||"")+'" aria-label="Giờ dự kiến đến sân bay" style="min-width:112px;padding:7px;border:1px solid #c5d2c8;border-radius:7px"></td>':"";
+   const timeCell=isDeparture?'<td><input type="time" class="saved-estimated-arrival" data-saved-key="'+esc(x.key||savedReviewKey(x))+'" value="'+esc(x.estimatedArrival||"")+'" aria-label="Giờ dự kiến đến sân bay" style="min-width:112px;padding:7px;border:1px solid #c9cbd2;border-radius:7px"></td>':"";
    return '<tr><td>'+(i+1)+'</td><td>'+esc(x.date)+'</td><td>'+esc(x.order)+'</td><td>'+esc(x.reviewPhone)+'</td><td>'+esc(x.agency||"Chưa rõ agency")+'</td>'+timeCell+'<td>'+esc(archiveSubject(x))+'</td><td>'+copyButton(line,"Copy dòng")+' <button type="button" class="mini ghost delete-saved-review" data-saved-key="'+esc(x.key||savedReviewKey(x))+'">Xóa</button></td></tr>';
   });
   const all=list.map(x=>[x.order,x.reviewPhone,x.agency||"Chưa rõ agency",...(isDeparture?[x.estimatedArrival||""]:[]),archiveSubject(x)].join(" | ")).join("\\n");
@@ -1219,7 +1219,7 @@ function renderFilteredBookings(){
   <div class="booking-direction-list">${items.map((b,i)=>cardHtml(b,i,allBookingsCache.indexOf(b))).join("")||'<p class="muted" style="padding:14px 4px">Không có booking trong mục này.</p>'}</div>
  </section>`;
  const ordered=shown.slice().sort((a,b)=>allBookingsCache.indexOf(a)-allBookingsCache.indexOf(b));
- $("results").innerHTML=renderGroup(ordered,"DANH SÁCH BOOKING ĐÃ SOẠN","ordered-group","#16866f");
+ $("results").innerHTML=renderGroup(ordered,"DANH SÁCH BOOKING ĐÃ SOẠN","ordered-group","#354b86");
  renderReviewTables();
  const count=$("filterCount");
  if(count) count.textContent=`Đang hiển thị ${shown.length}/${processedBookings.length} booking · ĐÓN ${arrival.length} · TIỄN ${departure.length}`;
@@ -1284,7 +1284,7 @@ function run(){
  saveReviewItems(kept);
  const partners=[...new Set(made.map(x=>x.agency||"Chưa rõ đối tác"))].sort((a,b)=>a.localeCompare(b,"vi"));
  $("summary").innerHTML=`<h2>TỔNG HỢP KẾT QUẢ</h2><div class="grid"><div class="kv"><small>Tổng booking đọc được</small><b>${made.length}</b></div><div class="kv"><small>Được đưa vào kết quả</small><b>${kept.length}</b></div><div class="kv"><small>Bỏ qua theo bộ lọc</small><b>${skipped.length}</b></div><div class="kv"><small>Đón / Tiễn</small><b>${kept.filter(x=>x.dir==="ARRIVAL").length} / ${kept.filter(x=>x.dir==="DEPARTURE").length}</b></div></div>${skipped.length?'<p class="hint">Có '+skipped.length+' booking bị loại khỏi kết quả chính; xem bảng BOOKING BỊ BỎ QUA bên dưới để biết lý do từng booking.</p>':""}
- <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm tất cả booking</label><input id="bookingSearch" type="text" placeholder="Tìm mọi booking: mã order / tên / chuyến bay / SĐT / nhân viên..." style="width:min(340px,85vw);max-width:none"><p class="hint">Khi nhập từ khóa, hệ thống tìm trong toàn bộ booking đã dán, gồm cả booking đã có nhân viên nhận việc, chưa xác nhận và booking cũ. Không giới hạn theo điều kiện lọc mặc định.</p></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="staffAssignmentFilter">Nhân viên nhận việc</label><select id="staffAssignmentFilter" style="padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="DEFAULT">Theo điều kiện soạn mặc định</option><option value="ASSIGNED">Đã có nhân viên nhận</option><option value="UNASSIGNED">Chưa có nhân viên nhận</option><option value="ALL">Tất cả booking đã dán</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #c5d2c8;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #c5d2c8;border-radius:8px"><option value="__ALL__">Tất cả (${made.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${made.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
+ <div class="controls" style="margin-top:16px;align-items:end"><div><label for="bookingSearch">Tìm tất cả booking</label><input id="bookingSearch" type="text" placeholder="Tìm mọi booking: mã order / tên / chuyến bay / SĐT / nhân viên..." style="width:min(340px,85vw);max-width:none"><p class="hint">Khi nhập từ khóa, hệ thống tìm trong toàn bộ booking đã dán, gồm cả booking đã có nhân viên nhận việc, chưa xác nhận và booking cũ. Không giới hạn theo điều kiện lọc mặc định.</p></div><div><label for="directionFilter">Loại dịch vụ</label><select id="directionFilter" style="padding:9px;border:1px solid #c9cbd2;border-radius:8px"><option value="ALL">ĐÓN + TIỄN</option><option value="ARRIVAL">ĐÓN</option><option value="DEPARTURE">TIỄN</option></select></div><div><label for="staffAssignmentFilter">Nhân viên nhận việc</label><select id="staffAssignmentFilter" style="padding:9px;border:1px solid #c9cbd2;border-radius:8px"><option value="DEFAULT">Theo điều kiện soạn mặc định</option><option value="ASSIGNED">Đã có nhân viên nhận</option><option value="UNASSIGNED">Chưa có nhân viên nhận</option><option value="ALL">Tất cả booking đã dán</option></select></div><div><label for="dateFilter">Ngày bay</label><input id="dateFilter" type="date" style="padding:8px;border:1px solid #c9cbd2;border-radius:8px"></div><div><label for="partnerFilter">Đối tác</label><select id="partnerFilter" style="min-width:180px;padding:9px;border:1px solid #c9cbd2;border-radius:8px"><option value="__ALL__">Tất cả (${made.length})</option>${partners.map(p=>`<option value="${esc(p)}">${esc(p)} (${made.filter(x=>(x.agency||"Chưa rõ đối tác")===p).length})</option>`).join("")}</select></div><span id="filterCount" class="hint"></span></div>`;
  renderFilteredBookings();
  skippedBookingsCache=skipped;
  $("skippedBookings").innerHTML=renderSkippedBookings(skipped,includeAssigned);
