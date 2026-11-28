@@ -511,18 +511,31 @@ async function saveSelectedEvidence(){
  const elapsed=((performance.now()-start)/1000).toFixed(1);
  $("evidenceFile").value="";$("evidenceLibrary").value="";
  $("evidenceSelected").textContent="Đã lưu ảnh ("+elapsed+" giây).";
- $("evidenceDialog").close();say("Đã lưu ảnh minh chứng ("+elapsed+" giây).");
+ $("evidenceDialog").close();
+ say("Ảnh đã lưu trên hệ thống.");
+ if(localTicketRequested===f){showTicketConfirmation(f);localTicketRequested=null;}
  load().catch(()=>{});
  }catch(err){$("evidenceSelected").textContent="Tải ảnh thất bại: "+err.message+". Bấm Tải ảnh lên để thử lại."}
  finally{evidenceBusy=false;controls.forEach(k=>$(k).disabled=false)}
 }
 $("evidenceDialog").addEventListener("cancel",e=>{if(evidenceBusy)e.preventDefault()});
+let localTicketRequested=null;
 function ticketDownload(file){const url=URL.createObjectURL(file);const a=document.createElement("a");a.href=url;a.download="SGN-ticket-"+new Date().toISOString().replace(/[:.]/g,"-")+"-"+(file.name||"photo").replace(/[^a-zA-Z0-9._-]/g,"_");document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)}
-function evidenceChosen(input){if(!input.files[0]||evidenceBusy)return;$(input.id==="evidenceFile"?"evidenceLibrary":"evidenceFile").value="";if(input.id==="evidenceFile"){try{ticketDownload(input.files[0])}catch(e){console.warn("Local ticket download",e)}}saveSelectedEvidence()}
+function showTicketConfirmation(file){
+ document.getElementById("ftTicketToast")?.remove();
+ const box=document.createElement("div");box.id="ftTicketToast";box.setAttribute("role","status");box.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:2147483647;background:#fff;color:#14532d;border:1px solid #86efac;border-radius:12px;padding:12px 16px;box-shadow:0 4px 18px #0003;width:max-content;max-width:90vw;font-size:14px";
+ const msg=document.createElement("div");msg.textContent="Đã lưu lên hệ thống. Ảnh đã tải về máy chưa?";box.append(msg);
+ const yes=document.createElement("button");yes.textContent="Đã lưu về máy";yes.style.cssText="margin:8px 6px 0 0;background:#166534;color:white;border:0;border-radius:6px;padding:7px 10px";box.append(yes);
+ const retry=document.createElement("button");retry.textContent="Tải lại ảnh";retry.style.cssText="margin-top:8px;padding:7px 10px";box.append(retry);
+ const close=document.createElement("button");close.textContent="Đóng";close.style.cssText="margin:8px 0 0 6px;padding:7px 10px";box.append(close);
+ yes.onclick=()=>{box.replaceChildren(document.createTextNode("✓ Đã lưu ảnh lên hệ thống và về máy"));box.style.background="#166534";box.style.color="#fff";setTimeout(()=>box.remove(),3000)};
+ retry.onclick=()=>ticketDownload(file);close.onclick=()=>box.remove();document.body.append(box);
+}
+function evidenceChosen(input){if(!input.files[0]||evidenceBusy)return;$(input.id==="evidenceFile"?"evidenceLibrary":"evidenceFile").value="";if(input.id==="evidenceFile"){try{ticketDownload(input.files[0]);localTicketRequested=input.files[0]}catch(e){console.warn("Local ticket download",e)}}saveSelectedEvidence()}
 $("evidenceFile").addEventListener("change",()=>evidenceChosen($("evidenceFile")));
 $("evidenceLibrary").addEventListener("change",()=>evidenceChosen($("evidenceLibrary")));
 $("evidenceUpload").addEventListener("click",saveSelectedEvidence);
-$("evidenceLocalSave").addEventListener("click",()=>{const f=$("evidenceFile").files[0]||$("evidenceLibrary").files[0];if(f)ticketDownload(f);else say("Chưa chọn ảnh. Hãy chụp hoặc chọn ảnh trước.")});
+$("evidenceLocalSave").addEventListener("click",()=>{const f=$("evidenceFile").files[0]||$("evidenceLibrary").files[0];if(f){ticketDownload(f);localTicketRequested=f;}else say("Chưa chọn ảnh. Hãy chụp hoặc chọn ảnh trước.")});
 ["dateFilter","search","statusFilter","staffFilter"].forEach(id=>$(id).addEventListener("input",render));
 $("refresh").addEventListener("click",()=>load().catch(e=>say(e.message)));
 $("staffAdminClose").addEventListener("click",()=>$("staffAdminDialog").close());
