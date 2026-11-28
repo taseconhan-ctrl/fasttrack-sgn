@@ -287,6 +287,46 @@ html body .ft-top-context b{white-space:normal!important;overflow-wrap:anywhere!
 }
 @media(max-width:360px){html body :is(.grid,.summary,.staffgrid){grid-template-columns:minmax(0,1fr)!important}}
 </style>
+<style id="ft-flat-layout">
+html body .ft-app{display:block!important;min-height:100vh!important}
+html body .ft-main{margin:0!important;width:100%!important;min-width:0!important}
+html body .ft-topbar{position:sticky!important;top:0!important;z-index:100!important;display:flex!important;align-items:center!important;gap:12px!important;min-height:60px!important;padding:8px 16px!important;border-radius:0!important}
+html body .ft-top-context small{display:none!important}
+html body .ft-top-context b{font-size:19px!important;font-weight:500!important}
+html body .ft-nav-label:not([hidden]),html body .ft-sidebar-foot,html body .ft-brand-copy small{display:none!important}
+html body .ft-brand{padding:24px 16px!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:12px!important}
+html body .ft-brand-mark{width:64px!important;height:64px!important;border-radius:50%!important}
+html body .ft-nav{padding:0!important;gap:0!important}
+html body .ft-nav-link{padding:14px 18px!important;min-height:50px!important;font-size:16px!important;font-weight:400!important;border:0!important}
+html body .ft-content{width:100%!important;max-width:none!important;margin:0!important;padding:20px!important}
+html body .ft-content :is(main,.wrap,#bookingMain){width:100%!important;max-width:none!important;margin:0!important}
+html body .ft-content :is(.panel,.review,.booking,.hero,.intro,.home-hero){border:0!important;border-bottom:1px solid #ddd!important;border-radius:0!important;padding:16px 0!important;margin:0 0 16px!important}
+html body .ft-content :is(h1,h2,h3){font-weight:500!important;letter-spacing:0!important;text-transform:none!important}
+html body .ft-content h1{font-size:26px!important}
+html body .ft-content h2{font-size:20px!important;border:0!important;padding:0!important}
+html body .ft-content :is(h1,h2,h3)::before{display:none!important;content:none!important}
+html body .ft-content .summary{display:flex!important;flex-wrap:wrap!important;gap:0!important;border-bottom:1px solid #ddd!important}
+html body .ft-content :is(.stat,.metric){flex:1 1 110px!important;border:0!important;border-right:1px solid #ddd!important;border-radius:0!important;padding:8px 12px!important}
+html body .ft-content :is(.stat,.metric) b{font-size:20px!important;font-weight:500!important}
+html body .ft-content .menu{display:block!important}
+html body .ft-content .menu .item{display:grid!important;grid-template-columns:40px 1fr auto!important;align-items:center!important;gap:12px!important;min-height:64px!important;padding:12px 4px!important;border:0!important;border-bottom:1px solid #ddd!important;border-radius:0!important}
+html body .ft-content .menu .item :is(p,.go){display:none!important}
+html body .ft-content .menu .item h3{margin:0!important;font-size:16px!important}
+html body .ft-content .menu .item .icon{margin:0!important}
+html body .ft-content .menu .item::after{content:"›"!important;display:block!important;position:static!important;color:#666!important;background:none!important}
+html body .workspace-switcher{display:flex!important;gap:0!important;border-bottom:1px solid #ddd!important;margin-bottom:16px!important}
+html body .workspace-switcher .workspace-choice{flex:1!important;min-width:0!important;display:flex!important;justify-content:center!important;padding:12px!important;border:0!important;border-radius:0!important;background:white!important}
+html body .workspace-choice[aria-current=page]{border-bottom:3px solid #434da0!important}
+html body .workspace-choice :is(.workspace-icon,.workspace-arrow,small){display:none!important}
+html body .workspace-choice strong{font-size:14px!important;color:#434da0!important}
+html body .ft-content .tablewrap{border-radius:3px!important}
+html body .ft-content table th{background:#fff!important;border-bottom:1px solid #ccc!important;font-weight:600!important}
+html body .ft-content table tbody tr:nth-child(even) td{background:#fff!important}
+html body #app #cards table.worktable thead th{background:#fff!important}
+html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#fff!important}
+@media(min-width:901px){html body .ft-main{width:calc(100% - 240px)!important;margin-left:240px!important}html body .ft-sidebar{width:240px!important}html body .ft-app:is(.sidebar-collapsed,.ft-sidebar-collapsed) .ft-main{width:100%!important;margin-left:0!important}}
+@media(max-width:900px){html body .ft-main{margin:0!important;width:100%!important}html body .ft-content{padding:12px!important}html body .ft-topbar{flex-wrap:wrap!important;gap:6px!important;padding:6px 10px!important}html body .ft-top-context{flex:1!important}html body .ft-top-context b{font-size:17px!important}html body .ft-topbar .ft-top-spacer{display:none!important}html body .ft-topbar :is(.ft-account-link,.who){font-size:12px!important}html body .ft-content .summary{gap:0!important}}
+</style>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
