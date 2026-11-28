@@ -280,4 +280,5 @@ $("historyPrev").addEventListener("click",()=>{historyOffset=Math.max(0,historyO
 $("historyNext").addEventListener("click",()=>{if(historyOffset+50<historyTotal){historyOffset+=50;loadHistory(false)}});
 (async()=>{try{const d=await api("can_manage");if(!d.can_manage)throw Error("Chỉ Quản trị viên hoặc Quản lý được truy cập.");document.querySelectorAll("[data-manager-schedule]").forEach(a=>a.hidden=false);await load()}catch(e){$("notice").textContent=e.message;setTimeout(()=>location.replace("index.html"),1400)}})();
 })();
-</script></body></html>
+</script><script id="sidebar-account-name">(()=>{function refresh(){let name="";try{const s=JSON.parse(localStorage.getItem("fasttrack_staff_pin_session_v1")||"null");if(s?.token&&s.username&&new Date(s.expiresAt).getTime()>Date.now())name=s.username}catch{}const b=document.querySelector("#ftSidebar .ft-brand-copy b");if(b)b.textContent=name||"FAST TRACK SGN";}refresh();window.addEventListener("storage",refresh);window.addEventListener("pageshow",refresh);new MutationObserver(refresh).observe(document.body,{attributes:true,attributeFilter:["class"]});document.getElementById("ftMenuToggle")?.addEventListener("click",refresh);})();</script>
+</body></html>
