@@ -1046,6 +1046,11 @@ function greeting(b){
  return b.names.length?"Dear Mr./Ms. "+b.names.join(", ")+",":"Dear Mr./Ms.,";
 }
 function signature(staff,phone,hotline){return `Best regards,\n${staff}\nPhone/WhatsApp\nMe: ${phone}\nHotline: ${hotline}`}
+function refundBody(b,staff,phone,hotline){
+ const g=greeting(b),sig=signature(staff,phone,hotline),ref=b.order?`\n\nBooking Reference: ${b.order}`:"";
+ return `${g}\n\nThank you for choosing our Fast Track service.${ref}\n\nWe regret to inform you that we currently do not provide Fast Track services for domestic departures, as domestic airport procedures are generally less crowded and less complicated.\n\nTherefore, we kindly ask you to cancel your booking and contact the booking platform or agency to request a refund.\n\nWe sincerely apologize for the inconvenience and appreciate your understanding.\n\n${sig}`;
+}
+function refundEligible(b){return direction(b)==="DEPARTURE"&&isDomestic(b)&&!isPartner(b)}
 function bodyEnglish(b,staff,phone,hotline){
  const g=greeting(b), sig=signature(staff,phone,hotline);
  const ref=b.order?`\n\nBooking Reference: ${b.order}`:"";
@@ -1057,9 +1062,7 @@ function bodyEnglish(b,staff,phone,hotline){
   if(!isPartner(b)&&pax>0&&pax<5&&!special) intro+=`\n\nAfter landing, please send me a message so I can assist you. If you cannot find me, please go to the clock area in the center of the immigration hall.`;
   return intro+ref+"\n\n"+sig;
  }
- if(direction(b)==="DEPARTURE"&&isDomestic(b)&&!isPartner(b)){
-  return `${g}\n\nThank you for choosing our Fast Track service.${ref}\n\nWe regret to inform you that we currently do not provide Fast Track services for domestic departures, as domestic airport procedures are generally less crowded and less complicated.\n\nTherefore, we kindly ask you to cancel your booking and contact the booking platform or agency to request a refund.\n\nWe sincerely apologize for the inconvenience and appreciate your understanding.\n\n${sig}`;
- }
+
  if(direction(b)==="DEPARTURE"){
   let intro=`${g}\n\nMy name is ${staff}, and I will be assisting you with the Fast Track departure service for flight ${b.flight} at Tan Son Nhat International Airport on ${d}.\n\nMay I know what time you expect to arrive at the airport?`;
   if(isPriority(b)) return intro+ref+"\n\n"+sig;
@@ -1080,9 +1083,7 @@ function subject(b){
  const agencyPart=(["LINKCARE","VIETTEL","URBOX","Ctrip","Dragon Pass"].includes(agency))?agency:"";
  const name=b.names.length?b.names[0]+(b.pax>1?` (+${b.pax-1})`:""):"";
  const code=serviceCode(b);
- if(direction(b)==="DEPARTURE"&&isDomestic(b)&&!isPartner(b))
-   return `Domestic Fast Track Service – ${b.order} – Cancellation and Refund Request`;
- const departureMark=isDomestic(b)&&isPartner(b)?"🛫(QN)":"🛫";
+ const departureMark=isDomestic(b)?"🛫(QN)":"🛫";
  const head=direction(b)==="ARRIVAL"?"":direction(b)==="DEPARTURE"?(departureMark+(isPriority(b)?" ƯTCK":"")):"Fast Track Service";
  return [head,b.date?b.date.slice(0,5):"",agencyPart,b.order,name,(isPriority(b)?"":code),b.flight,b.time].filter(Boolean).join(" – ")||"Fast Track Service";
 }
@@ -1130,7 +1131,7 @@ function buildOne(b,staff,phone,hotline,staffVN){
  if(!dir)warnings.push("Chưa xác định được loại dịch vụ ĐÓN/TIỄN");
  let copySubject=sub;
  if(b.order&&copySubject)copySubject=copySubject.replace(b.order,"").replace(/\s+–\s+–\s+/g," – ").replace(/^ – | – $/g,"").replace(/🛫 – /,"🛫 ");
- return {...b,dir,agency,sub,en,vi,wa,gm,zalo,calendar,intl,vn,confirmed,unassigned,warnings,reviewSubject:copySubject,reviewPhone:intl?("+"+intl):(b.phone||"Không có số điện thoại")};
+ return {...b,dir,agency,sub,en,vi,wa,gm,zalo,calendar,intl,vn,confirmed,unassigned,warnings,refundMessage:refundEligible(b)?refundBody(b,staff,phone,hotline):"",reviewSubject:copySubject,reviewPhone:intl?("+"+intl):(b.phone||"Không có số điện thoại")};
 }
 function linkHtml(url,label){return url?`<a class="linkbtn" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`:`<span class="muted">Không tạo được – thiếu dữ liệu phù hợp</span>`}
 function block(title,content){return `<h3>${title}</h3><pre class="body-content"${title==="BODY TIẾNG ANH"?' data-body-lang="en"':""}>${esc(content)}</pre>`}
@@ -1146,6 +1147,7 @@ function cardHtml(b,i,cacheIndex){
  ${b.en?block("BODY TIẾNG ANH",b.en):""}
  ${b.vi?block("BODY TIẾNG VIỆT",b.vi):""}
  <div class="actions">${copyButton(b.sub||"","Copy Subject")} ${copyButton(b.en||"","Copy Body EN","mini secondary")}${b.vi?` ${copyButton(b.vi,"Copy Body VI","mini secondary")}`:""}</div>
+ ${refundEligible(b)&&b.refundMessage?`<details class="refund-message"><summary style="cursor:pointer;font-weight:700;padding:10px 12px;color:#a12626">Soạn tin nhắn bảo khách hoàn tiền</summary>${block("TIN NHẮN HOÀN TIỀN",b.refundMessage)}<div class="actions">${copyButton(b.refundMessage,"Copy tin nhắn hoàn tiền","mini secondary")}${b.intl?linkHtml("https://wa.me/"+b.intl+"?text="+encodeURIComponent(b.refundMessage),"WhatsApp hoàn tiền"):""}${/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(b.email||"")&&b.order?linkHtml(gmailLink(b.email,"Domestic Fast Track Service – "+b.order+" – Cancellation and Refund Request",b.refundMessage),"Gmail hoàn tiền"):""}</div></details>`:""}
  <h3>LIÊN HỆ</h3>
  <div class="kv contact-edit-panel" style="margin:10px 0">
  <b>Bổ sung / chỉnh sửa thông tin liên hệ</b>
