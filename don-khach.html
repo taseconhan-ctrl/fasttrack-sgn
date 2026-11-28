@@ -299,6 +299,80 @@ body{margin:0!important;min-height:100vh!important;font-size:13px!important}
 .ft-app.ft-collapsed .ft-sidebar-logout{width:52px!important;justify-content:center!important;margin:8px 12px 14px!important;padding:9px 0!important}
 @media(max-width:680px){.ft-sidebar-logout{width:calc(100% - 24px)!important}.ft-app.ft-collapsed .ft-sidebar-logout{width:calc(100% - 24px)!important;justify-content:flex-start!important;padding:8px 11px!important}}
 </style>
+
+<style id="don-khach-clear-role-palette">
+/* Page-specific operational palette: separate functional areas without repeating one accent color. */
+#ftApp{--dk-ink:#172b45;--dk-muted:#58677b;--dk-line:#d5dee8;--dk-paper:#ffffff;--dk-canvas:#edf1f5;--dk-blue:#285b83;--dk-teal:#24745f;--dk-amber:#9a6818;--dk-red:#a33b3b}
+html,body{background:var(--dk-canvas)!important;color:var(--dk-ink)!important}
+#ftApp .ft-sidebar{background:#17283b!important;border-right:1px solid #263c53!important}
+#ftApp .ft-brand-mark{background:#203d56!important;border-color:#52718b!important;color:#e8f1f8!important}
+#ftApp .ft-nav-link.active{background:#294b68!important;border-color:#52718b!important;color:#fff!important}
+#ftApp .ft-nav-icon{color:#a8c3d8!important}
+#ftApp .ft-topbar{background:#fff!important;border-bottom:1px solid var(--dk-line)!important;box-shadow:0 2px 8px #172b450d!important}
+#ftApp .ft-top-context small{color:var(--dk-blue)!important}
+#ftApp .ft-top-context b{color:var(--dk-ink)!important}
+#ftApp .ft-account-link{background:#f4f7fa!important;border-color:var(--dk-line)!important;color:#29445f!important}
+#ftApp .ft-account-link span{color:var(--dk-blue)!important}
+#ftApp .ft-content{color:var(--dk-ink)!important}
+#ftApp .ft-content main>section.panel{
+ background:var(--dk-paper)!important;color:var(--dk-ink)!important;border:1px solid var(--dk-line)!important;
+ border-radius:13px!important;box-shadow:0 3px 12px #172b4509!important;margin-bottom:16px!important
+}
+#ftApp .ft-content main>section.panel:nth-of-type(1){border-left:4px solid var(--dk-blue)!important}
+#ftApp .ft-content main>section.panel:nth-of-type(2){background:#f8fafc!important;border-left:4px solid #718096!important}
+#ftApp .ft-content main>section.panel:nth-of-type(3){background:#f3f8f5!important;border-left:4px solid var(--dk-teal)!important}
+#ftApp .ft-content main>section.panel:nth-of-type(4){background:#f3f6fa!important;border-left:4px solid #527da5!important}
+#ftApp .ft-content main>section.panel:nth-of-type(5){background:#faf8f2!important;border-left:4px solid #b28a43!important}
+#ftApp .ft-content main>section.panel h2{color:var(--dk-ink)!important;border-color:var(--dk-line)!important}
+#ftApp .ft-content main>section.panel p,
+#ftApp .ft-content main>section.panel .hint,
+#ftApp .ft-content main>section.panel small{color:var(--dk-muted)!important}
+#ftApp .ft-content main>section.panel label{color:#34465d!important;font-weight:700!important}
+#ftApp .ft-content input:not([type=checkbox]):not([type=radio]),
+#ftApp .ft-content select,#ftApp .ft-content textarea{
+ background:#fff!important;color:#172b45!important;border:1px solid #bdcbd9!important;border-radius:8px!important;
+ box-shadow:inset 0 1px 2px #172b4508!important
+}
+#ftApp .ft-content input::placeholder,#ftApp .ft-content textarea::placeholder{color:#78879a!important;opacity:1!important}
+#ftApp .ft-content input:focus,#ftApp .ft-content select:focus,#ftApp .ft-content textarea:focus{
+ border-color:#397ca7!important;box-shadow:0 0 0 3px #397ca71c!important
+}
+#ftApp .ft-content button,#ftApp .ft-content .btn{
+ background:#285b83!important;border:1px solid #285b83!important;color:#fff!important;
+ border-radius:8px!important;box-shadow:none!important;font-weight:750!important
+}
+#ftApp .ft-content button.secondary,#ftApp .ft-content button.ghost,#ftApp .ft-content button.back,#ftApp .ft-content .btn.secondary{
+ background:#eef2f6!important;border:1px solid #c6d1dc!important;color:#29445f!important
+}
+#ftApp .ft-content button.danger,#ftApp .ft-content button.delete,#ftApp .ft-content .btn.danger{
+ background:#fff1f0!important;border:1px solid #d99b97!important;color:#922f2b!important
+}
+#ftApp .ft-content .count{background:#e8eef4!important;border:1px solid #c8d4df!important;color:#29445f!important;font-weight:800!important}
+#ftApp .ft-content .sectiontag{background:#e1f0e9!important;border:1px solid #b7d7c7!important;color:#205d49!important;font-weight:800!important}
+#ftApp .ft-content .tablewrap{background:#fff!important;border:1px solid #cbd5df!important;border-radius:9px!important}
+#ftApp .ft-content table{background:#fff!important;color:#172b45!important;border-color:#d6dfe8!important}
+#ftApp .ft-content th{background:#e8eef4!important;color:#263f59!important;border-color:#cbd5df!important}
+#ftApp .ft-content td{background:#fff!important;color:#26384d!important;border-color:#dce4eb!important}
+#ftApp .ft-content tbody tr:nth-child(even) td{background:#f5f8fa!important}
+#ftApp .ft-content tbody tr:hover td{background:#eaf2f8!important}
+#ftApp .ft-content th:first-child,#ftApp .ft-content td:first-child{background:#edf2f6!important;color:#203b55!important}
+#ftApp .ft-content td select{min-width:125px!important}
+#ftApp .ft-content .status{background:#edf2f6!important;border:1px solid #cbd5df!important;color:#29445f!important}
+#ftApp .ft-content .status.ok{background:#e7f4ec!important;border-color:#a9d0b7!important;color:#205b39!important}
+#ftApp .ft-content .status.warn{background:#fff5df!important;border-color:#e3c98d!important;color:#80530d!important}
+#ftApp .ft-content .status.bad{background:#fff0ef!important;border-color:#e0aaa5!important;color:#8e302c!important}
+#ftApp .ft-content :focus-visible{outline:2px solid #397ca7!important;outline-offset:2px!important}
+#globalStaffAuthBar{background:#203d56ee!important;border:1px solid #52718b!important;color:#fff!important}
+#globalStaffAuthBar button{background:#315c7c!important;border-color:#6f91aa!important;color:#fff!important}
+#photoDialog{background:#fff!important;color:#172b45!important}
+#photoDialog h3{color:#172b45!important}
+@media(max-width:680px){
+ #ftApp .ft-content{width:calc(100% - 24px)!important;padding:16px 0 24px!important}
+ #ftApp .ft-content main>section.panel{padding:15px!important}
+ #ftApp .ft-content main>section.panel h2{font-size:17px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="ft-app" id="ftApp">
