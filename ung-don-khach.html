@@ -23,16 +23,16 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 @media(max-width:760px){.toolbar{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}.summary{grid-template-columns:1fr 1fr}.top{padding:11px 13px}main{padding:17px 12px 35px}.who{display:none}}
 @media(max-width:420px){.toolbar,.dialog-grid{grid-template-columns:1fr}.details{grid-template-columns:1fr 1fr}.card-actions button{flex:1 1 100%}}
 
-.tablewrap{width:100%;overflow:auto;border:1px solid var(--line);border-radius:11px;background:#101511}
-.worktable{width:100%;border-collapse:separate;border-spacing:0;min-width:1120px;font-size:12px}
-.worktable th{position:sticky;top:0;background:#29251c;color:var(--gold2);text-align:left;padding:9px 8px;white-space:nowrap;border-bottom:1px solid var(--line)}
-.worktable td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle;background:#171c18}
-.worktable tbody tr:nth-child(even) td{background:#1d211d}
-.worktable tbody tr:hover td{background:#292820}
+.tablewrap{width:100%;overflow:auto;border:1px solid #c8d0c5;border-radius:11px;background:#f4f2e9}
+.worktable{width:100%;border-collapse:separate;border-spacing:0;min-width:1120px;font-size:12px;color:#26362d}
+.worktable th{position:sticky;top:0;background:#294638;color:#fff4d8;text-align:left;padding:10px 8px;white-space:nowrap;border-bottom:1px solid #526c5a;font-weight:800}
+.worktable td{padding:8px;border-bottom:1px solid #d8ded4;vertical-align:middle;background:#f7f6ef!important;color:#26362d!important}
+.worktable tbody tr:nth-child(even) td{background:#e9eee6!important;color:#26362d!important}
+.worktable tbody tr:hover td{background:#dce8dc!important;color:#1d3328!important}
 .worktable .photo-cell{text-align:center;width:42px;min-width:42px}
 .worktable .eta-cell{min-width:92px;width:100px}
-.worktable .eta-input{width:82px;min-width:82px;min-height:32px;padding:4px 6px;border:1px solid #596653;border-radius:6px;background:#101511;color:var(--text);font:inherit;font-variant-numeric:tabular-nums}
-.worktable .eta-input:focus{outline:2px solid var(--gold);outline-offset:1px}
+.worktable .eta-input{width:82px;min-width:82px;min-height:32px;padding:4px 6px;border:1px solid #aab9a8;border-radius:6px;background:#fff;color:#20352a;font:inherit;font-variant-numeric:tabular-nums}
+.worktable .eta-input:focus{outline:2px solid #b18d45;outline-offset:1px}
 .worktable .eta-input:disabled{opacity:.55}
 .worktable .photo-mini{min-width:30px;min-height:29px;height:29px;padding:3px 6px;border-radius:7px;font-size:15px}
 .worktable .guest-cell{min-width:180px;max-width:260px;white-space:normal}
