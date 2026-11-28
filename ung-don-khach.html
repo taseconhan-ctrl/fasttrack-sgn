@@ -327,6 +327,19 @@ html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#ff
 @media(min-width:901px){html body .ft-main{width:calc(100% - 240px)!important;margin-left:240px!important}html body .ft-sidebar{width:240px!important}html body .ft-app:is(.sidebar-collapsed,.ft-sidebar-collapsed) .ft-main{width:100%!important;margin-left:0!important}}
 @media(max-width:900px){html body .ft-main{margin:0!important;width:100%!important}html body .ft-content{padding:12px!important}html body .ft-topbar{flex-wrap:wrap!important;gap:6px!important;padding:6px 10px!important}html body .ft-top-context{flex:1!important}html body .ft-top-context b{font-size:17px!important}html body .ft-topbar .ft-top-spacer{display:none!important}html body .ft-topbar :is(.ft-account-link,.who){font-size:12px!important}html body .ft-content .summary{gap:0!important}}
 </style>
+<style>
+#app .hero.pickup-list-header {
+  background: #166534 !important;
+  padding: 16px !important;
+  border: 1px solid #166534 !important;
+  border-radius: 8px !important;
+}
+
+#app .hero.pickup-list-header :is(h1, p) {
+  color: #fff !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+</style>
 </head>
 <body>
 <div class="ft-app" id="ftApp">
@@ -347,7 +360,7 @@ html body #app #cards table.worktable tbody tr:nth-child(even) td{background:#ff
 <div class="ft-content">
 <section id="loginRequired" class="panel" hidden><h2>Đăng nhập nhân viên</h2><p class="sub">Dùng tên đăng nhập và PIN được Quản lý/Quản trị viên cấp.</p><form id="loginForm"><div class="dialog-grid"><div class="field"><label>Tên đăng nhập</label><input id="loginUsername" autocomplete="username" required></div><div class="field"><label>PIN 4 chữ số</label><input id="loginPin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="current-password" required></div></div><div class="actions"><button id="loginBtn" type="submit">Đăng nhập</button></div><div id="loginMessage" role="status"></div></form></section>
 <section id="appLoading" class="panel" role="status" hidden style="color:#21283c;background:#f7f8f4;padding:18px">Đang mở ứng dụng đón khách…</section><div id="app" hidden>
-<div class="hero"><div><h1>Danh sách đón khách</h1><p>Tự đồng bộ mỗi 12 giây · Tan Son Nhat (SGN)</p></div><div class="actions" style="margin:0"><button class="secondary" id="refresh">↻ Cập nhật danh sách làm việc</button></div></div>
+<div class="hero pickup-list-header"><div><h1>Danh sách đón khách</h1><p>Tự đồng bộ mỗi 12 giây · Tan Son Nhat (SGN)</p></div><div class="actions" style="margin:0"><button class="secondary" id="refresh">↻ Cập nhật danh sách làm việc</button></div></div>
 <section class="panel">
 <div class="toolbar">
 <div class="field"><label>Ngày phục vụ</label><input id="dateFilter" type="date"></div>
