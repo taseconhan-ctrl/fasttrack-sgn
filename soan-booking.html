@@ -1464,7 +1464,7 @@ document.getElementById("cloudSignOut").addEventListener("click",async()=>{
  try{if(stored?.token)await api("logout",{},stored.token);}catch(e){}
  clearStoredToken();sessionStorage.removeItem(BOOKING_SESSION_KEY);localStorage.removeItem(SAVED_REVIEW_KEY);savedReviewItems=[];
  if($("raw"))$("raw").value="";
- location.href="index.html";
+ location.replace("index.html?loggedout=1&v=login-20261128b");
 });
 (async()=>{
  const stored=getStoredToken();
