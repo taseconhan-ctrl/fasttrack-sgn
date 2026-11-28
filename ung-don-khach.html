@@ -37,10 +37,29 @@ dialog{width:min(560px,calc(100% - 24px));max-height:90vh;overflow:auto;border:1
 @media(max-width:760px){.tablewrap{border-radius:8px}.worktable{font-size:11px}.worktable th,.worktable td{padding:7px 6px}}
 
 </style>
+<link rel="stylesheet" href="assets/css/shared-layout.css?v=ui-refresh-20261127">
+<link rel="stylesheet" href="assets/css/shared-visual.css?v=ui-refresh-20261127">
+<link rel="stylesheet" href="assets/css/shared-mobile-contrast.css?v=ui-refresh-20261127">
+<link rel="stylesheet" href="assets/css/shared-ui.css?v=ui-refresh-20261127">
+<link rel="stylesheet" href="assets/css/complete-redesign.css?v=20261127d">
+<link rel="stylesheet" href="assets/css/christmas-village-theme.css?v=20261127c">
 </head>
 <body>
-<header><div class="top"><div class="brand">FAST TRACK SGN<small>GUEST OPERATIONS</small></div><div class="spacer"></div><span class="who" id="who"></span><button type="button" class="secondary" onclick="if(history.length>1){history.back()}else{location.href='index.html'}">← Quay lại</button><a class="btn secondary" href="index.html">Trang chủ</a><button class="secondary" id="logout">Đăng xuất</button></div></header>
-<main>
+<div class="ft-app" id="ftApp">
+<aside class="ft-sidebar" id="ftSidebar" aria-label="Điều hướng chính">
+ <a class="ft-brand" href="index.html"><span class="ft-brand-mark">FT</span><span class="ft-brand-copy"><b>FAST TRACK SGN</b><small>EXECUTIVE OPERATIONS</small></span></a>
+ <nav class="ft-nav">
+  <span class="ft-nav-label">WORKSPACE</span><a class="ft-nav-link" href="index.html"><span class="ft-nav-icon">⌂</span><span>Tổng quan</span></a>
+  <span class="ft-nav-label">BOOKING MANAGEMENT</span><a class="ft-nav-link" href="soan-booking.html"><span class="ft-nav-icon">▤</span><span>Soạn Booking</span></a>
+  <span class="ft-nav-label">OPERATIONS</span><a class="ft-nav-link active" href="ung-don-khach.html" aria-current="page"><span class="ft-nav-icon">↙</span><span>Ứng dụng đón khách</span></a><a class="ft-nav-link" href="don-khach.html"><span class="ft-nav-icon">◷</span><span>Đón khách</span></a>
+  <span class="ft-nav-label">PEOPLE & PLANNING</span><a class="ft-nav-link" href="xep-lich.html"><span class="ft-nav-icon">▦</span><span>Xếp lịch</span></a>
+ </nav>
+ <div class="ft-sidebar-foot"><span class="ft-status-dot"></span><span>Fast Track SGN</span></div>
+ <button type="button" class="ft-nav-link ft-sidebar-logout" id="ftSidebarLogout"><span class="ft-nav-icon">↪</span><span>Đăng xuất</span></button>
+</aside>
+<div class="ft-main" id="ftMain">
+<header class="ft-topbar"><button class="ft-menu-toggle" id="ftMenuToggle" type="button" aria-label="Mở hoặc thu gọn menu" aria-controls="ftSidebar" aria-expanded="true"><span></span><span></span><span></span></button><div class="ft-top-context"><small>FAST TRACK SGN / OPERATIONS</small><b>Ứng dụng đón khách</b></div><div class="ft-top-spacer"></div><span class="who" id="who"></span><button type="button" class="secondary" onclick="if(history.length>1){history.back()}else{location.href='index.html'}">← Quay lại</button><a class="btn secondary" href="index.html">Trang chủ</a><button class="secondary" id="logout">Đăng xuất</button></header>
+<div class="ft-content"><div class="top"><div class="brand">FAST TRACK SGN<small>GUEST OPERATIONS</small></div><div class="spacer"></div><span class="who" id="who"></span><button type="button" class="secondary" onclick="if(history.length>1){history.back()}else{location.href='index.html'}">← Quay lại</button><a class="btn secondary" href="index.html">Trang chủ</a><button class="secondary" id="logout">Đăng xuất</button></div></header>
 <section id="loginRequired" class="panel" hidden><h2>Đăng nhập nhân viên</h2><p class="sub">Dùng tên đăng nhập và PIN được Quản lý/Quản trị viên cấp.</p><form id="loginForm"><div class="dialog-grid"><div class="field"><label>Tên đăng nhập</label><input id="loginUsername" autocomplete="username" required></div><div class="field"><label>PIN 4 chữ số</label><input id="loginPin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="current-password" required></div></div><div class="actions"><button id="loginBtn" type="submit">Đăng nhập</button></div><div id="loginMessage" role="status"></div></form></section>
 <div id="app" hidden>
 <div class="hero"><div><h1>Danh sách đón khách</h1><p>Tự đồng bộ mỗi 12 giây · Tan Son Nhat (SGN)</p></div><div class="actions" style="margin:0"><button class="secondary" id="manageStaff" hidden>Quản lý nhân viên</button><button class="secondary" id="refresh">↻ Cập nhật danh sách làm việc</button></div></div>
@@ -124,4 +143,5 @@ $("loginForm").addEventListener("submit",async e=>{e.preventDefault();const b=$(
 startApp();
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 </script>
+<script id="ft-shell-navigation">(()=>{const app=document.getElementById("ftApp"),toggle=document.getElementById("ftMenuToggle"),side=document.getElementById("ftSidebar");if(!app||!toggle||!side)return;const mobile=window.matchMedia("(max-width: 680px)");const sync=()=>toggle.setAttribute("aria-expanded",String(mobile.matches?app.classList.contains("ft-mobile-open"):!app.classList.contains("ft-collapsed")));sync();toggle.addEventListener("click",()=>{if(mobile.matches)app.classList.toggle("ft-mobile-open");else app.classList.toggle("ft-collapsed");sync();});document.addEventListener("click",e=>{if(app.classList.contains("ft-mobile-open")&&!e.target.closest("#ftSidebar")&&!e.target.closest("#ftMenuToggle")){app.classList.remove("ft-mobile-open");sync();}});document.addEventListener("keydown",e=>{if(e.key==="Escape"&&app.classList.contains("ft-mobile-open")){app.classList.remove("ft-mobile-open");sync();toggle.focus();}});mobile.addEventListener("change",()=>{app.classList.remove("ft-mobile-open");sync();});document.getElementById("ftSidebarLogout")?.addEventListener("click",()=>document.getElementById("logout")?.click());})();</script>
 </body></html>
